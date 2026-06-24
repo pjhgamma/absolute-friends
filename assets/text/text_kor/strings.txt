@@ -1,0 +1,82 @@
+0pjhgamma.ripplefriends-name|잔물결 친구
+pjhgamma.ripplefriends-description|고요히 교차하는 잔물결.<LINE>무수한 주기의 개화.
+
+General|일반
+
+Ripple Friends|잔물결 친구
+Ripple friends do not affect each other.|잔물결 친구는 상호작용에 영향을 미치지 않는 관계입니다.
+This option itself does nothing, but targets to be affected by the other options.|이 옵션 자체는 아무 기능이 없지만, 다른 옵션들이 적용될 대상을 지정합니다.
+The Ripple Friends relationship applies bidirectionally, excluding oneself.|잔물결 친구 관계는 자기 자신을 제외하고 양방향으로 적용됩니다.
+Player|플레이어
+Includes players and slugpups as Ripple Friends.|잔물결 친구에 플레이어, 슬러그펍을 포함시킵니다.
+Friendly Creatures|우호적인 생물
+Includes friendly creatures, such as tamed lizards and friendly scavengers, as Ripple Friends.|잔물결 친구에 잔물결 친구에 길들인 도마뱀, 우호적인 스캐빈저 등 매우 우호적인 생물을 포함시킵니다.
+Neutral Creatures|중립적인 생물
+Includes ignoring creatures, such as neutralized lizards and rain deer, as Ripple Friends.|잔물결 친구에 중립화된 도마뱀, 토끼 사슴 등 무시하는 생물을 포함시킵니다.
+Iterators|반복자
+Includes Iterators as Ripple Friends.|잔물결 친구에 반복자를 포함시킵니다.
+Grabbed Objects|소지물
+Includes objects grabbed by Ripple Friends as well.|잔물결 친구에 잔물결 친구의 소지물 또한 포함시킵니다.
+Arena|아레나
+Activates the Ripple Friends relationship in the Arena.|아레나에서 잔물결 친구 관계가 활성화됩니다.
+
+General|일반
+Collisions|충돌
+Will not collide with Ripple Friends.|잔물결 친구와 부딪히지 않습니다.
+Weapons|무기
+Will not be hit by most weapons thrown by Ripple Friends.|잔물결 친구가 던진 대부분의 무기에 맞지 않습니다.
+Explosions|폭발
+Will not be hit by most explosions caused by Ripple Friends. This also applies to chain explosions.|잔물결 친구가 일으킨 대부분의 폭발에 맞지 않습니다. 연쇄적인 폭발에도 적용됩니다.
+
+Vanilla|바닐라
+
+Player Actions|플레이어 행동
+Grab Player|플레이어 잡기
+Cannot grab a player when they enter a control input.|플레이어가 조작을 입력할 때 잡을 수 없습니다.
+Sets the maximum control input time (in seconds) during which a player cannot be grabbed.|플레이어가 잡히지 않을 최대 조작 입력 시간(초)을 설정합니다.
+No Stealing|날치기 금지
+Will not steal objects grabbed by Ripple Friends. If the No Stealing option is enabled in Jolly Co-op, players never steal grabbed objects from each other.|잔물결 친구가 손에 들거나 입에 물은 물체를 빼앗지 않습니다. 졸리 협동의 날치기 금지 옵션이 켜져 있는 경우 플레이어의 소지물은 항상 빼앗을 수 없습니다.
+Pebbles|조약돌
+Pebbles cannot kill players.|조약돌이 플레이어를 죽일 수 없습니다.
+Moon|달
+Players cannot steal Moon's neurons.|플레이어가 달의 뉴런을 훔칠 수 없습니다.
+Mushroom|버섯
+Share the effects of mushrooms among players.|플레이어끼리 버섯의 효과가 공유됩니다.
+
+Interactions|상호작용
+Cherrybomb|폭죽 식물
+Will not be stunned by a cherrybomb thrown by Ripple Friends. However, this does not apply to the final explosion. This also applies to joke rifle bullets and chain explosions.|잔물결 친구가 던진 폭죽 식물에 기절하지 않습니다. 단, 마지막 폭발에는 적용되지 않습니다. 우스개 소총의 탄환과 연쇄적인 폭발에도 적용됩니다.
+Beehive|벌집
+Will not be caught by bees triggered by Ripple Friends. However, this does not apply to thoese spawned by approaching a beehive. This also applies to joke rifle bullets.|잔물결 친구가 발생시킨 벌에 잡히지 않습니다. 단, 벌집에 근접하여 발생한 벌에게는 적용되지 않습니다. 우스개 소총의 탄환에도 적용됩니다.
+Jellyfish|해파리
+Will not be caught or stunned by the tentacles of a jellyfish held by a Ripple Friends, and will not be stunned by a thrown jellyfish.|잔물결 친구가 잡은 해파리의 촉수에 잡히거나 기절하지 않고, 던진 해파리에 감전되지 않습니다.
+Snail|달팽이
+Will not be stunned by the next popping from a snail thrown, hit, or killed by Ripple Friends.|잔물결 친구가 던진, 맞힌, 또는 죽인 달팽이의 다음 충격파에 기절하지 않습니다.
+Grappling Worm|끈끈이 벌레
+Will not be caught by the tongue of a grappling worm shot by Ripple Friends.|잔물결 친구가 발사한 끈끈이 벌레의 혀에 잡히지 않습니다.
+
+Downpour|다운푸어
+
+Player Actions|플레이어 행동
+Gourmand Slam|대식가 부딪치기
+Will not take damage from a Gourmand's roll, slide, or slam. If the Spears Miss option is enabled in Jolly Co-op, players never damage each other.|잔물결 친구가 대식가의 구르기, 슬라이딩, 또는 내려찍기에 피해받지 않습니다. 졸리 협동의 창 빗나감 옵션이 켜져 있는 경우 플레이어는 항상 피해받지 않습니다.
+Artificer Parry|기술병 패링
+Will not be stunned by a Artificer's parry. If the Spears Miss option is enabled in Jolly Co-op, players never stun each other.|잔물결 친구가 기술병의 패링에 기절하지 않습니다. 졸리 협동의 창 빗나감 옵션이 켜져 있는 경우 플레이어는 항상 기절하지 않습니다.
+Saint Tongue|성자 혀
+Will not be caught by the tongue shot by a Saint.|잔물결 친구가 성자가 발사한 혀에 잡히지 않습니다.
+Saint Attunement|성자 조율
+Will not be instantly killed by a Saint's attunement.|잔물결 친구가 성자가 조율에 즉사하지 않습니다.
+
+Interactions|상호작용
+Fire Egg|불벌레 알
+Will not be attached to by a fire egg thrown by Ripple Friends. However, this does not apply to the explosion.|잔물결 친구가 던진 불벌레 알에 붙지 않습니다. 단, 폭발에는 적용되지 않습니다.
+Singularity Bomb|특이점 폭탄
+Will not be sucked or instantly killed by a singularity bomb thrown by Ripple Friends. However, this does not apply to the explosion.|잔물결 친구가 던진 특이점 폭탄에 끌리거나 즉사하지 않습니다. 단, 폭발에는 적용되지 않습니다.
+
+Watcher|관찰자
+
+Interactions|상호작용
+Pomegranate|석류
+Will not take damage from a pomegranate dropped by Ripple Friends.|잔물결 친구가 떨어뜨린 석류에 피해를 받지 않습니다.
+Frog|개구리
+Will not be attached to by a frog thrown by Ripple Friends.|잔물결 친구가 던진 개구리에 붙지 않습니다.

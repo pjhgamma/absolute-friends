@@ -1,0 +1,10 @@
+{
+  "id": "pjhgamma.ripplefriends",
+  "name": "Ripple Friends",
+  "version": "0.1.0",
+  "target_game_version": "v1.11",
+  "authors": "pjhgamma",
+  "description": "Ripples that pass through one another in silence.\nAn efflorescence of innumerable cycles.",
+  "tags": ["Game Mechanics"],
+  "priorities": ["jollycoop", "moreslugcats", "watcher"]
+}
