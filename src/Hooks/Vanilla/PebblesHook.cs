@@ -9,6 +9,7 @@ internal class PebblesHook : BaseHooks
     protected override Configurable<bool> Option => Config.Pebbles;
 
     [HookPatch(typeof(IL.SSOracleBehavior.ThrowOutBehavior), nameof(IL.SSOracleBehavior.ThrowOutBehavior.Update))]
+    [HookTest([914], ["ldarg.0; call SubBehavior::get_player"])]
     private static void IL_ThrowOutBehavior_Update(ILContext il)
     {
         ILCursor c = new(il);

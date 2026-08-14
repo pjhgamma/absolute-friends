@@ -2,6 +2,7 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using static RippleFriends.Core.FriendTracker;
 using static RippleFriends.Core.ILUtils;
+using RippleFriends.Diagnostics;
 using RippleFriends.Options;
 using Watcher;
 
@@ -22,12 +23,14 @@ internal class FrogHooks : WatcherHooks
     }
 
     [HookPatch(typeof(IL.Watcher.Frog), nameof(IL.Watcher.Frog.ThrowUpdate))]
+    [HookTest([58, 68], ["brfalse.s; ldarg.0; ldfld UpdatableAndDeletable::room", "ldloc.2; callvirt SocialEventRecognizer::WeaponAttack"])]
     private static void IL_Frog_ThrowUpdate(ILContext il)
     {
         IL_Return_Creature<Frog>(il);
     }
 
     [HookPatch(typeof(IL.Watcher.Frog), nameof(IL.Watcher.Frog.Update))]
+    [HookTest([52], ["ldarg.0; ldloc.1; callvirt AbstractCreature::get_realizedCreature"])]
     private static void IL_Frog_Update(ILContext il)
     {
         ILCursor c = new(il);
@@ -42,7 +45,7 @@ internal class FrogHooks : WatcherHooks
         {
             c.Emit(OpCodes.Ldarg_0);
             c.Emit(OpCodes.Ldloc_1);
-            c.EmitDelegate(IsFriend);
+            c.EmitGuarded<UpdatableAndDeletable?, UpdatableAndDeletable?, bool>(IsFriend);
             c.Emit(OpCodes.Brtrue, l);
         }
     }

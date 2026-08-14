@@ -80,3 +80,27 @@ Pomegranate|석류
 Will not take damage from a pomegranate dropped by Ripple Friends.|잔물결 친구가 떨어뜨린 석류에 피해를 받지 않습니다.
 Frog|개구리
 Will not be attached to by a frog thrown by Ripple Friends.|잔물결 친구가 던진 개구리에 붙지 않습니다.
+
+Diagnostics|진단
+
+If a feature breaks, it turns itself off and marks its option accordingly.|기능이 고장나면 스스로 꺼지고 해당 옵션에 표시가 남습니다.
+These options only add the detail a bug report needs:|이 옵션들은 오류 보고에 필요한 세부 정보를 더할 뿐입니다.
+turn them on and reproduce the problem, then copy the report.|옵션을 켜고 문제를 재현한 뒤 보고서를 복사하십시오.
+
+Visualizer|시각화
+Friend Link|친구 연결선
+Draws a line between two Ripple Friend objects.|잔물결 친구인 두 물체를 사이에 선을 그립니다.
+Owner Link|소유자 연결선
+Draws a line between each object and its owning creature, thickest at the owner's end.|각 물체와 해당 물체를 소유한 생물 사이에 선을 그립니다. 선은 소유자 쪽 끝이 가장 굵습니다.
+Owner Name|소유자 이름표
+Draws the owning creature's name tag above each object.|각 물체를 소유한 생물의 이름표를 해당 물체 위에 그립니다.
+
+Report|문제 보고
+Debug|디버그
+Logs where the mod patches landed and what they are doing.|모드 패치가 적용된 위치와 무엇을 하고 있는지를 기록합니다.
+Copy Report|보고서 복사
+Copies the report to the clipboard and saves it in the game folder.|보고서를 클립보드에 복사하고 게임 폴더에 저장합니다.
+
+Ripple Friends: an error turned off <FEATURE>. See the Remix menu.|잔물결 친구: 오류가 발생하여 <FEATURE> 기능을 껐습니다. 리믹스 메뉴를 확인해 주십시오.
+This feature ran into an error and disabled for this session. Restart the game to try it again.|이 기능은 오류가 발생하여 이번 세션 동안 꺼졌습니다. 다시 사용하려면 게임을 재시작하십시오.
+This feature was applied, but not the way it expected, so it may not be working.|이 기능은 예상과 다르게 적용되어 작동하지 않을 수 있습니다.

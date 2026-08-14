@@ -1,4 +1,5 @@
 using static RippleFriends.Core.OwnerTracker;
+using RippleFriends.Objects;
 using RippleFriends.Options;
 using RWCustom;
 
@@ -107,6 +108,13 @@ internal static class FriendTracker
 
     public static bool IsFriend(UpdatableAndDeletable? source, UpdatableAndDeletable? target)
     {
-        return IsDirectedFriend(source, target) || IsDirectedFriend(target, source);
+        bool friend = IsDirectedFriend(source, target) || IsDirectedFriend(target, source);
+
+        if (friend)
+        {
+            FriendLinkOverlay.Track(source, target);
+        }
+
+        return friend;
     }
 }

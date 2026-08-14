@@ -1,3 +1,5 @@
+using RippleFriends.Diagnostics;
+using RippleFriends.Options;
 using System.Reflection;
 
 namespace RippleFriends.Hooks;
@@ -10,23 +12,45 @@ public class HookPatchAttribute(Type targetType, string eventName) : Attribute
     public string EventName { get; } = eventName;
 }
 
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+public class HookTestAttribute(int[] indices, string[] anchors) : Attribute
+{
+    public int[] Indices { get; } = indices;
+
+    public string[] Anchors { get; } = anchors;
+}
+
 internal abstract class BaseHooks
 {
-    /// <summary>
-    /// The option that turns this group of hooks on. The option itself rather than its value, so that code
-    /// outside can reach the option a group of hooks belongs to, not just whether it is currently on.
-    /// </summary>
     protected abstract Configurable<bool> Option { get; }
 
-    public virtual bool IsEnabled => Option.Value;
+    public bool HasFailed { get; private set; }
+
+    public bool HasWarned => _bindings.Any(binding => binding.Warned);
+
+    public virtual bool IsEnabled => Option.Value && !HasFailed;
+
+    public string Name => field ??= GetType().Name;
+
+    public string Title => Option.Label() ?? Name;
+
+    public IEnumerable<HookBinding> Bindings => _bindings;
 
     private bool _isInit;
 
-    private string? _name;
+    private readonly List<HookBinding> _bindings = [];
 
-    private readonly List<Action> _hookActions = [];
+    public void MarkFailed()
+    {
+        HasFailed = true;
 
-    private readonly List<Action> _unhookActions = [];
+        foreach (var binding in _bindings)
+        {
+            binding.Failed = true;
+        }
+    }
+
+    public bool Owns(Configurable<bool>? option) => option != null && ReferenceEquals(Option, option);
 
     private void Initialize()
     {
@@ -41,7 +65,6 @@ internal abstract class BaseHooks
         {
             var type = GetType();
 
-            _name = type.Name;
             foreach (var methodInfo in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
             {
                 if (methodInfo?.GetCustomAttribute<HookPatchAttribute>() is { } attr)
@@ -52,8 +75,7 @@ internal abstract class BaseHooks
                         {
                             var handler = Delegate.CreateDelegate(eventInfo.EventHandlerType, methodInfo.IsStatic ? null : this, methodInfo);
 
-                            _hookActions.Add(() => eventInfo.AddEventHandler(null, handler));
-                            _unhookActions.Add(() => eventInfo.RemoveEventHandler(null, handler));
+                            _bindings.Add(new(this, methodInfo.Name, eventInfo, handler, methodInfo.GetCustomAttribute<HookTestAttribute>()));
                         }
                         else
                         {
@@ -71,7 +93,7 @@ internal abstract class BaseHooks
         {
             Disable();
 
-            UnityEngine.Debug.Log($"Ripple Friends: {_name}: Hooks failed: {exception.Message}");
+            HookDiagnostics.LogError($"{Name}: Hooks failed", exception);
         }
     }
 
@@ -85,35 +107,50 @@ internal abstract class BaseHooks
             return;
         }
 
-        try
+        int isApplied = 0;
+
+        foreach (var binding in _bindings)
         {
-            foreach (var action in _hookActions)
+            try
             {
-                action?.Invoke();
+                binding.Apply();
+
+                isApplied++;
             }
+            catch (Exception exception)
+            {
+                try
+                {
+                    binding.Remove();
+                }
+                catch
+                {
+                }
 
-            UnityEngine.Debug.Log($"Ripple Friends: {_name}: Hooks applied");
-        }
-        catch (Exception exception)
-        {
-            Disable();
+                MarkFailed();
 
-            UnityEngine.Debug.Log($"Ripple Friends: {_name}: Hooks failed: {exception}");
+                HookDiagnostics.LogError($"{binding.FullName} could not be applied", exception);
+                HookNotifier.Queue(Title);
+
+                break;
+            }
         }
+
+        HookDiagnostics.LogInfo($"{Name}: Hooks applied ({isApplied}/{_bindings.Count})");
     }
 
     public void Disable()
     {
-        try
+        foreach (var binding in _bindings)
         {
-            foreach (var action in _unhookActions)
+            try
             {
-                action?.Invoke();
+                binding.Remove();
             }
-        }
-        catch (Exception exception)
-        {
-            UnityEngine.Debug.Log($"Ripple Friends: {_name}: Hooks failed: {exception}");
+            catch (Exception exception)
+            {
+                HookDiagnostics.LogWarning($"{binding.FullName}: Unhook failed", exception);
+            }
         }
     }
 }

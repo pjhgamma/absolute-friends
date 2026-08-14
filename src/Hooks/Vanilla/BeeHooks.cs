@@ -2,6 +2,7 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using static RippleFriends.Core.FriendTracker;
 using static RippleFriends.Core.OwnerTracker;
+using RippleFriends.Diagnostics;
 using RippleFriends.Options;
 
 namespace RippleFriends.Hooks.Vanilla;
@@ -11,6 +12,7 @@ internal class BeeHooks : BaseHooks
     protected override Configurable<bool> Option => Config.Bee;
 
     [HookPatch(typeof(IL.SporePlant.Bee), nameof(IL.SporePlant.Bee.LookForRandomCreatureToHunt))]
+    [HookTest([44], ["brfalse; ldloc.0; callvirt AbstractCreature::get_realizedCreature"])]
     private static void IL_SporePlant_Bee_LookForRandomCreatureToHunt(ILContext il)
     {
         ILCursor c = new(il);
@@ -21,18 +23,19 @@ internal class BeeHooks : BaseHooks
         ))
         {
             c.Emit(OpCodes.Ldarg_0);
-            c.EmitDelegate((Creature creauture, SporePlant.Bee bee) =>
+            c.EmitGuarded((Creature creauture, SporePlant.Bee bee) =>
             {
                 if (IsFriend(creauture, bee))
                 {
                     return null;
                 }
                 return creauture;
-            });
+            }, (creauture, _) => creauture);
         }
     }
 
     [HookPatch(typeof(IL.JokeRifle), nameof(IL.JokeRifle.Use))]
+    [HookTest([645], ["stloc.s; ldloc.s; ldc.i4.1"])]
     private static void IL_JokeRifle_Use(ILContext il)
     {
         ILCursor c = new(il);
@@ -44,7 +47,7 @@ internal class BeeHooks : BaseHooks
         {
             c.Emit(OpCodes.Dup);
             c.Emit(OpCodes.Ldarg_0);
-            c.EmitDelegate((SporePlant.Bee bee, JokeRifle jokeRifle) =>
+            c.EmitGuarded((SporePlant.Bee bee, JokeRifle jokeRifle) =>
             {
                 SetThrower(bee, GetGrabber(jokeRifle));
             });

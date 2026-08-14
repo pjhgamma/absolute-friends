@@ -10,6 +10,7 @@ internal class SnailHooks : BaseHooks
     protected override Configurable<bool> Option => Config.Snail;
 
     [HookPatch(typeof(IL.Snail), nameof(IL.Snail.Click))]
+    [HookTest([366, 369, 379], ["ldfld AbstractPhysicalObject::rippleLayer", "ldfld AbstractPhysicalObject::rippleLayer", "ldloc.s; callvirt PhysicalObject::get_bodyChunks"])]
     private static void IL_Snail_Click(ILContext il)
     {
         IL_Branch_Ripple(il);

@@ -4,22 +4,21 @@
     <TargetFramework>net48</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <Reference Include="..\lib\BepInEx.dll"/>
-    <Reference Include="..\lib\HOOKS-Assembly-CSharp.dll"/>
-    <Reference Include="..\lib\Mono.Cecil.dll"/>
-    <Reference Include="..\lib\MonoMod.Utils.dll"/>
-    <Reference Include="..\lib\PUBLIC-Assembly-CSharp.dll"/>
-    <Reference Include="..\lib\UnityEngine.dll"/>
-    <Reference Include="..\lib\UnityEngine.CoreModule.dll"/>
-  </ItemGroup>
-  
-  <PropertyGroup>
+    <LangVersion>14.0</LangVersion>
+    <DefineConstants Condition="'$(RecordBaseline)' == 'true'">$(DefineConstants);RIPPLEFRIENDS_RECORDBASELINE</DefineConstants>
     <ModOutputPath>..\release\</ModOutputPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="..\lib\PUBLIC-Assembly-CSharp.dll" Private="false" />
+    <Reference Include="..\lib\HOOKS-Assembly-CSharp.dll" Private="false" />
+    <Reference Include="..\lib\BepInEx.dll" Private="false" />
+    <Reference Include="..\lib\Mono.Cecil.dll" Private="false" />
+    <Reference Include="..\lib\MonoMod.Utils.dll" Private="false" />
+    <Reference Include="..\lib\UnityEngine.dll" Private="false" />
+    <Reference Include="..\lib\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="..\lib\UnityEngine.IMGUIModule.dll" Private="false" />
+  </ItemGroup>
 
   <Target Name="DeployMod" AfterTargets="Build">
     <ItemGroup>
@@ -27,7 +26,7 @@
       <AssetFiles Include="..\assets\**\*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(ModOutputPath)plugins" SkipUnchangedFiles="true" />    
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(ModOutputPath)plugins" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(AssetFiles)" DestinationFiles="$(ModOutputPath)%(RecursiveDir)%(Filename)%(Extension)" SkipUnchangedFiles="true" />
   </Target>
 

@@ -9,6 +9,7 @@ internal class GourmandSlamHooks : DownpourHooks
     protected override Configurable<bool> Option => Config.GourmandSlam;
 
     [HookPatch(typeof(IL.Player), nameof(IL.Player.Collide))]
+    [HookTest([], [])]
     private static void IL_Player_Collide(ILContext il)
     {
         ILCursor c = new(il);

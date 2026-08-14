@@ -1,5 +1,4 @@
 using BepInEx;
-using BepInEx.Logging;
 using RippleFriends.Hooks;
 using RippleFriends.Options;
 using System.Security.Permissions;
@@ -23,21 +22,24 @@ public class Plugin : BaseUnityPlugin
 
     private void OnEnable()
     {
+        On.RainWorld.OnModsInit -= On_RainWorld_OnModsInit;
         On.RainWorld.OnModsInit += On_RainWorld_OnModsInit;
+
+        On.RainWorld.PostModsInit -= On_RainWorld_PostModsInit;
         On.RainWorld.PostModsInit += On_RainWorld_PostModsInit;
     }
 
     private void OnDisable()
     {
+        On.RainWorld.OnModsInit -= On_RainWorld_OnModsInit;
+        On.RainWorld.PostModsInit -= On_RainWorld_PostModsInit;
+
         if (!_isInit)
         {
             return;
         }
 
         _isInit = false;
-
-        On.RainWorld.OnModsInit -= On_RainWorld_OnModsInit;
-        On.RainWorld.PostModsInit -= On_RainWorld_PostModsInit;
 
         HookManager.OnDisable();
     }

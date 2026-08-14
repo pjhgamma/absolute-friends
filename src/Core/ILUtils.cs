@@ -1,6 +1,7 @@
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using RippleFriends.Diagnostics;
 using static RippleFriends.Core.FriendTracker;
 
 namespace RippleFriends.Core;
@@ -40,10 +41,10 @@ internal static class ILUtils
                 {
                     c.Emit(OpCodes.Ldloc, abstractPhysicalObject1);
                     c.IncomingLabels.ToList().ForEach(l => l.Target = c.Prev);
-                    c.EmitDelegate((AbstractPhysicalObject abstractPhysicalObject) => abstractPhysicalObject.realizedObject);
+                    c.EmitGuarded((AbstractPhysicalObject abstractPhysicalObject) => abstractPhysicalObject.realizedObject);
                     c.Emit(OpCodes.Ldloc, abstractPhysicalObject2);
-                    c.EmitDelegate((AbstractPhysicalObject abstractPhysicalObject) => abstractPhysicalObject.realizedObject);
-                    c.EmitDelegate(IsFriend);
+                    c.EmitGuarded((AbstractPhysicalObject abstractPhysicalObject) => abstractPhysicalObject.realizedObject);
+                    c.EmitGuarded<UpdatableAndDeletable?, UpdatableAndDeletable?, bool>(IsFriend);
                     c.Emit(OpCodes.Brtrue, l);
                 }
             }
@@ -60,14 +61,14 @@ internal static class ILUtils
         ))
         {
             c.Emit(OpCodes.Ldarg_0);
-            c.EmitDelegate((Creature creature, T physicalObject) =>
+            c.EmitGuarded((Creature creature, T physicalObject) =>
             {
                 if (IsFriend(creature, physicalObject))
                 {
                     return null;
                 }
                 return creature;
-            });
+            }, (creature, _) => creature);
         }
     }
 
@@ -81,14 +82,14 @@ internal static class ILUtils
         ))
         {
             c.Emit(OpCodes.Ldarg_0);
-            c.EmitDelegate((SharedPhysics.CollisionResult collisionResult, T tongue) =>
+            c.EmitGuarded((SharedPhysics.CollisionResult collisionResult, T tongue) =>
             {
                 if (IsFriend(getOwner(tongue), collisionResult.chunk.owner))
                 {
                     return new(null, null, null, false, default);
                 }
                 return collisionResult;
-            });
+            }, (collisionResult, _) => collisionResult);
         }
     }
 }

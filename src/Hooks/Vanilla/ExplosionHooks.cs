@@ -10,6 +10,7 @@ internal class ExplosionHooks : BaseHooks
     protected override Configurable<bool> Option => Config.Explosion;
 
     [HookPatch(typeof(IL.Explosion), nameof(IL.Explosion.Update))]
+    [HookTest([111, 120, 137], ["ldfld AbstractPhysicalObject::rippleLayer", "ldfld AbstractPhysicalObject::rippleLayer", "ldarg.0; ldfld UpdatableAndDeletable::room"])]
     private static void IL_Explosion_Update(ILContext il)
     {
         IL_Branch_Ripple(il);

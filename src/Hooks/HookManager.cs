@@ -1,12 +1,19 @@
+using RippleFriends.Diagnostics;
 using System.Reflection;
 
 namespace RippleFriends.Hooks;
 
 internal static class HookManager
 {
+    public static IEnumerable<HookBinding> Bindings => _activeHooks.SelectMany(hook => hook.Bindings);
+
     private static bool _isInit;
 
     private static readonly List<BaseHooks> _activeHooks = [];
+
+    public static bool IsFailed(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasFailed && hook.Owns(option));
+
+    public static bool IsWarned(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasWarned && hook.Owns(option));
 
     public static void Initialize()
     {
@@ -22,7 +29,9 @@ internal static class HookManager
             On.OptionInterface._SaveConfigFile -= On_OptionInterface__SaveConfigFile;
             On.OptionInterface._SaveConfigFile += On_OptionInterface__SaveConfigFile;
 
-            var hookTypes = Assembly.GetExecutingAssembly().GetTypes().Where(
+            HookNotifier.Listen();
+
+            IEnumerable<Type> hookTypes = Assembly.GetExecutingAssembly().GetTypes().Where(
                 t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(BaseHooks))
             );
 
@@ -36,31 +45,37 @@ internal static class HookManager
         }
         catch (Exception exception)
         {
-            UnityEngine.Debug.Log($"Ripple Friends: Hook Manager initialization failed: {exception}");
+            HookDiagnostics.LogError("Hook Manager initialization failed", exception);
         }
     }
 
     public static void OnEnable()
     {
+        HookDiagnostics.BeginSession();
+
         Initialize();
 
         foreach (var hook in _activeHooks)
         {
             hook.Enable();
         }
+
+        HookDiagnostics.EndSession();
     }
 
     public static void OnDisable()
     {
-        if (_activeHooks == null)
-        {
-            return;
-        }
+        _isInit = false;
+
+        On.OptionInterface._SaveConfigFile -= On_OptionInterface__SaveConfigFile;
+
+        HookNotifier.Stop();
 
         foreach (var hooks in _activeHooks)
         {
             hooks.Disable();
         }
+
         _activeHooks.Clear();
     }
 
@@ -70,6 +85,6 @@ internal static class HookManager
 
         OnEnable();
 
-        UnityEngine.Debug.Log($"Ripple Friends: Configurations saved");
+        HookDiagnostics.LogInfo("Configurations saved");
     }
 }
