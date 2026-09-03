@@ -10,14 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="..\lib\PUBLIC-Assembly-CSharp.dll" Private="false" />
-    <Reference Include="..\lib\HOOKS-Assembly-CSharp.dll" Private="false" />
-    <Reference Include="..\lib\BepInEx.dll" Private="false" />
-    <Reference Include="..\lib\Mono.Cecil.dll" Private="false" />
-    <Reference Include="..\lib\MonoMod.Utils.dll" Private="false" />
-    <Reference Include="..\lib\UnityEngine.dll" Private="false" />
-    <Reference Include="..\lib\UnityEngine.CoreModule.dll" Private="false" />
-    <Reference Include="..\lib\UnityEngine.IMGUIModule.dll" Private="false" />
+    <Reference Include="Assembly-CSharp" HintPath="..\lib\PUBLIC-Assembly-CSharp.dll" Private="false" />
+    <Reference Include="HOOKS-Assembly-CSharp" HintPath="..\lib\HOOKS-Assembly-CSharp.dll" Private="false" />
+    <Reference Include="BepInEx" HintPath="..\lib\BepInEx.dll" Private="false" />
+    <Reference Include="Mono.Cecil" HintPath="..\lib\Mono.Cecil.dll" Private="false" />
+    <Reference Include="MonoMod.Utils" HintPath="..\lib\MonoMod.Utils.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="..\lib\UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="..\lib\UnityEngine.CoreModule.dll" Private="false" />
   </ItemGroup>
 
   <Target Name="DeployMod" AfterTargets="Build">

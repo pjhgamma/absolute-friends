@@ -1,70 +1,82 @@
+using RippleFriends.Hooks;
 using RippleFriends.Options;
+using RWCustom;
 using System.Reflection;
 using System.Text;
+using UnityEngine;
 
 namespace RippleFriends.Diagnostics;
 
 internal static class HookReport
 {
-    public static string SetHeading(this string text, int level) => $"{new string('#', level)} {text}";
+    private const string Fence = "```";
 
-    public static string SetItem(this string text) => $"- {text}";
-
-    public static string SetBold(this string text) => $"**{text}**";
-
-    public static string SetCode(this string text) => $"`{text}`";
-
-    public static string SetCode(this IEnumerable<string> values) => string.Join(", ", values.Select(SetCode));
-
-    public static string Fence => "```";
-
-    public static void AppendHeading(this StringBuilder builder, string heading, int level)
+    extension(string text)
     {
-        builder.AppendLine(heading.SetHeading(level)).AppendLine();
+        public string Item => $"- {text}";
+
+        public string Bold => $"**{text}**";
+
+        public string Code => $"`{text}`";
+
+        public string Heading(int level) => $"{new string('#', level)} {text}";
     }
 
-    public static void AppendLines(this StringBuilder builder, List<string> lines)
+    extension(IEnumerable<string> values)
     {
-        foreach (var line in lines)
-        {
-            builder.AppendLine(line);
-        }
-
-        builder.AppendLine();
+        public string Code => string.Join(", ", values.Select(value => value.Code));
     }
 
-    public static void AppendSection(this StringBuilder builder, string heading, List<string> lines, string language = "")
+    extension(StringBuilder builder)
     {
-        if (lines.Count == 0)
+        public void AppendHeading(string heading, int level)
         {
-            return;
+            builder.AppendLine(heading.Heading(level)).AppendLine();
         }
 
-        builder.AppendHeading(heading, 2);
-        builder.AppendBlock(lines, language);
-    }
-
-    public static void AppendBlock(this StringBuilder builder, List<string> lines, string language = "")
-    {
-        if (lines.Count == 0)
+        public void AppendLines(List<string> lines)
         {
-            return;
+            foreach (var line in lines)
+            {
+                builder.AppendLine(line);
+            }
+
+            builder.AppendLine();
         }
 
-        builder.AppendLine(Fence + language);
-
-        foreach (var line in lines)
+        public void AppendBlock(List<string> lines, string language = "")
         {
-            builder.AppendLine(line);
+            if (lines.Count == 0)
+            {
+                return;
+            }
+
+            builder.AppendLine(Fence + language);
+
+            foreach (var line in lines)
+            {
+                builder.AppendLine(line);
+            }
+
+            builder.AppendLine(Fence).AppendLine();
         }
 
-        builder.AppendLine(Fence).AppendLine();
+        public void AppendSection(string heading, List<string> lines, string language = "")
+        {
+            if (lines.Count == 0)
+            {
+                return;
+            }
+
+            builder.AppendHeading(heading, 2);
+            builder.AppendBlock(lines, language);
+        }
     }
 }
 
 internal static class HookDiagnostics
 {
-    private const string ReportFileName = "RippleFriends_Diagnostics.md";
+    public const string ReportFileName = "RippleFriends.md";
 
     private static readonly List<string> _report = [];
 
@@ -74,171 +86,7 @@ internal static class HookDiagnostics
 
     private static int _warningCount;
 
-    private static bool _writing;
-
-    public static void BeginSession()
-    {
-        _report.Clear();
-        _problems.Clear();
-        _errorCount = 0;
-        _warningCount = 0;
-
-        HookBaseline.Begin();
-    }
-
-    public static void EndSession()
-    {
-        HookBaseline.Announce();
-
-        WriteReport();
-    }
-
-    public static void Log(string message)
-    {
-        UnityEngine.Debug.Log("Ripple Friends: " + message);
-    }
-
-    public static void LogInfo(string message)
-    {
-        Record("[INFO] " + message);
-    }
-
-    public static void LogDetail(List<string> lines)
-    {
-        if (lines.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var line in lines)
-        {
-            Record("    " + line);
-        }
-    }
-
-    public static void LogError(string message)
-    {
-        _errorCount++;
-
-        Flag("[ERROR] " + message);
-
-        WriteReport();
-    }
-
-    public static void LogError(string message, Exception exception)
-    {
-        LogError($"{message}: {exception.Message}");
-        Record(exception.ToString());
-    }
-
-    public static void LogWarning(string message)
-    {
-        _warningCount++;
-
-        Flag("[WARN] " + message);
-    }
-
-    public static void LogWarning(string message, Exception exception)
-    {
-        LogWarning($"{message}: {exception.Message}");
-        Record(exception.ToString());
-    }
-
-    public static void CopyReport()
-    {
-        string report = BuildReport();
-
-        CopyToClipboard(report);
-        Save(report);
-    }
-
-    private static void Record(string message)
-    {
-        if (Config.Debug.Value)
-        {
-            _report.Add(message);
-        }
-    }
-
-    private static void Flag(string message)
-    {
-        _problems.Add(message);
-        Record(message);
-        Log(message);
-    }
-
-    private static string? Save(string report)
-    {
-        try
-        {
-            string path = Path.Combine(RWCustom.Custom.RootFolderDirectory(), ReportFileName);
-
-            File.WriteAllText(path, report);
-
-            return path;
-        }
-        catch (Exception exception)
-        {
-            LogError("Could not write report", exception);
-
-            return null;
-        }
-    }
-
-    private static string BuildReport()
-    {
-        StringBuilder builder = new();
-
-        builder.AppendHeading($"{Plugin.Name} {Plugin.Version} diagnostics", 1);
-        builder.AppendLines(Provenance);
-
-        builder.AppendSection("Hook baseline", HookBaseline.Lines, "csharp");
-
-        if (_report.Count == 0)
-        {
-            builder.AppendLine("Nothing was recorded.");
-
-            return builder.ToString();
-        }
-
-        builder.AppendSection($"{_errorCount} error(s), {_warningCount} warning(s)", _problems);
-        builder.AppendSection("Full log", _report);
-        builder.AppendSection("Hooks that ran", Activities, "csharp");
-        builder.AppendSection("Hooks that never ran", Silent, "csharp");
-
-        return builder.ToString();
-    }
-
-    private static void WriteReport()
-    {
-        if (_writing || !Config.Debug.Value)
-        {
-            return;
-        }
-
-        _writing = true;
-
-        try
-        {
-            Save(BuildReport());
-        }
-        finally
-        {
-            _writing = false;
-        }
-    }
-
-    private static void CopyToClipboard(string report)
-    {
-        try
-        {
-            UnityEngine.GUIUtility.systemCopyBuffer = report;
-        }
-        catch (Exception exception)
-        {
-            LogError($"Could not reach the clipboard", exception);
-        }
-    }
+    public static string ReportPath => Path.Combine(Custom.RootFolderDirectory(), ReportFileName);
 
     private static string GameVersion
     {
@@ -263,14 +111,14 @@ internal static class HookDiagnostics
             {
                 if (ModManager.ActiveMods is not { } mods)
                 {
-                    return "unknown".SetCode();
+                    return "unknown".Code;
                 }
 
-                return mods.Select(mod => $"{mod.id} {mod.version}").SetCode();
+                return mods.Select(mod => $"{mod.id} {mod.version}").Code;
             }
             catch
             {
-                return "unknown".SetCode();
+                return "unknown".Code;
             }
         }
     }
@@ -301,7 +149,7 @@ internal static class HookDiagnostics
                 return $"unreadable ({exception.Message})";
             }
 
-            return options.SetCode();
+            return options.Code;
         }
     }
 
@@ -313,29 +161,154 @@ internal static class HookDiagnostics
             {
                 return
                 [
-                    $"{"game".SetBold()}: {GameVersion.SetCode()}".SetItem(),
-                    $"{"mods".SetBold()}: {Mods}".SetItem(),
-                    $"{"options".SetBold()}: {Options}".SetItem(),
+                    $"{"game".Bold}: {GameVersion.Code}".Item,
+                    $"{"mods".Bold}: {Mods}".Item,
+                    $"{"options".Bold}: {Options}".Item,
                 ];
             }
             catch (Exception exception)
             {
-                return [$"unreadable ({exception.Message})".SetItem()];
+                return [$"unreadable ({exception.Message})".Item];
             }
         }
     }
 
-    private static List<string> Activities => BindingNames(binding => binding.Ran);
+    private static List<string> ActiveBindings => BindingNames(binding => binding.Ran);
 
-    private static List<string> Silent => BindingNames(binding => !binding.Ran);
+    private static List<string> SilentBindings => BindingNames(binding => !binding.Ran);
 
-    private static List<string> BindingNames(Func<Hooks.HookBinding, bool> match)
+    private static List<string> FlaggedBindings => BindingNames(binding => binding.Warned || binding.Failed);
+
+    public static void BeginSession()
+    {
+        _report.Clear();
+        _problems.Clear();
+        _errorCount = 0;
+        _warningCount = 0;
+
+        HookBaseline.Begin();
+    }
+
+    public static void EndSession()
+    {
+        HookBaseline.Announce();
+
+        SaveReport();
+    }
+
+    public static void LogConsole(string message)
+    {
+        Debug.Log("Ripple Friends: " + message);
+    }
+
+    public static void LogDetail(List<string> lines)
+    {
+        if (lines.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var line in lines)
+        {
+            Record("    " + line);
+        }
+    }
+
+    public static void LogInfo(string message)
+    {
+        Record("[INFO] " + message);
+    }
+
+    public static void LogWarning(string message)
+    {
+        _warningCount++;
+
+        Flag("[WARN] " + message);
+    }
+
+    public static void LogWarning(string message, Exception exception)
+    {
+        LogWarning($"{message}: {exception.Message}");
+        LogDetail([exception.ToString()]);
+    }
+
+    public static void LogError(string message)
+    {
+        RecordError(message);
+
+        SaveReport();
+    }
+
+    public static void LogError(string message, Exception exception)
+    {
+        RecordError($"{message}: {exception.Message}");
+        LogDetail([exception.ToString()]);
+
+        SaveReport();
+    }
+
+    public static void SaveReport()
+    {
+        if (Config.Debug.IsActive)
+        {
+            Save(BuildReport());
+        }
+    }
+
+    public static void OpenReport()
+    {
+        SaveReport();
+
+        try
+        {
+            string path = Path.GetFullPath(ReportPath);
+            string folder = Path.GetFullPath(Custom.RootFolderDirectory()).TrimEnd(Path.DirectorySeparatorChar);
+            bool exists = File.Exists(path);
+
+            (string command, string arguments) = Application.platform switch
+            {
+                RuntimePlatform.OSXPlayer or RuntimePlatform.OSXEditor => ("open", exists ? $"-R \"{path}\"" : $"\"{folder}\""),
+                RuntimePlatform.LinuxPlayer or RuntimePlatform.LinuxEditor => ("xdg-open", $"\"{folder}\""),
+                _ => ("explorer.exe", exists ? $"/select,\"{path}\"" : $"\"{folder}\"")
+            };
+
+            System.Diagnostics.Process.Start(command, arguments);
+        }
+        catch (Exception exception)
+        {
+            LogError("Could not open the report", exception);
+        }
+    }
+
+    private static void Record(string message)
+    {
+        if (Config.Debug.IsActive)
+        {
+            _report.Add(message);
+        }
+    }
+
+    private static void RecordError(string message)
+    {
+        _errorCount++;
+
+        Flag("[ERROR] " + message);
+    }
+
+    private static void Flag(string message)
+    {
+        _problems.Add(message);
+        Record(message);
+        LogConsole(message);
+    }
+
+    private static List<string> BindingNames(Func<HookBinding, bool> match)
     {
         List<string> names = [];
 
         try
         {
-            foreach (var binding in Hooks.HookManager.Bindings)
+            foreach (var binding in HookManager.Bindings)
             {
                 if (match(binding))
                 {
@@ -349,5 +322,64 @@ internal static class HookDiagnostics
         }
 
         return names;
+    }
+
+    private static string BuildReport()
+    {
+        StringBuilder builder = new();
+
+        builder.AppendHeading($"{Plugin.Name} {Plugin.Version} diagnostics", 1);
+        builder.AppendLines(Provenance);
+
+        builder.AppendSection("Hook baseline", HookBaseline.Lines, "csharp");
+
+        if (_report.Count == 0)
+        {
+            builder.AppendLine("Nothing was recorded.");
+
+            return builder.ToString();
+        }
+
+        builder.AppendSection($"{_errorCount} error(s), {_warningCount} warning(s)", _problems);
+        builder.AppendSection("Full log", _report);
+        builder.AppendSection("Hooks that were flagged", FlaggedBindings, "csharp");
+        builder.AppendSection("Hooks that ran", ActiveBindings, "csharp");
+        builder.AppendSection("Hooks that never ran", SilentBindings, "csharp");
+
+        return builder.ToString();
+    }
+
+    private static void Save(string report)
+    {
+        try
+        {
+            File.WriteAllText(ReportPath, report);
+        }
+        catch (Exception exception)
+        {
+            RecordError($"Could not write report: {exception.Message}");
+            LogDetail([exception.ToString()]);
+        }
+    }
+}
+
+internal class ReportHooks : BaseHooks
+{
+    protected override Configurable<bool>[] Options => [Config.Debug];
+
+    [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.ctor))]
+    private static void On_RainWorldGame_ctor(On.RainWorldGame.orig_ctor orig, RainWorldGame self, ProcessManager manager)
+    {
+        orig(self, manager);
+
+        HookDiagnostics.SaveReport();
+    }
+
+    [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.ShutDownProcess))]
+    private static void On_RainWorldGame_ShutDownProcess(On.RainWorldGame.orig_ShutDownProcess orig, RainWorldGame self)
+    {
+        orig(self);
+
+        HookDiagnostics.SaveReport();
     }
 }

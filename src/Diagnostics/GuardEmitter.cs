@@ -60,12 +60,36 @@ internal sealed class GuardContract
         {
             throw new ArgumentException($"{handlerFieldName} must be a delegate");
         }
+
+        if (HandleErrorMethod.ReturnType != typeof(bool))
+        {
+            throw new ArgumentException($"{handleErrorMethodName} must return whether the hook is to blame");
+        }
     }
+}
+
+internal interface IEmittedGuard
+{
+    Delegate Body { get; }
+
+    Delegate? Fallback { get; }
+
+    bool ShouldRun();
+
+    void MarkFailed(Exception exception);
 }
 
 internal static class GuardEmitter
 {
-    private static readonly FieldInfo _slotsField = typeof(GuardContexts).GetField(nameof(GuardContexts.Slots))!;
+    private static readonly FieldInfo _slotsField = typeof(GuardContexts).GetField(nameof(GuardContexts.Slots));
+
+    private static readonly MethodInfo _bodyGetter = typeof(IEmittedGuard).GetProperty(nameof(IEmittedGuard.Body)).GetGetMethod();
+
+    private static readonly MethodInfo _fallbackGetter = typeof(IEmittedGuard).GetProperty(nameof(IEmittedGuard.Fallback)).GetGetMethod();
+
+    private static readonly MethodInfo _shouldRunMethod = typeof(IEmittedGuard).GetMethod(nameof(IEmittedGuard.ShouldRun));
+
+    private static readonly MethodInfo _markFailedMethod = typeof(IEmittedGuard).GetMethod(nameof(IEmittedGuard.MarkFailed));
 
     public static Delegate? Wrap(Type handlerType, object context, GuardContract contract, string methodName)
     {
@@ -111,19 +135,23 @@ internal static class GuardEmitter
         EmitArguments(il, parameters.Length);
         il.Emit(OpCodes.Callvirt, invoke);
 
-        if (result != null)
-        {
-            il.Emit(OpCodes.Stloc, result);
-        }
+        EmitStore(il, result);
 
         il.Emit(OpCodes.Leave, done);
 
         il.BeginCatchBlock(typeof(Exception));
 
+        Label blamed = il.DefineLabel();
+
         il.Emit(OpCodes.Stloc, error);
         il.Emit(OpCodes.Ldloc, contextLocal);
         il.Emit(OpCodes.Ldloc, error);
         il.Emit(OpCodes.Callvirt, contract.HandleErrorMethod);
+        il.Emit(OpCodes.Brtrue, blamed);
+
+        il.Emit(OpCodes.Rethrow);
+
+        il.MarkLabel(blamed);
         il.Emit(OpCodes.Leave, fallback);
 
         il.EndExceptionBlock();
@@ -135,35 +163,94 @@ internal static class GuardEmitter
             EmitArguments(il, parameters.Length);
             il.Emit(OpCodes.Callvirt, origInvoke);
 
-            if (result != null)
-            {
-                il.Emit(OpCodes.Stloc, result);
-            }
+            EmitStore(il, result);
         }
-        else if (result != null)
+        else
         {
-            if (returnType.IsValueType)
-            {
-                il.Emit(OpCodes.Ldloca, result);
-                il.Emit(OpCodes.Initobj, returnType);
-            }
-            else
-            {
-                il.Emit(OpCodes.Ldnull);
-                il.Emit(OpCodes.Stloc, result);
-            }
+            EmitDefault(il, result, returnType);
         }
 
         il.MarkLabel(done);
 
-        if (result != null)
-        {
-            il.Emit(OpCodes.Ldloc, result);
-        }
-
-        il.Emit(OpCodes.Ret);
+        EmitReturn(il, result);
 
         return method.CreateDelegate(handlerType);
+    }
+
+    public static Delegate? WrapEmitted(Type handlerType, IEmittedGuard guard, string methodName)
+    {
+        if (handlerType.GetMethod("Invoke") is not { } invoke)
+        {
+            return null;
+        }
+
+        ParameterInfo[] parameters = invoke.GetParameters();
+        Type returnType = invoke.ReturnType;
+
+        Type[] argumentTypes = [typeof(IEmittedGuard), .. parameters.Select(parameter => parameter.ParameterType)];
+
+        DynamicMethod method = new(methodName, returnType, argumentTypes, typeof(GuardEmitter), true);
+        ILGenerator il = method.GetILGenerator();
+
+        LocalBuilder? result = returnType == typeof(void) ? null : il.DeclareLocal(returnType);
+        LocalBuilder error = il.DeclareLocal(typeof(Exception));
+        LocalBuilder handler = il.DeclareLocal(typeof(Delegate));
+        Label fallback = il.DefineLabel();
+        Label empty = il.DefineLabel();
+        Label done = il.DefineLabel();
+
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Callvirt, _shouldRunMethod);
+        il.Emit(OpCodes.Brfalse, fallback);
+
+        il.BeginExceptionBlock();
+
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Callvirt, _bodyGetter);
+        il.Emit(OpCodes.Castclass, handlerType);
+        EmitArguments(il, parameters.Length, 1);
+        il.Emit(OpCodes.Callvirt, invoke);
+
+        EmitStore(il, result);
+
+        il.Emit(OpCodes.Leave, done);
+
+        il.BeginCatchBlock(typeof(Exception));
+
+        il.Emit(OpCodes.Stloc, error);
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Ldloc, error);
+        il.Emit(OpCodes.Callvirt, _markFailedMethod);
+        il.Emit(OpCodes.Leave, fallback);
+
+        il.EndExceptionBlock();
+
+        il.MarkLabel(fallback);
+
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Callvirt, _fallbackGetter);
+        il.Emit(OpCodes.Stloc, handler);
+        il.Emit(OpCodes.Ldloc, handler);
+        il.Emit(OpCodes.Brfalse, empty);
+
+        il.Emit(OpCodes.Ldloc, handler);
+        il.Emit(OpCodes.Castclass, handlerType);
+        EmitArguments(il, parameters.Length, 1);
+        il.Emit(OpCodes.Callvirt, invoke);
+
+        EmitStore(il, result);
+
+        il.Emit(OpCodes.Br, done);
+
+        il.MarkLabel(empty);
+
+        EmitDefault(il, result, returnType);
+
+        il.MarkLabel(done);
+
+        EmitReturn(il, result);
+
+        return method.CreateDelegate(handlerType, guard);
     }
 
     private static MethodInfo? FindOriginalInvoke(ParameterInfo[] parameters, Type returnType)
@@ -181,9 +268,9 @@ internal static class GuardEmitter
         return origInvoke.GetParameters().Select(parameter => parameter.ParameterType).SequenceEqual(parameters.Skip(1).Select(parameter => parameter.ParameterType)) ? origInvoke : null;
     }
 
-    private static void EmitArguments(ILGenerator il, int count)
+    private static void EmitArguments(ILGenerator il, int count, int offset = 0)
     {
-        for (int i = 0; i < count; ++i)
+        for (int i = offset; i < count + offset; ++i)
         {
             switch (i)
             {
@@ -218,5 +305,42 @@ internal static class GuardEmitter
                     break;
             }
         }
+    }
+
+    private static void EmitStore(ILGenerator il, LocalBuilder? result)
+    {
+        if (result != null)
+        {
+            il.Emit(OpCodes.Stloc, result);
+        }
+    }
+
+    private static void EmitDefault(ILGenerator il, LocalBuilder? result, Type returnType)
+    {
+        if (result == null)
+        {
+            return;
+        }
+
+        if (returnType.IsValueType)
+        {
+            il.Emit(OpCodes.Ldloca, result);
+            il.Emit(OpCodes.Initobj, returnType);
+
+            return;
+        }
+
+        il.Emit(OpCodes.Ldnull);
+        il.Emit(OpCodes.Stloc, result);
+    }
+
+    private static void EmitReturn(ILGenerator il, LocalBuilder? result)
+    {
+        if (result != null)
+        {
+            il.Emit(OpCodes.Ldloc, result);
+        }
+
+        il.Emit(OpCodes.Ret);
     }
 }

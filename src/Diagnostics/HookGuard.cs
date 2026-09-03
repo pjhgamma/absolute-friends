@@ -19,7 +19,9 @@ internal static class HookGuard
     {
         try
         {
-            return handlerType == typeof(ILContext.Manipulator) ? CreateManipulatorGuard(binding) : GuardEmitter.Wrap(handlerType, binding, _bindingContract, $"RippleFriends_Guard_{binding.HookName}_{binding.MethodName}");
+            return handlerType == typeof(ILContext.Manipulator)
+                ? CreateManipulatorGuard(binding)
+                : GuardEmitter.Wrap(handlerType, binding, _bindingContract, $"RippleFriends_Guard_{binding.HookName}_{binding.MethodName}");
         }
         catch (Exception exception)
         {
@@ -31,74 +33,28 @@ internal static class HookGuard
         }
     }
 
-    public static void EmitGuarded<T1, T2>(this ILCursor c, Action<T1, T2> body)
+    extension(ILCursor c)
     {
-        HookBinding? binding = Manipulating;
-
-        c.EmitDelegate((T1 first, T2 second) =>
+        public void EmitGuarded<T>(T body, T? fallback = null) where T : Delegate
         {
-            if (!ShouldRun(binding))
-            {
-                return;
-            }
+            HookBinding? binding = Manipulating;
+            string name = $"{binding?.HookName ?? "Anonymous"}_{binding?.MethodName ?? "Emitted"}";
+
+            T? guarded = null;
 
             try
             {
-                body(first, second);
+                guarded = GuardEmitter.WrapEmitted(typeof(T), new EmittedGuard(binding, body, fallback), $"RippleFriends_Emit_{name}") as T;
             }
             catch (Exception exception)
             {
-                Report(binding, exception);
-            }
-        });
-    }
+                HookDiagnostics.LogWarning($"{binding?.FullName ?? "Emitted code"}: could not be guarded, emitting it directly instead", exception);
 
-    public static void EmitGuarded<T1, TResult>(this ILCursor c, Func<T1, TResult> body, Func<T1, TResult>? fallback = null)
-    {
-        HookBinding? binding = Manipulating;
-
-        c.EmitDelegate((T1 first) =>
-        {
-            if (!ShouldRun(binding))
-            {
-                return Passthrough(fallback, first);
+                binding?.MarkWarned();
             }
 
-            try
-            {
-                return body(first);
-            }
-            catch (Exception exception)
-            {
-                Report(binding, exception);
-
-                return Passthrough(fallback, first);
-            }
-        });
-    }
-
-    public static void EmitGuarded<T1, T2, TResult>(this ILCursor c, Func<T1, T2, TResult> body, Func<T1, T2, TResult>? fallback = null)
-    {
-        HookBinding? binding = Manipulating;
-
-        c.EmitDelegate((T1 first, T2 second) =>
-        {
-            if (!ShouldRun(binding))
-            {
-                return Passthrough(fallback, first, second);
-            }
-
-            try
-            {
-                return body(first, second);
-            }
-            catch (Exception exception)
-            {
-                Report(binding, exception);
-
-                return Passthrough(fallback, first, second);
-            }
-        });
+            c.EmitDelegate(guarded ?? body);
+        }
     }
 
     private static ILContext.Manipulator CreateManipulatorGuard(HookBinding binding)
@@ -108,6 +64,7 @@ internal static class HookGuard
         return il =>
         {
             ILSnapshot snapshot = ILVerifier.Capture(il);
+            HookBinding? manipulated = Manipulating;
 
             Manipulating = binding;
 
@@ -117,21 +74,18 @@ internal static class HookGuard
             }
             catch (Exception exception)
             {
-                binding.HandleError(exception);
+                binding.MarkFailed(exception);
 
                 throw;
             }
             finally
             {
-                Manipulating = null;
+                Manipulating = manipulated;
             }
 
             try
             {
-                if (!ILVerifier.Verify(binding.FullName, snapshot, il, binding.Indices, binding.Anchors))
-                {
-                    binding.MarkWarned();
-                }
+                binding.MarkVerified(ILVerifier.Verify(binding.FullName, snapshot, il, binding.Indices, binding.Anchors));
             }
             catch (Exception exception)
             {
@@ -139,10 +93,6 @@ internal static class HookGuard
             }
         };
     }
-
-    private static TResult Passthrough<T1, TResult>(Func<T1, TResult>? fallback, T1 first) => fallback == null ? default! : fallback(first);
-
-    private static TResult Passthrough<T1, T2, TResult>(Func<T1, T2, TResult>? fallback, T1 first, T2 second) => fallback == null ? default! : fallback(first, second);
 
     private static bool ShouldRun(HookBinding? binding)
     {
@@ -156,7 +106,7 @@ internal static class HookGuard
         return !binding.Failed;
     }
 
-    private static void Report(HookBinding? binding, Exception exception)
+    private static void MarkFailed(HookBinding? binding, Exception exception)
     {
         if (binding == null)
         {
@@ -165,6 +115,17 @@ internal static class HookGuard
             return;
         }
 
-        binding.HandleError(exception);
+        binding.MarkFailed(exception);
+    }
+
+    private sealed class EmittedGuard(HookBinding? binding, Delegate body, Delegate? fallback) : IEmittedGuard
+    {
+        public Delegate Body => body;
+
+        public Delegate? Fallback => fallback;
+
+        public bool ShouldRun() => HookGuard.ShouldRun(binding);
+
+        public void MarkFailed(Exception exception) => HookGuard.MarkFailed(binding, exception);
     }
 }

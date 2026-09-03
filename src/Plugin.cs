@@ -1,4 +1,5 @@
 using BepInEx;
+using RippleFriends.Diagnostics;
 using RippleFriends.Hooks;
 using RippleFriends.Options;
 using System.Security.Permissions;
@@ -18,14 +19,14 @@ public class Plugin : BaseUnityPlugin
 
     public const string Version = "0.1.1";
 
-    public bool _isInit;
+    private bool _isInit;
 
     private void OnEnable()
     {
         On.RainWorld.OnModsInit -= On_RainWorld_OnModsInit;
-        On.RainWorld.OnModsInit += On_RainWorld_OnModsInit;
-
         On.RainWorld.PostModsInit -= On_RainWorld_PostModsInit;
+
+        On.RainWorld.OnModsInit += On_RainWorld_OnModsInit;
         On.RainWorld.PostModsInit += On_RainWorld_PostModsInit;
     }
 
@@ -59,11 +60,11 @@ public class Plugin : BaseUnityPlugin
 
             MachineConnector.SetRegisteredOI(GUID, RemixMenu.Instance);
 
-            UnityEngine.Debug.Log($"Ripple Friends: Plugin initialized");
+            HookDiagnostics.LogConsole("Plugin initialized");
         }
         catch (Exception exception)
         {
-            UnityEngine.Debug.Log($"Ripple Friends: Plugin initialization failed: {exception.Message}");
+            HookDiagnostics.LogError("Plugin initialization failed", exception);
         }
     }
 

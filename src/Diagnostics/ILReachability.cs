@@ -32,7 +32,7 @@ internal static class ILReachability
 
         if (extraEntries != null)
         {
-            foreach (int entry in extraEntries)
+            foreach (var entry in extraEntries)
             {
                 pending.Push(entry);
             }
@@ -51,7 +51,7 @@ internal static class ILReachability
 
             Instruction instruction = instructions[index];
 
-            foreach (int target in Targets(instruction, indices, branchTargets))
+            foreach (var target in TargetIndices(instruction, indices, branchTargets))
             {
                 pending.Push(target);
             }
@@ -76,9 +76,9 @@ internal static class ILReachability
 
         Dictionary<Instruction, int> indices = InstructionIndex.Build(body.Instructions);
 
-        foreach (ExceptionHandler handler in body.ExceptionHandlers)
+        foreach (var handler in body.ExceptionHandlers)
         {
-            foreach (Instruction? start in new[] { handler.TryStart, handler.HandlerStart, handler.FilterStart })
+            foreach (var start in new[] { handler.TryStart, handler.HandlerStart, handler.FilterStart })
             {
                 if (start != null && indices.TryGetValue(start, out int index))
                 {
@@ -88,9 +88,9 @@ internal static class ILReachability
         }
     }
 
-    private static IEnumerable<int> Targets(Instruction instruction, Dictionary<Instruction, int> indices, Func<object?, IEnumerable<Instruction>> branchTargets)
+    private static IEnumerable<int> TargetIndices(Instruction instruction, Dictionary<Instruction, int> indices, Func<object?, IEnumerable<Instruction>> branchTargets)
     {
-        foreach (Instruction target in branchTargets(instruction.Operand))
+        foreach (var target in branchTargets(instruction.Operand))
         {
             if (indices.TryGetValue(target, out int index))
             {

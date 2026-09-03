@@ -1,19 +1,16 @@
 using RippleFriends.Diagnostics;
+using RippleFriends.Options;
 using System.Reflection;
 
 namespace RippleFriends.Hooks;
 
 internal static class HookManager
 {
-    public static IEnumerable<HookBinding> Bindings => _activeHooks.SelectMany(hook => hook.Bindings);
+    private static readonly List<BaseHooks> _activeHooks = [];
 
     private static bool _isInit;
 
-    private static readonly List<BaseHooks> _activeHooks = [];
-
-    public static bool IsFailed(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasFailed && hook.Owns(option));
-
-    public static bool IsWarned(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasWarned && hook.Owns(option));
+    public static IEnumerable<HookBinding> Bindings => _activeHooks.SelectMany(hook => hook.Bindings);
 
     public static void Initialize()
     {
@@ -29,7 +26,7 @@ internal static class HookManager
             On.OptionInterface._SaveConfigFile -= On_OptionInterface__SaveConfigFile;
             On.OptionInterface._SaveConfigFile += On_OptionInterface__SaveConfigFile;
 
-            HookNotifier.Listen();
+            HookNotifier.Start();
 
             IEnumerable<Type> hookTypes = Assembly.GetExecutingAssembly().GetTypes().Where(
                 t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(BaseHooks))
@@ -57,7 +54,17 @@ internal static class HookManager
 
         foreach (var hook in _activeHooks)
         {
+            hook.ClearWarnings();
+        }
+
+        foreach (var hook in _activeHooks)
+        {
             hook.Enable();
+        }
+
+        foreach (var binding in Bindings)
+        {
+            binding.Report();
         }
 
         HookDiagnostics.EndSession();
@@ -79,9 +86,18 @@ internal static class HookManager
         _activeHooks.Clear();
     }
 
+    public static bool IsFailed(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasFailed && hook.Owns(option));
+
+    public static bool IsWarned(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasWarned && hook.Owns(option));
+
     public static void On_OptionInterface__SaveConfigFile(On.OptionInterface.orig__SaveConfigFile orig, OptionInterface self)
     {
         orig(self);
+
+        if (!ReferenceEquals(self, RemixMenu.Instance))
+        {
+            return;
+        }
 
         OnEnable();
 

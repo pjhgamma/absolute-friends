@@ -22,23 +22,41 @@ public class HookTestAttribute(int[] indices, string[] anchors) : Attribute
 
 internal abstract class BaseHooks
 {
-    protected abstract Configurable<bool> Option { get; }
-
-    public bool HasFailed { get; private set; }
-
-    public bool HasWarned => _bindings.Any(binding => binding.Warned);
-
-    public virtual bool IsEnabled => Option.Value && !HasFailed;
-
-    public string Name => field ??= GetType().Name;
-
-    public string Title => Option.Label() ?? Name;
-
-    public IEnumerable<HookBinding> Bindings => _bindings;
+    private readonly List<HookBinding> _bindings = [];
 
     private bool _isInit;
 
-    private readonly List<HookBinding> _bindings = [];
+    public bool HasFailed { get; private set; }
+
+    public bool HasWarned { get; private set; }
+
+    public virtual bool IsEnabled => IsOptionEnabled && !HasFailed;
+
+    public string Name => field ??= GetType().Name;
+
+    public string Title => Subject ?? Options.FirstOrDefault().Label ?? Name;
+
+    public IEnumerable<HookBinding> Bindings => _bindings;
+
+    protected abstract Configurable<bool>[] Options { get; }
+
+    protected virtual string? Subject => null;
+
+    protected virtual bool IsOptionEnabled => Options.Any(option => option.IsActive);
+
+    public void MarkWarned() => HasWarned = true;
+
+    public void ClearWarnings()
+    {
+        HasWarned = false;
+
+        foreach (var binding in _bindings)
+        {
+            binding.Warned = false;
+
+            binding.ClearReport();
+        }
+    }
 
     public void MarkFailed()
     {
@@ -50,52 +68,7 @@ internal abstract class BaseHooks
         }
     }
 
-    public bool Owns(Configurable<bool>? option) => option != null && ReferenceEquals(Option, option);
-
-    private void Initialize()
-    {
-        if (_isInit)
-        {
-            return;
-        }
-
-        _isInit = true;
-
-        try
-        {
-            var type = GetType();
-
-            foreach (var methodInfo in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
-            {
-                if (methodInfo?.GetCustomAttribute<HookPatchAttribute>() is { } attr)
-                {
-                    try
-                    {
-                        if (attr.TargetType?.GetEvent(attr.EventName, BindingFlags.Static | BindingFlags.Public) is { } eventInfo)
-                        {
-                            var handler = Delegate.CreateDelegate(eventInfo.EventHandlerType, methodInfo.IsStatic ? null : this, methodInfo);
-
-                            _bindings.Add(new(this, methodInfo.Name, eventInfo, handler, methodInfo.GetCustomAttribute<HookTestAttribute>()));
-                        }
-                        else
-                        {
-                            throw new($"Failed to bind event {attr.EventName} on {attr.TargetType?.Name}");
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        throw new($"{attr.EventName} failed: {exception}");
-                    }
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            Disable();
-
-            HookDiagnostics.LogError($"{Name}: Hooks failed", exception);
-        }
-    }
+    public bool Owns(Configurable<bool>? option) => option != null && Options.Any(owned => ReferenceEquals(owned, option));
 
     public void Enable()
     {
@@ -151,6 +124,51 @@ internal abstract class BaseHooks
             {
                 HookDiagnostics.LogWarning($"{binding.FullName}: Unhook failed", exception);
             }
+        }
+    }
+
+    private void Initialize()
+    {
+        if (_isInit)
+        {
+            return;
+        }
+
+        _isInit = true;
+
+        try
+        {
+            Type type = GetType();
+
+            foreach (var methodInfo in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+            {
+                if (methodInfo?.GetCustomAttribute<HookPatchAttribute>() is { } attr)
+                {
+                    try
+                    {
+                        if (attr.TargetType?.GetEvent(attr.EventName, BindingFlags.Static | BindingFlags.Public) is { } eventInfo)
+                        {
+                            Delegate handler = Delegate.CreateDelegate(eventInfo.EventHandlerType, methodInfo.IsStatic ? null : this, methodInfo);
+
+                            _bindings.Add(new(this, methodInfo.Name, eventInfo, handler, methodInfo.GetCustomAttribute<HookTestAttribute>()));
+                        }
+                        else
+                        {
+                            throw new($"Failed to bind event {attr.EventName} on {attr.TargetType?.Name}");
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        throw new($"{attr.EventName} failed", exception);
+                    }
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            Disable();
+
+            HookDiagnostics.LogError($"{Name}: Hooks failed", exception);
         }
     }
 }

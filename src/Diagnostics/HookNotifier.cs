@@ -1,4 +1,4 @@
-using RippleFriends.Core;
+using RippleFriends.Utils;
 
 namespace RippleFriends.Diagnostics;
 
@@ -8,13 +8,11 @@ internal static class HookNotifier
 
     private const int MessageDuration = 200;
 
-    private const string Placeholder = "<FEATURE>";
-
     private static readonly List<string> _pending = [];
 
     private static readonly HashSet<string> _announced = [];
 
-    public static void Listen()
+    public static void Start()
     {
         On.RainWorldGame.Update -= On_RainWorldGame_Update;
         On.RainWorldGame.Update += On_RainWorldGame_Update;
@@ -58,17 +56,17 @@ internal static class HookNotifier
 
     private static void Deliver(RainWorldGame game)
     {
-        if (GameUtils.MainCamera(game) is not { } camera || camera.hud?.textPrompt is not { } textPrompt)
+        if (RainWorldUtils.MainCamera(game) is not { } camera || camera.hud?.textPrompt is not { } textPrompt)
         {
             return;
         }
 
-        string features = string.Join(", ", _pending.Select(Translate));
+        string features = string.Join(", ", _pending.Select(Translation.Of));
 
         _pending.Clear();
 
         textPrompt.AddMessage(
-            Translate($"Ripple Friends: an error turned off {Placeholder}. See the Remix menu.").Replace(Placeholder, features),
+            Translation.Of("Ripple Friends: an error turned off <PLACEHOLDER>. See the Remix menu.").Replace(Translation.Placeholder, features),
             MessageDelay,
             MessageDuration,
             false,
@@ -76,17 +74,5 @@ internal static class HookNotifier
         );
 
         camera.virtualMicrophone?.PlaySound(SoundID.MENU_Error_Ping, 0f, 1f, 1f);
-    }
-
-    private static string Translate(string text)
-    {
-        try
-        {
-            return RWCustom.Custom.rainWorld?.inGameTranslator?.Translate(text) ?? text;
-        }
-        catch
-        {
-            return text;
-        }
     }
 }
