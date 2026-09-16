@@ -1,27 +1,80 @@
 0pjhgamma.ripplefriends-name|잔물결 친구
 pjhgamma.ripplefriends-description|고요히 교차하는 잔물결.<LINE>무수한 주기의 개화.
 
-Presets|사전 설정
-A preset sets every option at once.|사전 설정은 모든 선택지를 한 번에 설정합니다.
-Values are only laid out; apply the settings to keep them.|값은 선택되기만 하고 적용하여야 설정이 유지됩니다.
-Ratios and durations are left as they were.|비율과 시간은 바뀌지 않습니다.
+Addons|애드온
+Select a profile, then enable addons and configure their options.|프로필을 선택한 다음, 애드온을 활성화하고 옵션을 설정합니다.
 
-Current Preset|현재 사전 설정
-NONE|없음
-STILL WATER|잔잔한 물
-No one is a Ripple Friend, and the world runs as it always has.|아무도 잔물결 친구가 되지 않으며, 세계는 늘 그랬듯 흘러갑니다.
-POINT|점
-Only slugcats are Ripple Friends, and only their own bodies and some of the objects they throw turn aside from them.|슬러그캣만이 잔물결 친구가 되고, 서로의 몸과 일부 물체만 비켜 갑니다.
-LOOP|고리
-Only slugcats are Ripple Friends, yet every phenomenon turns aside from them, and the world waits at its doors. These are the mod's defaults.|슬러그캣만이 잔물결 친구가 되지만, 모든 현상이 그들을 비켜 가고, 세계는 그 문 앞에서 기다립니다. 모드의 기본값입니다.
-SPIRAL|나선
-Friendly creatures and Iterators are drawn in as well, and resonance answers when it is called.|우호적인 생물과 반복자까지 이끌려 들고, 공명이 부름에 답합니다.
-RIPPLE|잔물결
-Every creature that could be a Ripple Friend becomes one, and nothing that could reach them does.|잔물결 친구가 될 수 있는 모든 생물이 친구가 되고, 그들에게 닿을 수 있는 것은 아무것도 닿지 못합니다.
+Selected Profile|선택한 프로필
+Selects a profile to load or modify.|불러오거나 수정할 프로필을 선택합니다.
+No profiles saved|저장된 프로필 없음
 
-Friends|친구
+Search|검색
+Shows only the addons whose name or options contain what is typed here.|입력한 내용이 이름이나 옵션에 포함된 애드온만 표시합니다.
+
+Built-In Addons|내장 애드온
+Third-Party Addons|서드파티 애드온
+Remix is not enabled.|리믹스가 활성화되지 않았습니다.
+Requires: <PLACEHOLDER>|필요한 애드온: <PLACEHOLDER>
+Built for Ripple Friends v<PLACEHOLDER>; it may not work correctly.|잔물결 친구 v<PLACEHOLDER>용으로 만들어져 제대로 동작하지 않을 수 있습니다.
+Options enabled: <PLACEHOLDER>|활성화된 옵션: <PLACEHOLDER>
+Shows or hides this addon's options.|이 애드온의 옵션을 표시하거나 숨깁니다.
+
+Profiles|프로필
+Profiles save addon and option settings.|프로필은 애드온과 옵션 설정을 저장합니다.
+Selecting a profile loads it and saves changes immediately; apply to keep them.|프로필을 선택하면 불러오고 변경 사항을 바로 저장하며, 유지하려면 적용을 선택하세요.
+
+Shows only the profiles whose name contains what is typed here.|입력한 내용이 이름에 포함된 프로필만 표시합니다.
+
+Create Profile|프로필 만들기
+Creates a new profile from the current option values.|현재 옵션 값으로 새 프로필을 만듭니다.
+Saves the entered profile name.|입력한 이름으로 프로필을 저장합니다.
+Cancels editing the profile name.|프로필 이름 편집을 취소합니다.
+
+Selects this profile.|이 프로필을 선택합니다.
+Copies this profile under a generated name.|이 프로필을 복사합니다.
+Edits this profile's name.|이 프로필의 이름을 편집합니다.
+Addons enabled: <PLACEHOLDER>|활성화된 애드온: <PLACEHOLDER>
+Shows or hides this profile's details.|이 프로필의 상세 정보를 표시하거나 숨깁니다.
+Created: <PLACEHOLDER>|만든 시각: <PLACEHOLDER>
+Modified: <PLACEHOLDER>|수정한 시각: <PLACEHOLDER>
+Unavailable: <PLACEHOLDER> addons and <PLACEHOLDER> options|사용할 수 없음: 애드온 <PLACEHOLDER>개 및 옵션 <PLACEHOLDER>개
+Remove Profile|프로필 제거
+Hold to remove this profile.|길게 눌러 이 프로필을 제거합니다.
+
+Profile created.|프로필이 생성되었습니다.
+Profile loaded.|프로필을 불러왔습니다.
+Profile copied.|프로필이 복사되었습니다.
+Profile renamed.|프로필 이름이 변경되었습니다.
+Profile removed.|프로필이 제거되었습니다.
+Could not create profile.|프로필을 만들 수 없습니다.
+Could not update profile.|프로필을 업데이트할 수 없습니다.
+Could not copy profile.|프로필을 복사할 수 없습니다.
+Could not rename profile.|프로필 이름을 변경할 수 없습니다.
+Could not remove profile.|프로필을 제거할 수 없습니다.
+<PLACEHOLDER> <PLACEHOLDER> addons and <PLACEHOLDER> options; <PLACEHOLDER> addons and <PLACEHOLDER> options unavailable.|<PLACEHOLDER> 애드온 <PLACEHOLDER>개와 옵션 <PLACEHOLDER>개, 사용할 수 없는 애드온 <PLACEHOLDER>개와 옵션 <PLACEHOLDER>개.
+
+Diagnostics|진단
+Broken features disable themselves and mark their options.|고장 난 기능은 스스로 꺼지고 해당 옵션에 표시를 남깁니다.
+Enable debugging, reproduce the problem, then send <PLACEHOLDER>.|디버그를 켜고 문제를 재현한 다음 <PLACEHOLDER> 파일을 보내 주십시오.
+
+Report|문제 보고
+Debug|디버그
+Records patch locations and behavior in the diagnostics report.|모드 패치의 위치와 동작을 진단 보고서에 기록합니다.
+Record Hook Baselines|훅 기준선 기록
+Records hook baselines as HookTest attributes in the diagnostics report.|훅 기준선을 HookTest 어트리뷰트 형식으로 진단 보고서에 기록합니다.
+Open Report|보고서 열기
+Shows the saved report in the file browser.|저장된 보고서를 파일 탐색기에서 보여 줍니다.
+
+Turn on <PLACEHOLDER> first to use this option.|이 기능을 사용하려면 먼저 <PLACEHOLDER> 설정을 켜십시오.
+one of <PLACEHOLDER>|<PLACEHOLDER> 중 하나의
+
+This feature ran into an error and disabled for this session. Restart the game to try it again.|이 기능은 오류가 발생하여 이번 세션 동안 꺼졌습니다. 다시 사용하려면 게임을 재시작하십시오.
+This feature was applied, but not the way it expected, so it may not be working.|이 기능은 예상과 다르게 적용되어 작동하지 않을 수 있습니다.
+
+Ripple Friends: an error turned off <PLACEHOLDER>. See the Remix menu.|잔물결 친구: 오류가 발생하여 <PLACEHOLDER> 기능을 껐습니다. 리믹스 메뉴를 확인해 주십시오.
+
+Controls who are Ripple Friends and how their relationships are shared and shown.|누가 잔물결 친구인지와 그 관계가 공유되고 표시되는 방식을 조정합니다.
 Ripple Friends do not interfere with each other's trajectories.|잔물결 친구는 서로의 궤적에 간섭하지 않습니다.
-This choice creates no immediate ripples, but determines who the forthcoming phenomena will reach.|이 선택은 당장 잔물결을 일으키지는 않지만, 앞으로 누구에게 현상들이 닿을지 결정합니다.
 Ripples flow bidirectionally to one another, excluding oneself.|잔물결은 자기 자신을 제외하고 서로에게 양방향으로 흐릅니다.
 
 Base|기본
@@ -29,11 +82,9 @@ Slugcats|슬러그캣
 Includes players as Ripple Friends, and a creature friendly to one player counts as a Ripple Friend of every player. Ripple Friends never try to attack one another.|잔물결 친구에 플레이어를 포함하며, 한 플레이어와 우호적인 생물을 모든 플레이어의 잔물결 친구로 취급합니다. 잔물결 친구끼리는 서로를 공격하려 들지 않습니다.
 Includes players and slugpups as Ripple Friends, and a creature friendly to one player counts as a Ripple Friend of every player. Ripple Friends never try to attack one another.|잔물결 친구에 플레이어와 슬러그펍을 포함하며, 한 플레이어와 우호적인 생물을 모든 플레이어의 잔물결 친구로 취급합니다. 잔물결 친구끼리는 서로를 공격하려 들지 않습니다.
 Friendly Creatures|우호적인 생물
-Includes friendly creatures, such as tamed lizards and friendly scavengers, as Ripple Friends.|잔물결 친구에 길들인 도마뱀, 우호적인 스캐빈저 등 우호적인 생물을 포함합니다.
+Includes friendly creatures, such as lizards tamed by Ripple Friends and friendly scavengers, as Ripple Friends.|잔물결 친구에게 길들여진 도마뱀이나 우호적인 스캐빈저 등의 우호적인 생물을 잔물결 친구로 포함합니다.
 Neutral Creatures|중립적인 생물
 Includes neutral creatures, such as neutralized lizards and rain deer, as Ripple Friends alongside friendly ones.|우호적인 생물과 더불어 중립화된 도마뱀, 토끼 사슴 등 중립적인 생물도 잔물결 친구에 포함합니다.
-Iterators|반복자
-Includes Iterators as Ripple Friends.|잔물결 친구에 반복자를 포함합니다.
 
 Extended|확장
 Relationship|관계
@@ -46,14 +97,27 @@ Temporarily excludes a grabbed creature from Ripple Friends while the player Rip
 Arena|아레나
 Activates the Ripple Friends relationship in the Arena.|아레나에서 잔물결 친구 관계를 활성화합니다.
 
-Gameplay|게임플레이
-Every option here decides what passes between Ripple Friends and what turns aside from them.|이곳의 선택지는 잔물결 친구 사이에서 무엇이 오가고 무엇이 비켜 갈지 정합니다.
+Visualizer|시각화
+Friend Link|친구 연결선
+Draws a line between two things as the mod treats them as Ripple Friends.|두 대상이 잔물결 친구로 판단되는 동안 그 사이에 선을 그립니다.
+Tag|표식
+Friend Name|친구 이름표
+Draws the name above every Ripple Friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.|화면에 보이는 모든 잔물결 친구 위에 이름을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 이름을 화면 가장자리에 유지합니다.
+Friend Icon|친구 아이콘
+Draws an icon above every Ripple Friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.|화면에 보이는 모든 잔물결 친구 위에 아이콘을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 아이콘을 화면 가장자리에 유지합니다.
+Owner Link|소유자 연결선
+Draws a line between each object and its owning creature, thickest at the owner's end.|각 물체와 해당 물체를 소유한 생물 사이에 선을 그립니다. 선은 소유자 쪽 끝이 가장 굵습니다.
+Owner Name|소유자 이름표
+Draws the owner's name above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 이름을 표시합니다.
+Owner Icon|소유자 아이콘
+Draws the owner's icon above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 아이콘을 표시합니다.
 
-General|일반
-Violence|폭력
-Ripple Friends take no damage from one another, whatever the cause, so long as the blow can be traced back to one of them.|잔물결 친구끼리는 그 근원이 잔물결 친구인 한, 원인을 가리지 않고 피해를 받지 않습니다.
+Controls the general harm and effects that pass between Ripple Friends.|잔물결 친구 사이의 일반적인 피해나 영향을 조정합니다.
+
 Collisions|충돌
 Will not collide with Ripple Friends.|잔물결 친구와 충돌하지 않습니다.
+Violence|폭력
+Ripple Friends take no damage from one another, whatever the cause, so long as the blow can be traced back to one of them.|잔물결 친구끼리는 그 근원이 잔물결 친구인 한, 원인을 가리지 않고 피해를 받지 않습니다.
 Explosions|폭발
 Will not be hit by most explosions caused by Ripple Friends.|잔물결 친구가 일으킨 대부분의 폭발에 맞지 않습니다.
 Fear|공포
@@ -73,10 +137,11 @@ Hypothermia|저체온증
 Hypothermia gradually fades toward that of the least frozen Ripple Friend in the same room.|저체온증이 같은 방에 있는 잔물결 친구 중 가장 옅은 쪽을 향해 서서히 옅어집니다.
 Sets how much of the remaining difference in hypothermia fades away each frame while a less frozen Ripple Friend is in the same room. A value of 1 closes the difference at once, and 0 disables the warmth.|저체온증이 더 옅은 잔물결 친구가 같은 방에 있을 때 남은 저체온증 차이가 매 프레임 얼마나 옅어질지 설정합니다. 1은 그 차이를 단숨에 메우며, 0은 추가로 옅어지지 않습니다.
 Forgiveness|자비
-Attacks and thefts between Ripple Friends leave less of a grudge behind, upon the one who suffered them and upon any onlooker.|잔물결 친구끼리 벌어진 공격과 날치기로 떨어지는 평판이 줄어듭니다.
-Sets how much of the reputation that attacks and thefts between Ripple Friends would take away is still lost. A value of 0 lets the deed pass unnoticed, and 1 leaves the reputation loss untouched.|잔물결 친구끼리 깎이는 평판을 얼마나 감소할지 정합니다. 값이 0이면 그 일을 아예 없던 일로 삼고, 1이면 평판이 깎이는 그대로 둡니다.
+Reputation loss between Ripple Friends is reduced.|잔물결 친구끼리 떨어지는 평판이 줄어듭니다.
+Sets how much reputation loss between Ripple Friends is forgiven. A value of 1 lets the deed pass unnoticed, and 0 leaves the reputation loss untouched.|잔물결 친구끼리 평판 손실을 얼마나 용서할지 정합니다. 값이 1이면 그 일을 아예 없던 일로 삼고, 0이면 평판이 깎이는 그대로 둡니다.
 
-Items|아이템
+Controls interactions with the items Ripple Friends throw or hold.|잔물결 친구가 던지거나 들고 있는 아이템과의 상호작용을 조정합니다.
+
 Weapon|무기
 Rock|돌
 Will not be hit by a rock thrown by Ripple Friends.|잔물결 친구가 던진 돌에 맞지 않습니다.
@@ -133,7 +198,8 @@ Will not be caught by a grappling worm's tongue used by Ripple Friends.|잔물�
 Frog|개구리
 Will not be attached by a frog thrown by Ripple Friends.|잔물결 친구가 던진 개구리에 붙지 않습니다.
 
-Players|플레이어
+Controls interactions with players who are Ripple Friends.|잔물결 친구인 플레이어와의 상호작용을 조정합니다.
+
 Grab Player|플레이어 잡기
 Will not be grabbed by player Ripple Friends while entering control inputs.|조작을 입력하는 동안 잔물결 친구인 플레이어에게 잡히지 않습니다.
 Sets the maximum control input time (in seconds) during which a player Ripple Friend cannot be grabbed.|잔물결 친구인 플레이어가 잡히지 않는 최대 조작 입력 시간(초)을 설정합니다.
@@ -157,6 +223,8 @@ Will not be instantly killed by the attunement of a Saint Ripple Friend.|잔물�
 Watcher Ripple|관찰자 잔물결
 Will share camouflage and its gauge with Watcher Ripple Friends, yet what the game forces off is not shared, and synchronized later. Tracked Ripple Friends also stay in their player's ripple space and in sight.|잔물결 친구인 관찰자끼리 은신과 게이지를 공유하며, 강제로 해제된 은신은 공유되지 않고 나중에 동기화됩니다. 추적되는 잔물결 친구도 잔물결 공간에 함께 머물며 보입니다.
 
+Controls interactions with lizard and scavenger Ripple Friends.|잔물결 친구인 도마뱀과 스캐빈저와의 상호작용을 조정합니다.
+
 Lizards|도마뱀
 Lizard Bite|도마뱀 물기
 Will not be bitten by lizard Ripple Friends.|잔물결 친구인 도마뱀에게 물리지 않습니다.
@@ -177,19 +245,18 @@ Will not have objects inside a shelter taken by scavenger Ripple Friends.|잔물
 Scavenger Shield|스캐빈저 보호막
 Will not be struck by the shockwave from the karma shield of a templar Ripple Friend.|잔물결 친구인 스캐빈저의 카르마 보호막 충격파에 맞지 않습니다.
 
+Controls interactions with Iterators that are Ripple Friends.|잔물결 친구인 반복자와의 상호작용을 조정합니다.
+
 Moon|달
 Will not lower the opinion of Moon Ripple Friend, nor make her refuse to speak.|잔물결 친구인 달의 호감이 떨어지거나 대화를 거부하게 하지 않습니다.
-Moon Neuron|달 뉴런
-Will not steal the neurons of Moon Ripple Friend.|잔물결 친구인 달의 뉴런을 훔치지 않습니다.
+Moon Neuron|달 신경파리
+Will not steal the Neurons of Moon Ripple Friend.|잔물결 친구인 달의 신경파리을 훔치지 않습니다.
 Pebbles|조약돌
 Will not be killed by Pebbles Ripple Friend.|잔물결 친구인 조약돌에게 죽지 않습니다.
 Pebbles Pearl|조약돌 진주
 Will not steal the pearl of Pebbles Ripple Friend.|잔물결 친구인 조약돌의 음악 진주를 훔치지 않습니다.
 
-Progression|진행
-It might be too long a journey to traverse this harsh world alone.|이 험난한 세계를 홀로 헤쳐 나가기에는 너무 먼 길일지도 모릅니다.
-Let the world hold its doors, and resonate with the cycles you might have shared.|세계가 그 문을 붙들게 하고, 어쩌면 함께 했을지도 모를 주기와 공명하세요.
-However, reckless resonances before the cycles properly align will have consequences.|그러나 주기가 올바르게 정렬되기 전 무분별한 공명에는 대가가 따를 것입니다.
+Controls travelling and resonating with Ripple Friends.|잔물결 친구와 이동하고 공명하는 것을 조정합니다.
 
 Thresholds|관문
 Gate Delay|게이트 지연
@@ -227,36 +294,3 @@ The paid resonance cost lingers as an aftershock, making everyone who resonated 
 Sets how much of the paid resonance cost lingers as an aftershock. A value of 1 leaves all of it behind, and 0 leaves nothing.|공명으로 치른 대가가 후유증으로 얼마나 남을지 설정합니다. 1은 그 전부를 남기며, 0은 아무것도 남기지 않습니다.
 Visual Effects|시각적 효과
 Displays visual effects upon resonance. A gate resonance melts the room into the void, while a room or grab resonance answers with ripples.|공명 시 시각적인 효과를 보여줍니다.
-
-Diagnostics|진단
-If a feature breaks, it turns itself off and marks its option accordingly.|기능이 고장나면 스스로 꺼지고 해당 옵션에 표시가 남습니다.
-Every option here only shows what the mod sees, and none of them change what it does.|이곳의 선택지는 모드가 무엇을 보고 있는지 보여 줄 뿐, 기능 자체를 바꾸지 않습니다.
-Turn on what a bug report needs and reproduce the problem.|오류 보고에 필요한 것을 켜고 문제를 재현해 주십시오.
-Then send <PLACEHOLDER> saved in the StreamingAssets folder.|그런 다음 StreamingAssets 폴더에 저장된 <PLACEHOLDER> 파일을 보내 주십시오.
-
-Visualizer|시각화
-Friend Link|친구 연결선
-Draws a line between two things as the mod treats them as Ripple Friends.|두 대상이 잔물결 친구로 판단되는 동안 그 사이에 선을 그립니다.
-Tag|표식
-Friend Name|친구 이름표
-Draws the name above every Ripple Friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.|화면에 보이는 모든 잔물결 친구 위에 이름을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 이름을 화면 가장자리에 유지합니다.
-Friend Icon|친구 아이콘
-Draws an icon above every Ripple Friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.|화면에 보이는 모든 잔물결 친구 위에 아이콘을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 아이콘을 화면 가장자리에 유지합니다.
-Owner Link|소유자 연결선
-Draws a line between each object and its owning creature, thickest at the owner's end.|각 물체와 해당 물체를 소유한 생물 사이에 선을 그립니다. 선은 소유자 쪽 끝이 가장 굵습니다.
-Owner Name|소유자 이름표
-Draws the owner's name above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 이름을 표시합니다.
-Owner Icon|소유자 아이콘
-Draws the owner's icon above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 아이콘을 표시합니다.
-
-Report|문제 보고
-Debug|디버그
-Logs where the mod patches landed and what they are doing.|모드의 패치가 적용된 위치와 모드가 무엇을 하고 있는지를 기록합니다.
-Open Report|보고서 열기
-Shows the saved report in a file browser.|저장된 보고서를 파일 탐색기에서 보여 줍니다.
-
-Ripple Friends: an error turned off <PLACEHOLDER>. See the Remix menu.|잔물결 친구: 오류가 발생하여 <PLACEHOLDER> 기능을 껐습니다. 리믹스 메뉴를 확인해 주십시오.
-This feature ran into an error and disabled for this session. Restart the game to try it again.|이 기능은 오류가 발생하여 이번 세션 동안 꺼졌습니다. 다시 사용하려면 게임을 재시작하십시오.
-This feature was applied, but not the way it expected, so it may not be working.|이 기능은 예상과 다르게 적용되어 작동하지 않을 수 있습니다.
-Turn on <PLACEHOLDER> first to use this option.|이 기능을 사용하려면 먼저 <PLACEHOLDER> 설정을 켜십시오.
-one of <PLACEHOLDER>|<PLACEHOLDER> 중 하나의

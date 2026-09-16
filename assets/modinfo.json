@@ -5,6 +5,19 @@
   "target_game_version": "v1.11.8",
   "authors": "pjhgamma",
   "description": "Ripples that pass through one another in silence.\nAn efflorescence of innumerable cycles.",
-  "tags": ["Game Mechanics", "Base", "Downpour", "Watcher"],
-  "priorities": ["rwremix", "jollycoop", "moreslugcats", "watcher"]
+  "tags": [
+    "Game Mechanics",
+    "Dependency",
+    "Accessibility",
+    "Tools",
+    "Base",
+    "Downpour",
+    "Watcher"
+  ],
+  "priorities": [
+    "rwremix",
+    "jollycoop",
+    "moreslugcats",
+    "watcher"
+  ]
 }

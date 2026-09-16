@@ -1,0 +1,15 @@
+<Solution>
+
+  <Folder Name="/addons/">
+    <Project Path="addons/core/RippleCore.csproj" />
+    <Project Path="addons/general/RippleGeneral.csproj" />
+    <Project Path="addons/items/RippleItems.csproj" />
+    <Project Path="addons/players/RipplePlayers.csproj" />
+    <Project Path="addons/creatures/RippleCreatures.csproj" />
+    <Project Path="addons/iterators/RippleIterators.csproj" />
+    <Project Path="addons/progression/RippleProgression.csproj" />
+  </Folder>
+
+  <Project Path="src/RippleFriends.csproj" />
+
+</Solution>

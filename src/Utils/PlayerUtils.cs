@@ -2,7 +2,7 @@ using MoreSlugcats;
 
 namespace RippleFriends.Utils;
 
-internal static class PlayerUtils
+public static class PlayerUtils
 {
     extension(AbstractPhysicalObject? abstractPhysicalObject)
     {

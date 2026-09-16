@@ -2,7 +2,7 @@ using RWCustom;
 
 namespace RippleFriends.Utils;
 
-internal static class RainWorldUtils
+public static class RainWorldUtils
 {
     public const int Second = 40;
 

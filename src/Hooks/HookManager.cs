@@ -1,5 +1,5 @@
+using RippleFriends.Addons;
 using RippleFriends.Diagnostics;
-using RippleFriends.Options;
 using System.Reflection;
 
 namespace RippleFriends.Hooks;
@@ -8,11 +8,70 @@ internal static class HookManager
 {
     private static readonly List<BaseHooks> _activeHooks = [];
 
+    private static readonly HashSet<Assembly> _assemblies = [];
+
+    private static readonly HashSet<OptionInterface> _menus = [];
+
     private static bool _isInit;
 
-    public static IEnumerable<HookBinding> Bindings => _activeHooks.SelectMany(hook => hook.Bindings);
+    private static bool _isBinding;
 
-    public static void Initialize()
+    internal static IEnumerable<HookBinding> Bindings => _activeHooks.SelectMany(hook => hook.Bindings);
+
+    internal static void Register(Assembly assembly)
+    {
+        if (!_assemblies.Add(assembly))
+        {
+            return;
+        }
+
+        try
+        {
+            IEnumerable<Type> hookTypes = assembly.GetTypes().Where(
+                t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(BaseHooks))
+            );
+
+            foreach (var type in hookTypes)
+            {
+                if (Activator.CreateInstance(type) is BaseHooks hook)
+                {
+                    _activeHooks.Add(hook);
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            Reporter.LogError($"{assembly.GetName().Name}: Hooks could not be collected", exception);
+        }
+
+        if (_isInit && !_isBinding)
+        {
+            OnEnable();
+        }
+    }
+
+    internal static void Unregister(Assembly assembly)
+    {
+        if (!_assemblies.Remove(assembly))
+        {
+            return;
+        }
+
+        foreach (var hook in _activeHooks.Where(hook => hook.GetType().Assembly == assembly).ToArray())
+        {
+            hook.Disable();
+
+            _activeHooks.Remove(hook);
+        }
+    }
+
+    internal static void Watch(OptionInterface menu) => _menus.Add(menu);
+
+    internal static bool IsFailed(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasFailed && hook.Owns(option));
+
+    internal static bool IsWarned(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasWarned && hook.Owns(option));
+
+    internal static void Initialize()
     {
         if (_isInit)
         {
@@ -28,49 +87,56 @@ internal static class HookManager
 
             HookNotifier.Start();
 
-            IEnumerable<Type> hookTypes = Assembly.GetExecutingAssembly().GetTypes().Where(
-                t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(BaseHooks))
-            );
-
-            foreach (var type in hookTypes)
-            {
-                if (Activator.CreateInstance(type) is BaseHooks hook)
-                {
-                    _activeHooks.Add(hook);
-                }
-            }
+            Watch(Options.RemixMenu.Instance);
+            Register(Assembly.GetExecutingAssembly());
         }
         catch (Exception exception)
         {
-            HookDiagnostics.LogError("Hook Manager initialization failed", exception);
+            Reporter.LogError("Hook Manager initialization failed", exception);
         }
     }
 
-    public static void OnEnable()
+    internal static void OnEnable()
     {
-        HookDiagnostics.BeginSession();
-
-        Initialize();
-
-        foreach (var hook in _activeHooks)
+        if (_isBinding)
         {
-            hook.ClearWarnings();
+            return;
         }
 
-        foreach (var hook in _activeHooks)
-        {
-            hook.Enable();
-        }
+        _isBinding = true;
 
-        foreach (var binding in Bindings)
+        try
         {
-            binding.Report();
-        }
+            Reporter.BeginSession();
 
-        HookDiagnostics.EndSession();
+            Initialize();
+
+            AddonRegistry.UpdateRunningStates();
+
+            foreach (var hook in _activeHooks)
+            {
+                hook.ClearWarnings();
+            }
+
+            foreach (var hook in _activeHooks.ToArray())
+            {
+                hook.Enable();
+            }
+
+            foreach (var binding in Bindings)
+            {
+                binding.Report();
+            }
+
+            Reporter.EndSession();
+        }
+        finally
+        {
+            _isBinding = false;
+        }
     }
 
-    public static void OnDisable()
+    internal static void OnDisable()
     {
         _isInit = false;
 
@@ -78,29 +144,29 @@ internal static class HookManager
 
         HookNotifier.Stop();
 
+        AddonRegistry.Reset();
+
         foreach (var hooks in _activeHooks)
         {
             hooks.Disable();
         }
 
         _activeHooks.Clear();
+        _assemblies.Clear();
+        _menus.Clear();
     }
 
-    public static bool IsFailed(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasFailed && hook.Owns(option));
-
-    public static bool IsWarned(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasWarned && hook.Owns(option));
-
-    public static void On_OptionInterface__SaveConfigFile(On.OptionInterface.orig__SaveConfigFile orig, OptionInterface self)
+    internal static void On_OptionInterface__SaveConfigFile(On.OptionInterface.orig__SaveConfigFile orig, OptionInterface self)
     {
         orig(self);
 
-        if (!ReferenceEquals(self, RemixMenu.Instance))
+        if (!_menus.Contains(self))
         {
             return;
         }
 
         OnEnable();
 
-        HookDiagnostics.LogInfo("Configurations saved");
+        Reporter.LogInfo("Configurations saved");
     }
 }

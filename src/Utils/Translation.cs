@@ -2,7 +2,7 @@ using RWCustom;
 
 namespace RippleFriends.Utils;
 
-internal static class Translation
+public static class Translation
 {
     public const string Placeholder = "<PLACEHOLDER>";
 
@@ -15,6 +15,26 @@ internal static class Translation
         catch
         {
             return text;
+        }
+    }
+
+    extension(string template)
+    {
+        public string FillPlaceholders(params object[] values)
+        {
+            foreach (object value in values)
+            {
+                int index = template.IndexOf(Placeholder, StringComparison.Ordinal);
+
+                if (index < 0)
+                {
+                    break;
+                }
+
+                template = template.Remove(index, Placeholder.Length).Insert(index, value.ToString());
+            }
+
+            return template;
         }
     }
 }

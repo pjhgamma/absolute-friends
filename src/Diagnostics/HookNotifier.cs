@@ -50,7 +50,7 @@ internal static class HookNotifier
         {
             _pending.Clear();
 
-            HookDiagnostics.LogWarning("Could not show the text prompt", exception);
+            Reporter.LogWarning("Could not show the text prompt", exception);
         }
     }
 
@@ -66,7 +66,7 @@ internal static class HookNotifier
         _pending.Clear();
 
         textPrompt.AddMessage(
-            Translation.Of("Ripple Friends: an error turned off <PLACEHOLDER>. See the Remix menu.").Replace(Translation.Placeholder, features),
+            Translation.Of("Ripple Friends: an error turned off <PLACEHOLDER>. See the Remix menu.").FillPlaceholders(features),
             MessageDelay,
             MessageDuration,
             false,

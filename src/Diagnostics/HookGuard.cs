@@ -3,7 +3,7 @@ using RippleFriends.Hooks;
 
 namespace RippleFriends.Diagnostics;
 
-internal static class HookGuard
+public static class HookGuard
 {
     private static readonly GuardContract _bindingContract = new(
         typeof(HookBinding),
@@ -14,24 +14,6 @@ internal static class HookGuard
     );
 
     private static HookBinding? Manipulating { get; set; }
-
-    public static Delegate? Wrap(HookBinding binding, Type handlerType)
-    {
-        try
-        {
-            return handlerType == typeof(ILContext.Manipulator)
-                ? CreateManipulatorGuard(binding)
-                : GuardEmitter.Wrap(handlerType, binding, _bindingContract, $"RippleFriends_Guard_{binding.HookName}_{binding.MethodName}");
-        }
-        catch (Exception exception)
-        {
-            HookDiagnostics.LogWarning($"{binding.FullName}: could not be guarded, binding it directly instead", exception);
-
-            binding.MarkWarned();
-
-            return null;
-        }
-    }
 
     extension(ILCursor c)
     {
@@ -48,12 +30,30 @@ internal static class HookGuard
             }
             catch (Exception exception)
             {
-                HookDiagnostics.LogWarning($"{binding?.FullName ?? "Emitted code"}: could not be guarded, emitting it directly instead", exception);
+                Reporter.LogWarning($"{binding?.FullName ?? "Emitted code"}: could not be guarded, emitting it directly instead", exception);
 
                 binding?.MarkWarned();
             }
 
             c.EmitDelegate(guarded ?? body);
+        }
+    }
+
+    internal static Delegate? Wrap(HookBinding binding, Type handlerType)
+    {
+        try
+        {
+            return handlerType == typeof(ILContext.Manipulator)
+                ? CreateManipulatorGuard(binding)
+                : GuardEmitter.Wrap(handlerType, binding, _bindingContract, $"RippleFriends_Guard_{binding.HookName}_{binding.MethodName}");
+        }
+        catch (Exception exception)
+        {
+            Reporter.LogWarning($"{binding.FullName}: could not be guarded, binding it directly instead", exception);
+
+            binding.MarkWarned();
+
+            return null;
         }
     }
 
@@ -89,7 +89,7 @@ internal static class HookGuard
             }
             catch (Exception exception)
             {
-                HookDiagnostics.LogWarning($"{binding.FullName}: verification itself failed", exception);
+                Reporter.LogWarning($"{binding.FullName}: verification itself failed", exception);
             }
         };
     }
@@ -110,7 +110,7 @@ internal static class HookGuard
     {
         if (binding == null)
         {
-            HookDiagnostics.LogError($"Emitted code threw {exception.GetType().Name} and was disabled", exception);
+            Reporter.LogError($"Emitted code threw {exception.GetType().Name} and was disabled", exception);
 
             return;
         }

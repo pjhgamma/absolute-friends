@@ -1,7 +1,6 @@
 using BepInEx;
 using RippleFriends.Diagnostics;
 using RippleFriends.Hooks;
-using RippleFriends.Options;
 using System.Security.Permissions;
 
 #pragma warning disable CS0618
@@ -58,13 +57,13 @@ public class Plugin : BaseUnityPlugin
 
             _isInit = true;
 
-            MachineConnector.SetRegisteredOI(GUID, RemixMenu.Instance);
+            MachineConnector.SetRegisteredOI(GUID, Options.RemixMenu.Instance);
 
-            HookDiagnostics.LogConsole("Plugin initialized");
+            Reporter.LogInfo("Plugin initialized");
         }
         catch (Exception exception)
         {
-            HookDiagnostics.LogError("Plugin initialization failed", exception);
+            Reporter.LogError("Plugin initialization failed", exception);
         }
     }
 

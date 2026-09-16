@@ -1,32 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <LangVersion>14.0</LangVersion>
-    <DefineConstants Condition="'$(RecordBaseline)' == 'true'">$(DefineConstants);RIPPLEFRIENDS_RECORDBASELINE</DefineConstants>
-    <ModOutputPath>..\release\</ModOutputPath>
+    <AssemblyName>RippleFriends</AssemblyName>
+    <RootNamespace>RippleFriends</RootNamespace>
+    <AssetsPath>$(MSBuildThisFileDirectory)..\assets\</AssetsPath>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Reference Include="Assembly-CSharp" HintPath="..\lib\PUBLIC-Assembly-CSharp.dll" Private="false" />
-    <Reference Include="HOOKS-Assembly-CSharp" HintPath="..\lib\HOOKS-Assembly-CSharp.dll" Private="false" />
-    <Reference Include="BepInEx" HintPath="..\lib\BepInEx.dll" Private="false" />
-    <Reference Include="Mono.Cecil" HintPath="..\lib\Mono.Cecil.dll" Private="false" />
-    <Reference Include="MonoMod.Utils" HintPath="..\lib\MonoMod.Utils.dll" Private="false" />
-    <Reference Include="UnityEngine" HintPath="..\lib\UnityEngine.dll" Private="false" />
-    <Reference Include="UnityEngine.CoreModule" HintPath="..\lib\UnityEngine.CoreModule.dll" Private="false" />
-  </ItemGroup>
-
-  <Target Name="DeployMod" AfterTargets="Build">
-    <ItemGroup>
-      <PluginFiles Include="$(TargetPath)" />
-      <AssetFiles Include="..\assets\**\*" />
-    </ItemGroup>
-
-    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(ModOutputPath)plugins" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(AssetFiles)" DestinationFiles="$(ModOutputPath)%(RecursiveDir)%(Filename)%(Extension)" SkipUnchangedFiles="true" />
-  </Target>
 
 </Project>

@@ -1,0 +1,22 @@
+<Project>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp" HintPath="$(LibraryPath)PUBLIC-Assembly-CSharp.dll" Private="false" />
+    <Reference Include="HOOKS-Assembly-CSharp" HintPath="$(LibraryPath)HOOKS-Assembly-CSharp.dll" Private="false" />
+    <Reference Include="BepInEx" HintPath="$(LibraryPath)BepInEx.dll" Private="false" />
+    <Reference Include="Mono.Cecil" HintPath="$(LibraryPath)Mono.Cecil.dll" Private="false" />
+    <Reference Include="MonoMod.Utils" HintPath="$(LibraryPath)MonoMod.Utils.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(LibraryPath)UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(LibraryPath)UnityEngine.CoreModule.dll" Private="false" />
+  </ItemGroup>
+
+  <Target Name="StageArtifacts" AfterTargets="Build">
+    <ItemGroup>
+      <Assets Include="$(AssetsPath)**\*" Condition="'$(AssetsPath)' != ''" />
+    </ItemGroup>
+
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ArtifactsPath)plugins" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(Assets)" DestinationFiles="$(ArtifactsPath)%(RecursiveDir)%(Filename)%(Extension)" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

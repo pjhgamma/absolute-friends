@@ -108,7 +108,7 @@ internal sealed class HookBinding(BaseHooks owner, string methodName, EventInfo 
     {
         owner.MarkFailed();
 
-        HookDiagnostics.LogError($"{FullName} ({eventInfo.DeclaringType?.FullName}.{eventInfo.Name}) threw {exception.GetType().Name}", exception);
+        Reporter.LogError($"{FullName} ({eventInfo.DeclaringType?.FullName}.{eventInfo.Name}) threw {exception.GetType().Name}", exception);
 
         HookNotifier.Queue(owner.Title);
     }
@@ -128,7 +128,7 @@ internal sealed class HookBinding(BaseHooks owner, string methodName, EventInfo 
             {
                 _isPassedThrough = true;
 
-                HookDiagnostics.LogInfo($"{FullName}: {exception.GetType().Name} was thrown inside {eventInfo.DeclaringType?.Name}.{eventInfo.Name} itself and was left to the game");
+                Reporter.LogInfo($"{FullName}: {exception.GetType().Name} was thrown inside {eventInfo.DeclaringType?.Name}.{eventInfo.Name} itself and was left to the game");
             }
 
             return false;

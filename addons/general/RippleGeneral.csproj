@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>RippleFriends.General</AssemblyName>
+    <RootNamespace>RippleFriends.General</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RippleFriends.csproj" Private="false" />
+    <ProjectReference Include="..\core\RippleCore.csproj" Private="false" />
+  </ItemGroup>
+
+</Project>

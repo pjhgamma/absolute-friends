@@ -205,7 +205,7 @@ internal sealed class ILPatchResult(string fullName, ILPatchStatus status, int s
     {
         if (unreachable > 0)
         {
-            HookDiagnostics.LogError($"{fullName}: UNREACHABLE ({unreachable} inserted instruction(s) cannot be reached, so this patch is in place but never runs)");
+            Reporter.LogError($"{fullName}: UNREACHABLE ({unreachable} inserted instruction(s) cannot be reached, so this patch is in place but never runs)");
         }
 
         string summary = $"{fullName}: {FormatStatus(shared)} {FormatSites()}";
@@ -214,30 +214,31 @@ internal sealed class ILPatchResult(string fullName, ILPatchStatus status, int s
         {
             case ILPatchStatus.Rearranged:
             case ILPatchStatus.CountMismatch or ILPatchStatus.AnchorMismatch when shared:
-                HookDiagnostics.LogWarning(summary);
+                Reporter.LogWarning(summary);
 
                 break;
 
             case ILPatchStatus.NotFound or ILPatchStatus.CountMismatch or ILPatchStatus.AnchorMismatch:
-                HookDiagnostics.LogError(summary);
+                Reporter.LogError(summary);
 
                 break;
 
             default:
-                HookDiagnostics.LogInfo(summary);
+                Reporter.LogInfo(summary);
 
                 break;
         }
 
-#if RIPPLEFRIENDS_RECORDBASELINE
-        string attribute = $"[HookTest([{string.Join(", ", sites.Select(site => site.Index))}], [{string.Join(", ", sites.Select(site => $"\"{site.Anchor}\""))}])]";
+        if (HookBaseline.Enabled)
+        {
+            string attribute = $"[HookTest([{string.Join(", ", sites.Select(site => site.Index))}], [{string.Join(", ", sites.Select(site => $"\"{site.Anchor}\""))}])]";
 
-        HookDiagnostics.LogInfo($"{fullName}: {attribute}");
+            Reporter.LogInfo($"{fullName}: {attribute}");
 
-        HookBaseline.Record(fullName, attribute);
-#endif
+            HookBaseline.Record(fullName, attribute);
+        }
 
-        HookDiagnostics.LogDetail(details);
+        Reporter.LogDetail(details);
     }
 
     private string FormatStatus(bool shared) => status switch

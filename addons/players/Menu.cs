@@ -1,0 +1,21 @@
+using RippleFriends.Options;
+
+namespace RippleFriends.Players;
+
+internal static class Menu
+{
+    public static void Build(MenuBuilder menu)
+    {
+        menu.SetColumns(4);
+        menu.AddCheckBox(Config.GrabbingPlayer);
+        menu.AddFloatSlider(Config.GrabbingPlayerTime, span: 3f, max: 5f);
+        menu.AddCheckBox(Config.Wiggle);
+        menu.AddCheckBox(Config.Carry);
+        menu.AddCheckBox(Config.Mauling);
+        menu.AddCheckBox(Config.GourmandSlam, enabled: ModManager.MSC);
+        menu.AddCheckBox(Config.ArtificerParry, enabled: ModManager.MSC);
+        menu.AddCheckBox(Config.SaintTongue, enabled: ModManager.MSC);
+        menu.AddCheckBox(Config.SaintAttunement, enabled: ModManager.MSC);
+        menu.AddCheckBox(Config.WatcherRipple, enabled: ModManager.Watcher);
+    }
+}

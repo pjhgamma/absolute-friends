@@ -20,7 +20,7 @@ public class HookTestAttribute(int[] indices, string[] anchors) : Attribute
     public string[] Anchors { get; } = anchors;
 }
 
-internal abstract class BaseHooks
+public abstract class BaseHooks
 {
     private readonly List<HookBinding> _bindings = [];
 
@@ -36,7 +36,7 @@ internal abstract class BaseHooks
 
     public string Title => Subject ?? Options.FirstOrDefault().Label ?? Name;
 
-    public IEnumerable<HookBinding> Bindings => _bindings;
+    internal IEnumerable<HookBinding> Bindings => _bindings;
 
     protected abstract Configurable<bool>[] Options { get; }
 
@@ -44,9 +44,9 @@ internal abstract class BaseHooks
 
     protected virtual bool IsOptionEnabled => Options.Any(option => option.IsActive);
 
-    public void MarkWarned() => HasWarned = true;
+    internal void MarkWarned() => HasWarned = true;
 
-    public void ClearWarnings()
+    internal void ClearWarnings()
     {
         HasWarned = false;
 
@@ -58,7 +58,7 @@ internal abstract class BaseHooks
         }
     }
 
-    public void MarkFailed()
+    internal void MarkFailed()
     {
         HasFailed = true;
 
@@ -68,9 +68,9 @@ internal abstract class BaseHooks
         }
     }
 
-    public bool Owns(Configurable<bool>? option) => option != null && Options.Any(owned => ReferenceEquals(owned, option));
+    internal bool Owns(Configurable<bool>? option) => option != null && Options.Any(owned => ReferenceEquals(owned, option));
 
-    public void Enable()
+    internal void Enable()
     {
         Initialize();
         Disable();
@@ -102,17 +102,17 @@ internal abstract class BaseHooks
 
                 MarkFailed();
 
-                HookDiagnostics.LogError($"{binding.FullName} could not be applied", exception);
+                Reporter.LogError($"{binding.FullName} could not be applied", exception);
                 HookNotifier.Queue(Title);
 
                 break;
             }
         }
 
-        HookDiagnostics.LogInfo($"{Name}: Hooks applied ({isApplied}/{_bindings.Count})");
+        Reporter.LogInfo($"{Name}: Hooks applied ({isApplied}/{_bindings.Count})");
     }
 
-    public void Disable()
+    internal void Disable()
     {
         foreach (var binding in _bindings)
         {
@@ -122,7 +122,7 @@ internal abstract class BaseHooks
             }
             catch (Exception exception)
             {
-                HookDiagnostics.LogWarning($"{binding.FullName}: Unhook failed", exception);
+                Reporter.LogWarning($"{binding.FullName}: Unhook failed", exception);
             }
         }
     }
@@ -168,17 +168,17 @@ internal abstract class BaseHooks
         {
             Disable();
 
-            HookDiagnostics.LogError($"{Name}: Hooks failed", exception);
+            Reporter.LogError($"{Name}: Hooks failed", exception);
         }
     }
 }
 
-internal abstract class DownpourHooks : BaseHooks
+public abstract class DownpourHooks : BaseHooks
 {
     public override bool IsEnabled => base.IsEnabled && ModManager.MSC;
 }
 
-internal abstract class WatcherHooks : BaseHooks
+public abstract class WatcherHooks : BaseHooks
 {
     public override bool IsEnabled => base.IsEnabled && ModManager.Watcher;
 }
