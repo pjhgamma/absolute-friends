@@ -16,7 +16,7 @@ public class Plugin : BaseUnityPlugin
 
     public const string Name = "Ripple Friends";
 
-    public const string Version = "0.1.2";
+    public const string Version = "0.1.3";
 
     private bool _isInit;
 
