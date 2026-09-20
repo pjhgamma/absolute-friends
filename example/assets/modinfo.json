@@ -1,0 +1,20 @@
+{
+  "id": "pjhgamma.ripplefriends.example",
+  "name": "Ripple Friends Example",
+  "version": "0.1.0",
+  "target_game_version": "v1.11.8",
+  "authors": "pjhgamma",
+  "description": "Example Remix plugin and Ripple Friends addon in one mod.",
+  "tags": [
+    "Game Mechanics",
+    "Downpour"
+  ],
+  "requirements": [
+    "moreslugcats",
+    "pjhgamma.ripplefriends"
+  ],
+  "requirements_names": [
+    "More Slugcats Expansion",
+    "Ripple Friends"
+  ]
+}
