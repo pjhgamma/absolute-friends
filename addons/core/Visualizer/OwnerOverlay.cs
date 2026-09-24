@@ -1,4 +1,4 @@
-namespace RippleFriends.Core.Visualizer;
+namespace AbsoluteFriends.Core.Visualizer;
 
 internal abstract class OwnerOverlay(UpdatableAndDeletable target) : TargetOverlay(target)
 {

@@ -1,10 +1,10 @@
-using RippleFriends.Core;
-using RippleFriends.Options;
-using RippleFriends.Utils;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 using RWCustom;
 using Watcher;
 
-namespace RippleFriends.Progression;
+namespace AbsoluteFriends.Progression;
 
 internal static class GateUtils
 {

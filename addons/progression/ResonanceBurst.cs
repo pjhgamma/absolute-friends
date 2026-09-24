@@ -1,6 +1,6 @@
-using RippleFriends.Utils;
+using AbsoluteFriends.Utils;
 
-namespace RippleFriends.Progression;
+namespace AbsoluteFriends.Progression;
 
 internal class ResonanceBurst : UpdatableAndDeletable
 {

@@ -1,6 +1,6 @@
-using RippleFriends.Hooks;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Core.Visualizer;
+namespace AbsoluteFriends.Core.Visualizer;
 
 internal class FriendLinkHooks : RoomOverlayHooks<FriendLinkOverlay>
 {

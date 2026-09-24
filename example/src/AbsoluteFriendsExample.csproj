@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>14.0</LangVersion>
     <ImportDirectoryBuildTargets>false</ImportDirectoryBuildTargets>
-    <AssemblyName>RippleFriends.Example</AssemblyName>
-    <RootNamespace>RippleFriendsExample</RootNamespace>
+    <AssemblyName>AbsoluteFriends.Example</AssemblyName>
+    <RootNamespace>AbsoluteFriendsExample</RootNamespace>
     <LibraryPath>$(MSBuildThisFileDirectory)..\lib\</LibraryPath>
     <AssetsPath>$(MSBuildThisFileDirectory)..\assets\</AssetsPath>
   </PropertyGroup>
@@ -18,12 +18,12 @@
     <Reference Include="BepInEx" HintPath="$(LibraryPath)BepInEx.dll" Private="false" />
     <Reference Include="Mono.Cecil" HintPath="$(LibraryPath)Mono.Cecil.dll" Private="false" />
     <Reference Include="MonoMod.Utils" HintPath="$(LibraryPath)MonoMod.Utils.dll" Private="false" />
-    <!-- RippleFriends is required for AddonPlugin and MenuBuilder. Copy it into lib only as a compile-time reference. -->
-    <!-- Do not package RippleFriends or addon DLLs with your plugin. Users install those BepInEx plugins separately. -->
+    <!-- AbsoluteFriends is required for AddonPlugin and MenuBuilder. Copy it into lib only as a compile-time reference. -->
+    <!-- Do not package AbsoluteFriends or addon DLLs with your plugin. Users install those BepInEx plugins separately. -->
     <!-- Bundled copies can cause duplicate plugin IDs or incompatible versions; Private="false" prevents them from being copied to this plugin's output. -->
-    <Reference Include="RippleFriends" HintPath="$(LibraryPath)RippleFriends.dll" Private="false" />
-    <!-- Add or remove Core and other addon references as needed. For example, RippleFriends.Core provides friendship and ownership features for addons. -->
-    <Reference Include="RippleFriends.Core" HintPath="$(LibraryPath)RippleFriends.Core.dll" Private="false" />
+    <Reference Include="AbsoluteFriends" HintPath="$(LibraryPath)AbsoluteFriends.dll" Private="false" />
+    <!-- Add or remove Core and other addon references as needed. For example, AbsoluteFriends.Core provides friendship and ownership features for addons. -->
+    <Reference Include="AbsoluteFriends.Core" HintPath="$(LibraryPath)AbsoluteFriends.Core.dll" Private="false" />
     <Reference Include="UnityEngine" HintPath="$(LibraryPath)UnityEngine.dll" Private="false" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(LibraryPath)UnityEngine.CoreModule.dll" Private="false" />
   </ItemGroup>

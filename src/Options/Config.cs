@@ -1,4 +1,4 @@
-namespace RippleFriends.Options;
+namespace AbsoluteFriends.Options;
 
 public static class Config
 {

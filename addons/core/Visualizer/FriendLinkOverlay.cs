@@ -1,10 +1,10 @@
-using RippleFriends.Options;
-using RippleFriends.Utils;
+using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 using RWCustom;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace RippleFriends.Core.Visualizer;
+namespace AbsoluteFriends.Core.Visualizer;
 
 internal class FriendLinkOverlay : CosmeticSprite, IOverlay
 {

@@ -1,10 +1,10 @@
-using RippleFriends.Diagnostics;
-using RippleFriends.Options;
-using RippleFriends.Utils;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 using RWCustom;
 using System.Runtime.CompilerServices;
 
-namespace RippleFriends.Core;
+namespace AbsoluteFriends.Core;
 
 public static class FriendUtils
 {

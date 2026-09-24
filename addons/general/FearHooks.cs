@@ -1,10 +1,10 @@
 using MonoMod.Cil;
 using MoreSlugcats;
-using RippleFriends.Core;
-using RippleFriends.Diagnostics;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.General;
+namespace AbsoluteFriends.General;
 
 internal class FearHooks : BaseHooks
 {

@@ -1,11 +1,11 @@
-using RippleFriends.Addons;
-using RippleFriends.Hooks;
-using RippleFriends.Options;
+using AbsoluteFriends.Addons;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Options;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
 
-namespace RippleFriends.Diagnostics;
+namespace AbsoluteFriends.Diagnostics;
 
 internal static class Report
 {
@@ -210,7 +210,7 @@ public static class Reporter
 
     internal static void LogConsole(string message)
     {
-        Debug.Log("Ripple Friends: " + message);
+        Debug.Log("Absolute Friends: " + message);
     }
 
     internal static void LogDetail(List<string> lines)

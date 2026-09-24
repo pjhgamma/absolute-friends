@@ -1,6 +1,6 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 
-namespace RippleFriends.Diagnostics;
+namespace AbsoluteFriends.Diagnostics;
 
 internal static class HookBaseline
 {

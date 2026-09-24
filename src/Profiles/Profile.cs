@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace RippleFriends.Profiles;
+namespace AbsoluteFriends.Profiles;
 
 [DataContract]
 internal sealed class Profile

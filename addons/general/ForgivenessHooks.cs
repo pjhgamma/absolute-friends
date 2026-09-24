@@ -1,8 +1,8 @@
-using RippleFriends.Core;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
 using UnityEngine;
 
-namespace RippleFriends.General;
+namespace AbsoluteFriends.General;
 
 internal class ForgivenessHooks : BaseHooks
 {

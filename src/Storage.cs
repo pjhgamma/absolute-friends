@@ -2,11 +2,11 @@ using RWCustom;
 using System.Text;
 using UnityEngine;
 
-namespace RippleFriends;
+namespace AbsoluteFriends;
 
 internal static class Storage
 {
-    internal static string RootPath => Path.Combine(Custom.RootFolderDirectory(), "RippleFriends");
+    internal static string RootPath => Path.Combine(Custom.RootFolderDirectory(), "absolutefriends");
 
     internal static void Write(string path, Action<Stream> write)
     {
@@ -16,7 +16,7 @@ internal static class Storage
 
         if (!destination.StartsWith(root + Path.DirectorySeparatorChar, comparison))
         {
-            throw new InvalidOperationException("The storage path is outside the Ripple Friends folder");
+            throw new InvalidOperationException("The storage path is outside the Absolute Friends folder");
         }
 
         Directory.CreateDirectory(Path.GetDirectoryName(destination));

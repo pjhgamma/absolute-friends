@@ -1,8 +1,8 @@
-using RippleFriends.Core;
-using RippleFriends.Hooks;
-using RippleFriends.Utils;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Utils;
 
-namespace RippleFriends.General;
+namespace AbsoluteFriends.General;
 
 internal class GrabbingHooks : BaseHooks
 {

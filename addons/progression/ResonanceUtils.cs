@@ -1,12 +1,12 @@
-using RippleFriends.Core;
-using RippleFriends.Options;
-using RippleFriends.Utils;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 using RWCustom;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace RippleFriends.Progression;
+namespace AbsoluteFriends.Progression;
 
 internal enum ResonanceType
 {

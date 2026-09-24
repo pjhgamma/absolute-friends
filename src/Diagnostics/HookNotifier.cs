@@ -1,6 +1,6 @@
-using RippleFriends.Utils;
+using AbsoluteFriends.Utils;
 
-namespace RippleFriends.Diagnostics;
+namespace AbsoluteFriends.Diagnostics;
 
 internal static class HookNotifier
 {
@@ -66,7 +66,7 @@ internal static class HookNotifier
         _pending.Clear();
 
         textPrompt.AddMessage(
-            Translation.Of("Ripple Friends: an error turned off <PLACEHOLDER>. See the Remix menu.").FillPlaceholders(features),
+            Translation.Of("Absolute Friends: an error turned off <PLACEHOLDER>. See the Remix menu.").FillPlaceholders(features),
             MessageDelay,
             MessageDuration,
             false,

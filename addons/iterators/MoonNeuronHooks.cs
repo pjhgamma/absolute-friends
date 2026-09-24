@@ -1,6 +1,6 @@
-using RippleFriends.Hooks;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Iterators;
+namespace AbsoluteFriends.Iterators;
 
 internal class MoonNeuronHooks : BaseHooks
 {

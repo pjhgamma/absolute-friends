@@ -1,7 +1,7 @@
 using Mono.Cecil.Cil;
 using System.Runtime.CompilerServices;
 
-namespace RippleFriends.Diagnostics;
+namespace AbsoluteFriends.Diagnostics;
 
 internal static class InstructionIndex
 {

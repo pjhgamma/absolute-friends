@@ -1,8 +1,8 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Iterators;
+namespace AbsoluteFriends.Iterators;
 
 internal class PebblesHooks : BaseHooks
 {

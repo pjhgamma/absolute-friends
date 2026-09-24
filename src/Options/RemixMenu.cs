@@ -1,9 +1,9 @@
 using Menu.Remix.MixedUI;
-using RippleFriends.Addons;
-using RippleFriends.Profiles;
-using RippleFriends.Utils;
+using AbsoluteFriends.Addons;
+using AbsoluteFriends.Profiles;
+using AbsoluteFriends.Utils;
 
-namespace RippleFriends.Options;
+namespace AbsoluteFriends.Options;
 
 internal sealed partial class RemixMenu : MenuBuilder
 {

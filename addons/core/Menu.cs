@@ -1,13 +1,12 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 
-namespace RippleFriends.Core;
+namespace AbsoluteFriends.Core;
 
 internal static class Menu
 {
     public static void Build(MenuBuilder menu)
     {
-        menu.AddLabel("Ripple Friends do not interfere with each other's trajectories.");
-        menu.AddLabel("Ripples flow bidirectionally to one another, excluding oneself.");
+        menu.AddLabel("Friendship applies in both directions, but nothing counts as its own friend.");
 
         menu.AddTitle("Base");
         menu.SetColumns(3);

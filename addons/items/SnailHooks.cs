@@ -1,10 +1,10 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using RippleFriends.Core;
-using RippleFriends.Diagnostics;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Items;
+namespace AbsoluteFriends.Items;
 
 internal class SnailHooks : BaseHooks
 {
@@ -12,7 +12,7 @@ internal class SnailHooks : BaseHooks
 
     [HookPatch(typeof(IL.Snail), nameof(IL.Snail.Click))]
     [HookTest([367, 370, 379], ["ldarg.0; ldfld PhysicalObject::abstractPhysicalObject", "beq.s; ldloc.s; ldfld PhysicalObject::abstractPhysicalObject", "ldloc.s; callvirt PhysicalObject::get_bodyChunks"])]
-    private static void IL_Snail_Click(ILContext il) => il.RippleBranch();
+    private static void IL_Snail_Click(ILContext il) => il.FriendBranch();
 
     [HookPatch(typeof(On.Snail), nameof(On.Snail.Click))]
     private static void On_Snail_Click(On.Snail.orig_Click orig, Snail self)

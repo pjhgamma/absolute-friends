@@ -1,9 +1,9 @@
 using MonoMod.Cil;
 using MoreSlugcats;
-using RippleFriends.Core;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Items;
+namespace AbsoluteFriends.Items;
 
 internal class SingularityBombHooks : DownpourHooks
 {
@@ -19,9 +19,9 @@ internal class SingularityBombHooks : DownpourHooks
 
     [HookPatch(typeof(IL.MoreSlugcats.SingularityBomb), nameof(IL.MoreSlugcats.SingularityBomb.Update))]
     [HookTest([491, 494, 509, 661, 664, 679], ["ldarg.0; ldfld PhysicalObject::abstractPhysicalObject", "beq.s; ldarg.0; ldfld UpdatableAndDeletable::room", "ldc.i4.0; stloc.s; br", "ldarg.0; ldfld PhysicalObject::abstractPhysicalObject", "beq.s; ldarg.0; ldfld UpdatableAndDeletable::room", "ldc.i4.0; stloc.s; br"])]
-    private static void IL_SingularityBomb_Update(ILContext il) => il.RippleBranch();
+    private static void IL_SingularityBomb_Update(ILContext il) => il.FriendBranch();
 
     [HookPatch(typeof(IL.MoreSlugcats.SingularityBomb), nameof(IL.MoreSlugcats.SingularityBomb.Explode))]
     [HookTest([342, 345, 360], ["ldarg.0; ldfld PhysicalObject::abstractPhysicalObject", "beq.s; ldarg.0; ldfld UpdatableAndDeletable::room", "ldarg.0; ldfld UpdatableAndDeletable::room"])]
-    private static void IL_SingularityBomb_Explode(ILContext il) => il.RippleBranch();
+    private static void IL_SingularityBomb_Explode(ILContext il) => il.FriendBranch();
 }

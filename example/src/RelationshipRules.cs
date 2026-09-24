@@ -1,8 +1,8 @@
-using RippleFriends.Core;
-using RippleFriends.Options;
-using RippleFriends.Utils;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 
-namespace RippleFriendsExample;
+namespace AbsoluteFriendsExample;
 
 internal static class RelationshipRules
 {

@@ -1,9 +1,9 @@
 using MonoMod.Cil;
-using RippleFriends.Core;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
 using System.Runtime.CompilerServices;
 
-namespace RippleFriends.Items;
+namespace AbsoluteFriends.Items;
 
 internal class MushroomHooks : BaseHooks
 {

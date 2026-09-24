@@ -1,1 +1,1 @@
-global using RippleFriends.Addons;
+global using AbsoluteFriends.Addons;

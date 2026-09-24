@@ -1,9 +1,9 @@
-using RippleFriends.Options;
-using RippleFriends.Utils;
+using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace RippleFriends.Core.Visualizer;
+namespace AbsoluteFriends.Core.Visualizer;
 
 internal class TagOverlay : TrackerOverlay<SubjectTag>
 {

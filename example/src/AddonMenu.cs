@@ -1,6 +1,6 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 
-namespace RippleFriendsExample;
+namespace AbsoluteFriendsExample;
 
 // A separate menu class is only an organizational choice; BuildMenu may compose the panel directly.
 internal static class AddonMenu

@@ -1,7 +1,7 @@
 using MonoMod.Cil;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Diagnostics;
+namespace AbsoluteFriends.Diagnostics;
 
 public static class HookGuard
 {
@@ -26,7 +26,7 @@ public static class HookGuard
 
             try
             {
-                guarded = GuardEmitter.WrapEmitted(typeof(T), new EmittedGuard(binding, body, fallback), $"RippleFriends_Emit_{name}") as T;
+                guarded = GuardEmitter.WrapEmitted(typeof(T), new EmittedGuard(binding, body, fallback), $"AbsoluteFriends_Emit_{name}") as T;
             }
             catch (Exception exception)
             {
@@ -45,7 +45,7 @@ public static class HookGuard
         {
             return handlerType == typeof(ILContext.Manipulator)
                 ? CreateManipulatorGuard(binding)
-                : GuardEmitter.Wrap(handlerType, binding, _bindingContract, $"RippleFriends_Guard_{binding.HookName}_{binding.MethodName}");
+                : GuardEmitter.Wrap(handlerType, binding, _bindingContract, $"AbsoluteFriends_Guard_{binding.HookName}_{binding.MethodName}");
         }
         catch (Exception exception)
         {

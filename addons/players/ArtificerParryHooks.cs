@@ -1,8 +1,8 @@
 using MonoMod.Cil;
-using RippleFriends.Core;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Players;
+namespace AbsoluteFriends.Players;
 
 internal class ArtificerParryHooks : DownpourHooks
 {
@@ -10,5 +10,5 @@ internal class ArtificerParryHooks : DownpourHooks
 
     [HookPatch(typeof(IL.Player), nameof(IL.Player.ClassMechanicsArtificer))]
     [HookTest([892, 895, 910], ["ldarg.0; ldfld PhysicalObject::abstractPhysicalObject", "beq.s; ldarg.0; ldfld UpdatableAndDeletable::room", "ldarg.0; ldfld UpdatableAndDeletable::room"])]
-    private static void IL_Player_ClassMechanicsArtificer(ILContext il) => il.RippleBranch();
+    private static void IL_Player_ClassMechanicsArtificer(ILContext il) => il.FriendBranch();
 }

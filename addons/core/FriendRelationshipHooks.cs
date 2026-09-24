@@ -1,8 +1,8 @@
-using RippleFriends.Hooks;
-using RippleFriends.Options;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Options;
 using UnityEngine;
 
-namespace RippleFriends.Core;
+namespace AbsoluteFriends.Core;
 
 internal class FriendRelationshipHooks : BaseHooks
 {

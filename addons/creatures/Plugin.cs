@@ -1,26 +1,26 @@
 using BepInEx;
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 using System.Security.Permissions;
 
 #pragma warning disable CS0618
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 #pragma warning restore CS0618
 
-namespace RippleFriends.Creatures;
+namespace AbsoluteFriends.Creatures;
 
-[BepInPlugin(GUID, Name, RippleFriends.Plugin.Version)]
+[BepInPlugin(GUID, Name, AbsoluteFriends.Plugin.Version)]
 [BepInDependency(Core.Plugin.GUID)]
 public class Plugin : AddonPlugin
 {
-    public const string GUID = "pjhgamma.ripplefriends.creatures";
+    public const string GUID = "pjhgamma.absolutefriends.creatures";
 
-    public const string Name = "Ripple Friends: Creatures";
+    public const string Name = "Absolute Friends: Creatures";
 
-    public override string AddonDescription => "Controls interactions with lizard and scavenger Ripple Friends.";
+    public override string AddonDescription => "Controls interactions with friendly lizards and scavengers.";
 
     public override string[] AddonDependencies => [Core.Plugin.GUID];
 
-    public override string RippleFriendsVersion => RippleFriends.Plugin.Version;
+    public override string AbsoluteFriendsVersion => AbsoluteFriends.Plugin.Version;
 
     protected override void Bind(Addon addon) => Creatures.Config.Bind(addon);
 

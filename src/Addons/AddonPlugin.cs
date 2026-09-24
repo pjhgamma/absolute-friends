@@ -1,8 +1,8 @@
 using BepInEx;
-using RippleFriends.Diagnostics;
-using RippleFriends.Options;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Options;
 
-namespace RippleFriends.Addons;
+namespace AbsoluteFriends.Addons;
 
 public abstract class AddonPlugin : BaseUnityPlugin
 {
@@ -10,7 +10,7 @@ public abstract class AddonPlugin : BaseUnityPlugin
 
     public virtual string AddonDescription => "";
 
-    public abstract string RippleFriendsVersion { get; }
+    public abstract string AbsoluteFriendsVersion { get; }
 
     public virtual string[] AddonDependencies => [];
 
@@ -110,7 +110,7 @@ public abstract class AddonPlugin : BaseUnityPlugin
 
             if (AddonContext.IsMismatched)
             {
-                Logger.LogWarning($"Built for Ripple Friends v{AddonContext.RippleFriendsVersion}, running v{Plugin.Version}");
+                Logger.LogWarning($"Built for Absolute Friends v{AddonContext.AbsoluteFriendsVersion}, running v{Plugin.Version}");
             }
         }
         catch (Exception exception)

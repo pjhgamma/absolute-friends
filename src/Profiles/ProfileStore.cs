@@ -1,7 +1,7 @@
-using RippleFriends.Diagnostics;
+using AbsoluteFriends.Diagnostics;
 using System.Runtime.Serialization.Json;
 
-namespace RippleFriends.Profiles;
+namespace AbsoluteFriends.Profiles;
 
 internal static class ProfileStore
 {

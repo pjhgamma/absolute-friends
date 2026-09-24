@@ -1,6 +1,6 @@
-using RippleFriends.Hooks;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Core;
+namespace AbsoluteFriends.Core;
 
 internal class OwnerTrackerHooks : BaseHooks
 {

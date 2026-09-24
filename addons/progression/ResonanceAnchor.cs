@@ -1,7 +1,7 @@
-using RippleFriends.Core;
-using RippleFriends.Options;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Options;
 
-namespace RippleFriends.Progression;
+namespace AbsoluteFriends.Progression;
 
 internal class ResonanceAnchor : UpdatableAndDeletable
 {

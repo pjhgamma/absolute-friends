@@ -1,0 +1,15 @@
+<Solution>
+
+  <Folder Name="/addons/">
+    <Project Path="addons/core/AbsoluteCore.csproj" />
+    <Project Path="addons/general/AbsoluteGeneral.csproj" />
+    <Project Path="addons/items/AbsoluteItems.csproj" />
+    <Project Path="addons/players/AbsolutePlayers.csproj" />
+    <Project Path="addons/creatures/AbsoluteCreatures.csproj" />
+    <Project Path="addons/iterators/AbsoluteIterators.csproj" />
+    <Project Path="addons/progression/AbsoluteProgression.csproj" />
+  </Folder>
+
+  <Project Path="src/AbsoluteFriends.csproj" />
+
+</Solution>

@@ -1,7 +1,7 @@
-using RippleFriends.Diagnostics;
+using AbsoluteFriends.Diagnostics;
 using System.Reflection;
 
-namespace RippleFriends.Hooks;
+namespace AbsoluteFriends.Hooks;
 
 internal sealed class HookBinding(BaseHooks owner, string methodName, EventInfo eventInfo, Delegate handler, HookTestAttribute? test)
 {

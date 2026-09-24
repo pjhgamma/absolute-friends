@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace RippleFriends.Diagnostics;
+namespace AbsoluteFriends.Diagnostics;
 
 internal static class GuardContexts
 {

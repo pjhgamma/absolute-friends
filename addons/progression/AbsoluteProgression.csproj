@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>AbsoluteFriends.Progression</AssemblyName>
+    <RootNamespace>AbsoluteFriends.Progression</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AbsoluteFriends.csproj" Private="false" />
+    <ProjectReference Include="..\core\AbsoluteCore.csproj" Private="false" />
+  </ItemGroup>
+
+</Project>

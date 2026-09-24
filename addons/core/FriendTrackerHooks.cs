@@ -1,7 +1,7 @@
-using RippleFriends.Hooks;
-using RippleFriends.Utils;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Utils;
 
-namespace RippleFriends.Core;
+namespace AbsoluteFriends.Core;
 
 internal class FriendTrackerHooks : BaseHooks
 {

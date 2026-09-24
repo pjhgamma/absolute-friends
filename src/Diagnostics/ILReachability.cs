@@ -1,6 +1,6 @@
 using Mono.Cecil.Cil;
 
-namespace RippleFriends.Diagnostics;
+namespace AbsoluteFriends.Diagnostics;
 
 internal static class ILReachability
 {

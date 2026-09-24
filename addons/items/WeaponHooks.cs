@@ -1,11 +1,11 @@
 using MoreSlugcats;
-using RippleFriends.Core;
-using RippleFriends.Hooks;
-using RippleFriends.Options;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Options;
 using RWCustom;
 using UnityEngine;
 
-namespace RippleFriends.Items;
+namespace AbsoluteFriends.Items;
 
 internal class WeaponHooks : BaseHooks
 {

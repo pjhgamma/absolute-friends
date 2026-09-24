@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>AbsoluteFriends.Core</AssemblyName>
+    <RootNamespace>AbsoluteFriends.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AbsoluteFriends.csproj" Private="false" />
+  </ItemGroup>
+
+</Project>

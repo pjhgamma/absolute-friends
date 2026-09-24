@@ -1,7 +1,7 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 using System.Runtime.CompilerServices;
 
-namespace RippleFriends.Core;
+namespace AbsoluteFriends.Core;
 
 public static class OwnerUtils
 {

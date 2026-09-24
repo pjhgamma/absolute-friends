@@ -1,13 +1,13 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using RippleFriends.Core;
-using RippleFriends.Diagnostics;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Hooks;
 using RWCustom;
 using UnityEngine;
 using Watcher;
 
-namespace RippleFriends.Items;
+namespace AbsoluteFriends.Items;
 
 internal class FrogHooks : WatcherHooks
 {

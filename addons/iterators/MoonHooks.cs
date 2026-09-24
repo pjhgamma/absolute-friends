@@ -1,7 +1,7 @@
-using RippleFriends.Hooks;
+using AbsoluteFriends.Hooks;
 using UnityEngine;
 
-namespace RippleFriends.Iterators;
+namespace AbsoluteFriends.Iterators;
 
 internal class MoonHooks : BaseHooks
 {

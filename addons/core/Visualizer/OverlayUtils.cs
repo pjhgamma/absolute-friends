@@ -1,10 +1,10 @@
-using RippleFriends.Diagnostics;
-using RippleFriends.Utils;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Utils;
 using RWCustom;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace RippleFriends.Core.Visualizer;
+namespace AbsoluteFriends.Core.Visualizer;
 
 internal interface IOverlay;
 

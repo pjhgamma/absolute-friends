@@ -1,11 +1,11 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using RippleFriends.Diagnostics;
-using RippleFriends.Hooks;
-using RippleFriends.Options;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Options;
 using Watcher;
 
-namespace RippleFriends.Progression;
+namespace AbsoluteFriends.Progression;
 
 internal class ResonanceHooks : BaseHooks
 {

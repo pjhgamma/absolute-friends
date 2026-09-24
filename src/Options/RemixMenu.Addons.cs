@@ -1,8 +1,8 @@
 using Menu.Remix.MixedUI;
-using RippleFriends.Addons;
-using RippleFriends.Utils;
+using AbsoluteFriends.Addons;
+using AbsoluteFriends.Utils;
 
-namespace RippleFriends.Options;
+namespace AbsoluteFriends.Options;
 
 internal sealed partial class RemixMenu
 {
@@ -83,7 +83,7 @@ internal sealed partial class RemixMenu
             AddLabel("Requires: <PLACEHOLDER>", string.Join(", ", addon.AddonDependencyIds.Select(AddonRegistry.NameOf)), alignment: FLabelAlignment.Left);
         }
 
-        if (addon.IsMismatched && AddLabel("Built for Ripple Friends v<PLACEHOLDER>; it may not work correctly.", addon.RippleFriendsVersion, alignment: FLabelAlignment.Left) is { } warning)
+        if (addon.IsMismatched && AddLabel("Built for Absolute Friends v<PLACEHOLDER>; it may not work correctly.", addon.AbsoluteFriendsVersion, alignment: FLabelAlignment.Left) is { } warning)
         {
             warning.color = Palette.Secondary;
         }

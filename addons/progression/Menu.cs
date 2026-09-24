@@ -1,6 +1,6 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 
-namespace RippleFriends.Progression;
+namespace AbsoluteFriends.Progression;
 
 internal static class Menu
 {

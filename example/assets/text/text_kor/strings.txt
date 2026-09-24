@@ -1,7 +1,7 @@
-0pjhgamma.ripplefriends.example-name|잔물결 친구 예제
-pjhgamma.ripplefriends.example-description|리믹스 플러그인과 잔물결 친구 애드온을 한 모드에 담은 예제입니다.
+0pjhgamma.absolutefriends.example-name|절대적 친구 예제
+pjhgamma.absolutefriends.example-description|리믹스 플러그인과 절대적 친구 애드온을 한 모드에 담은 예제입니다.
 
-Ripple Friends: Example|잔물결 친구: 예제
+Absolute Friends: Example|절대적 친구: 예제
 Adds friendship and ownership rules for Hunter Long Legs and the green Neuron.|헌터 롱 레그와 녹색 신경파리에 친구 및 소유 규칙을 추가합니다.
 
 Ripple Purple|잔물결 보라색
@@ -17,7 +17,7 @@ Overview|개요
 Plugin Overview|플러그인 개요
 Adds a profile-aware addon and an independent Remix menu.|프로필용 애드온과 독립 리믹스 메뉴를 추가합니다.
 This tab uses MenuBuilder for the plugin's own settings.|이 탭은 플러그인 설정에 MenuBuilder를 사용합니다.
-Addon options: Ripple Friends > Addons|애드온 옵션: 잔물결 친구 > 애드온
+Addon options: Absolute Friends > Addons|애드온 옵션: 절대적 친구 > 애드온
 Plugin: <PLACEHOLDER>|플러그인: <PLACEHOLDER>
 Version <PLACEHOLDER>|버전 <PLACEHOLDER>
 
@@ -87,7 +87,7 @@ Tint|색상
 A color picker.|색상 선택기입니다.
 
 Hunter Long Legs|헌터 롱 레그
-Makes Hunter Long Legs a player Ripple Friend.|헌터 롱 레그를 플레이어의 잔물결 친구로 만듭니다.
+Treats Hunter Long Legs as a friend of players.|헌터 롱 레그를 플레이어의 친구로 취급합니다.
 Aggressive Hunter|사냥꾼 적대
 Preserves Hunter's hostile relationship with Hunter Long Legs.|사냥꾼과 헌터 롱 레그의 적대 관계를 유지합니다.
 Tentacle Ownership|촉수 소유

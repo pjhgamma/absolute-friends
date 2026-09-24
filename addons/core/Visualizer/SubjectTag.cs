@@ -1,6 +1,6 @@
-using RippleFriends.Utils;
+using AbsoluteFriends.Utils;
 
-namespace RippleFriends.Core.Visualizer;
+namespace AbsoluteFriends.Core.Visualizer;
 
 internal sealed class SubjectTag : ITag
 {

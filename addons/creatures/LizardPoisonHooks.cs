@@ -1,10 +1,10 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using RippleFriends.Core;
-using RippleFriends.Diagnostics;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Creatures;
+namespace AbsoluteFriends.Creatures;
 
 internal class LizardPoisonHooks : WatcherHooks
 {

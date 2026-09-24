@@ -1,7 +1,7 @@
-using RippleFriends.Utils;
+using AbsoluteFriends.Utils;
 using UnityEngine;
 
-namespace RippleFriends.Core.Visualizer;
+namespace AbsoluteFriends.Core.Visualizer;
 
 internal class OwnerLinkOverlay(UpdatableAndDeletable target) : OwnerOverlay(target)
 {

@@ -1,6 +1,6 @@
 using MoreSlugcats;
 
-namespace RippleFriends.Utils;
+namespace AbsoluteFriends.Utils;
 
 public static class PlayerUtils
 {

@@ -1,12 +1,12 @@
 using Menu.Remix.MixedUI;
 using MoreSlugcats;
-using RippleFriends.Diagnostics;
-using RippleFriends.Options;
-using RippleFriends.Utils;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 using RWCustom;
 using UnityEngine;
 
-namespace RippleFriendsExample;
+namespace AbsoluteFriendsExample;
 
 internal sealed class RemixMenu : MenuBuilder
 {
@@ -81,7 +81,7 @@ internal sealed class RemixMenu : MenuBuilder
     {
         AddTitle("Plugin Overview", "Adds a profile-aware addon and an independent Remix menu.");
         AddParagraph("This tab uses MenuBuilder for the plugin's own settings.", 55f);
-        AddLabel("Addon options: Ripple Friends > Addons", alignment: FLabelAlignment.Right);
+        AddLabel("Addon options: Absolute Friends > Addons", alignment: FLabelAlignment.Right);
 
         SetColumns(4);
         AddNote("Plugin: <PLACEHOLDER>", Plugin.Name, alignment: FLabelAlignment.Left, span: 3f);

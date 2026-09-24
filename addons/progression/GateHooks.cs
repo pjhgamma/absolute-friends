@@ -1,11 +1,11 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using RippleFriends.Core;
-using RippleFriends.Diagnostics;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Hooks;
 using Watcher;
 
-namespace RippleFriends.Progression;
+namespace AbsoluteFriends.Progression;
 
 internal class GateHooks : BaseHooks
 {

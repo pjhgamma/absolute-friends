@@ -1,8 +1,8 @@
-using RippleFriends.Diagnostics;
-using RippleFriends.Options;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Options;
 using System.Reflection;
 
-namespace RippleFriends.Hooks;
+namespace AbsoluteFriends.Hooks;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
 public class HookPatchAttribute(Type targetType, string eventName) : Attribute

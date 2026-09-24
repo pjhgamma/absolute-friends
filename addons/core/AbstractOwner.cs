@@ -1,4 +1,4 @@
-namespace RippleFriends.Core;
+namespace AbsoluteFriends.Core;
 
 public class AbstractOwner(PhysicalObject physicalObject) : AbstractCreature(null, null, null, new(), new())
 {

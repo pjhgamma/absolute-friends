@@ -1,10 +1,10 @@
 using Menu.Remix.MixedUI;
 using Menu.Remix.MixedUI.ValueTypes;
-using RippleFriends.Hooks;
-using RippleFriends.Utils;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Utils;
 using UnityEngine;
 
-namespace RippleFriends.Options;
+namespace AbsoluteFriends.Options;
 
 public abstract partial class MenuBuilder : OptionInterface
 {

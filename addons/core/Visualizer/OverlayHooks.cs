@@ -1,7 +1,7 @@
-using RippleFriends.Hooks;
+using AbsoluteFriends.Hooks;
 using System.Runtime.CompilerServices;
 
-namespace RippleFriends.Core.Visualizer;
+namespace AbsoluteFriends.Core.Visualizer;
 
 internal abstract class RoomOverlayHooks<TOverlay> : BaseHooks
     where TOverlay : UpdatableAndDeletable, IOverlay

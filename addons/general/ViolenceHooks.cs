@@ -1,7 +1,7 @@
-using RippleFriends.Core;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.General;
+namespace AbsoluteFriends.General;
 
 internal class ViolenceHooks : BaseHooks
 {

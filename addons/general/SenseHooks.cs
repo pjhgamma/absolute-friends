@@ -1,9 +1,9 @@
-using RippleFriends.Core;
-using RippleFriends.Hooks;
-using RippleFriends.Options;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Options;
 using UnityEngine;
 
-namespace RippleFriends.General;
+namespace AbsoluteFriends.General;
 
 internal class SenseHooks : BaseHooks
 {

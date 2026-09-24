@@ -1,8 +1,8 @@
-using RippleFriends.Hooks;
+using AbsoluteFriends.Hooks;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace RippleFriends.Core;
+namespace AbsoluteFriends.Core;
 
 internal class FriendMemoryHooks : BaseHooks
 {

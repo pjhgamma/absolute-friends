@@ -1,9 +1,9 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MoreSlugcats;
-using RippleFriends.Diagnostics;
+using AbsoluteFriends.Diagnostics;
 
-namespace RippleFriends.Core;
+namespace AbsoluteFriends.Core;
 
 public static class ILUtils
 {
@@ -13,7 +13,7 @@ public static class ILUtils
 
     extension(ILContext il)
     {
-        public void RippleBranch()
+        public void FriendBranch()
         {
             ILCursor c = new(il);
             ILLabel? l = null;

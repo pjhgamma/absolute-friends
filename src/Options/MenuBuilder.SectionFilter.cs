@@ -1,7 +1,7 @@
 using Menu.Remix.MixedUI;
 using UnityEngine;
 
-namespace RippleFriends.Options;
+namespace AbsoluteFriends.Options;
 
 public abstract partial class MenuBuilder
 {

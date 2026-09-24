@@ -1,6 +1,6 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 
-namespace RippleFriends.Creatures;
+namespace AbsoluteFriends.Creatures;
 
 internal static class Config
 {
@@ -22,22 +22,22 @@ internal static class Config
 
     internal static void Bind(Addon addon)
     {
-        LizardBite = addon.Bind("LizardBite", false, new ConfigurableInfo("Will not be bitten by lizard Ripple Friends.", tags: ["Lizard Bite"]))
+        LizardBite = addon.Bind("LizardBite", false, new ConfigurableInfo("Will not be bitten by friendly lizards.", tags: ["Lizard Bite"]))
             .Require(Core.Config.FriendCreature);
-        LizardTongue = addon.Bind("LizardTongue", false, new ConfigurableInfo("Will not be caught by the tongue of a lizard Ripple Friend. Instead, an indigo lizard Ripple Friend licks any Ripple Friend caught in a locust swarm, not only the one it follows.", tags: ["Lizard Tongue"]))
+        LizardTongue = addon.Bind("LizardTongue", false, new ConfigurableInfo("Will not be caught by a friendly lizard's tongue. Instead, a friendly indigo lizard licks any friend caught in a locust swarm, not only the one it follows.", tags: ["Lizard Tongue"]))
             .Require(Core.Config.FriendCreature);
-        LizardSpit = addon.Bind("LizardSpit", false, new ConfigurableInfo("Will not be stuck by the spit of a lizard Ripple Friend.", tags: ["Lizard Spit"]))
+        LizardSpit = addon.Bind("LizardSpit", false, new ConfigurableInfo("Will not be stuck by a friendly lizard's spit.", tags: ["Lizard Spit"]))
             .Require(Core.Config.FriendCreature);
-        LizardBeam = addon.Bind("LizardBeam", false, new ConfigurableInfo("Will not be struck by the laser of a blizzard lizard Ripple Friend.", tags: ["Lizard Laser"]))
+        LizardBeam = addon.Bind("LizardBeam", false, new ConfigurableInfo("Will not be struck by a friendly blizzard lizard's laser.", tags: ["Lizard Laser"]))
             .Require(Core.Config.FriendCreature);
-        LizardBlizzard = addon.Bind("LizardBlizzard", false, new ConfigurableInfo("Will not be swept up by the shield around a blizzard lizard Ripple Friend.", tags: ["Lizard Shield"]))
+        LizardBlizzard = addon.Bind("LizardBlizzard", false, new ConfigurableInfo("Will not be swept up by a friendly blizzard lizard's shield.", tags: ["Lizard Shield"]))
             .Require(Core.Config.FriendCreature);
-        LizardPoison = addon.Bind("LizardPoison", false, new ConfigurableInfo("Will not be poisoned by the touch of a basilisk lizard Ripple Friend, nor dazed by the mushroom haze around it.", tags: ["Lizard Poison"]))
+        LizardPoison = addon.Bind("LizardPoison", false, new ConfigurableInfo("Will not be poisoned by a friendly basilisk lizard's touch, nor dazed by its mushroom effect.", tags: ["Lizard Poison"]))
             .Require(Core.Config.FriendCreature);
 
-        ScavengerShelter = addon.Bind("ScavengerShelter", false, new ConfigurableInfo("Will not have objects inside a shelter taken by scavenger Ripple Friends.", tags: ["Scavenger Shelter"]))
+        ScavengerShelter = addon.Bind("ScavengerShelter", false, new ConfigurableInfo("Will not have shelter objects taken by friendly scavengers.", tags: ["Scavenger Shelter"]))
             .Require(Core.Config.FriendCreature);
-        ScavengerTemplar = addon.Bind("ScavengerTemplar", false, new ConfigurableInfo("Will not be struck by the shockwave from the karma shield of a templar Ripple Friend.", tags: ["Scavenger Shield"]))
+        ScavengerTemplar = addon.Bind("ScavengerTemplar", false, new ConfigurableInfo("Will not be struck by a friendly scavenger's karma shield shockwave.", tags: ["Scavenger Shield"]))
             .Require(Core.Config.FriendCreature);
     }
 }

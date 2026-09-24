@@ -1,9 +1,9 @@
-using RippleFriends.Core;
-using RippleFriends.Hooks;
-using RippleFriends.Options;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Options;
 using System.Runtime.CompilerServices;
 
-namespace RippleFriendsExample;
+namespace AbsoluteFriendsExample;
 
 internal sealed class OwnershipHooks : DownpourHooks
 {

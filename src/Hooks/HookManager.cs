@@ -1,8 +1,8 @@
-using RippleFriends.Addons;
-using RippleFriends.Diagnostics;
+using AbsoluteFriends.Addons;
+using AbsoluteFriends.Diagnostics;
 using System.Reflection;
 
-namespace RippleFriends.Hooks;
+namespace AbsoluteFriends.Hooks;
 
 internal static class HookManager
 {

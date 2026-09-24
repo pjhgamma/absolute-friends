@@ -1,8 +1,8 @@
-using RippleFriends.Utils;
+using AbsoluteFriends.Utils;
 using RWCustom;
 using UnityEngine;
 
-namespace RippleFriends.Progression;
+namespace AbsoluteFriends.Progression;
 
 internal class ResonanceEffect : UpdatableAndDeletable
 {

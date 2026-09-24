@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace RippleFriends.Progression;
+namespace AbsoluteFriends.Progression;
 
 internal class ResonanceTracker
 {

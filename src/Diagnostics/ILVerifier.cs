@@ -3,7 +3,7 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System.Text;
 
-namespace RippleFriends.Diagnostics;
+namespace AbsoluteFriends.Diagnostics;
 
 internal enum ILPatchStatus
 {

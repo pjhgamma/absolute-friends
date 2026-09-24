@@ -1,1 +1,1 @@
-# ripple-friends
+# absolute-friends

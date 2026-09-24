@@ -1,6 +1,6 @@
-using RippleFriends.Core;
+using AbsoluteFriends.Core;
 
-namespace RippleFriends.Creatures;
+namespace AbsoluteFriends.Creatures;
 
 internal static class LizardUtils
 {

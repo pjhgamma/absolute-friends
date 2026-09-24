@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>RippleFriends</AssemblyName>
-    <RootNamespace>RippleFriends</RootNamespace>
+    <AssemblyName>AbsoluteFriends</AssemblyName>
+    <RootNamespace>AbsoluteFriends</RootNamespace>
     <AssetsPath>$(MSBuildThisFileDirectory)..\assets\</AssetsPath>
   </PropertyGroup>
 

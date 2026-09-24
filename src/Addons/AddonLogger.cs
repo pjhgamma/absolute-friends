@@ -1,6 +1,6 @@
-using RippleFriends.Diagnostics;
+using AbsoluteFriends.Diagnostics;
 
-namespace RippleFriends.Addons;
+namespace AbsoluteFriends.Addons;
 
 public sealed class AddonLogger
 {

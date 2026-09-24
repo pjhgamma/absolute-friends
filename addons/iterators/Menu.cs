@@ -1,6 +1,6 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 
-namespace RippleFriends.Iterators;
+namespace AbsoluteFriends.Iterators;
 
 internal static class Menu
 {

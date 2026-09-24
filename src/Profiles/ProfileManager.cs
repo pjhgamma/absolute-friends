@@ -1,8 +1,8 @@
-using RippleFriends.Addons;
-using RippleFriends.Diagnostics;
-using RippleFriends.Options;
+using AbsoluteFriends.Addons;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Options;
 
-namespace RippleFriends.Profiles;
+namespace AbsoluteFriends.Profiles;
 
 internal static class ProfileManager
 {

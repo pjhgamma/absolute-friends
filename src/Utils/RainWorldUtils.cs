@@ -1,6 +1,6 @@
 using RWCustom;
 
-namespace RippleFriends.Utils;
+namespace AbsoluteFriends.Utils;
 
 public static class RainWorldUtils
 {

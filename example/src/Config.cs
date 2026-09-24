@@ -1,7 +1,7 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 using UnityEngine;
 
-namespace RippleFriendsExample;
+namespace AbsoluteFriendsExample;
 
 internal enum ExampleResource
 {

@@ -1,6 +1,6 @@
 using MoreSlugcats;
 
-namespace RippleFriendsExample;
+namespace AbsoluteFriendsExample;
 
 internal static class Utils
 {

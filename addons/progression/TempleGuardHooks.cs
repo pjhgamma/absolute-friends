@@ -1,9 +1,9 @@
-using RippleFriends.Core;
-using RippleFriends.Hooks;
-using RippleFriends.Utils;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Utils;
 using UnityEngine;
 
-namespace RippleFriends.Progression;
+namespace AbsoluteFriends.Progression;
 
 internal class TempleGuardHooks : BaseHooks
 {

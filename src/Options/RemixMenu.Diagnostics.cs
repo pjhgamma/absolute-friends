@@ -1,7 +1,7 @@
 using Menu.Remix.MixedUI;
-using RippleFriends.Diagnostics;
+using AbsoluteFriends.Diagnostics;
 
-namespace RippleFriends.Options;
+namespace AbsoluteFriends.Options;
 
 internal sealed partial class RemixMenu
 {

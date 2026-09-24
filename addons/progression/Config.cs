@@ -1,6 +1,6 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 
-namespace RippleFriends.Progression;
+namespace AbsoluteFriends.Progression;
 
 internal static class Config
 {
@@ -39,8 +39,8 @@ internal static class Config
     public static void Bind(Addon addon)
     {
         Gate = addon.Bind("Gate", true, new ConfigurableInfo(Options.Config.Watcher(
-            "Shelters and karma gates wait for tracked Ripple Friends and will not activate while any player is entering control inputs.",
-            "Shelters, karma gates, and warp points wait for tracked Ripple Friends and will not activate while any player is entering control inputs."
+            "Shelters and karma gates wait for tracked friends and will not activate while any player is entering control inputs.",
+            "Shelters, karma gates, and warp points wait for tracked friends and will not activate while any player is entering control inputs."
         ), tags: ["Gate Delay"]));
         GateTime = addon.Bind("GateTime", 1f, new ConfigurableInfo(Options.Config.Watcher(
             "Sets the minimum time (in seconds) of no control input from the player required for shelters and karma gates to activate.",
@@ -48,18 +48,18 @@ internal static class Config
         )))
             .Require(Gate);
         GateForce = addon.Bind("GateForce", true, new ConfigurableInfo(Options.Config.Watcher(
-            "Shelters and karma gates forcefully activate, ignoring non-player Ripple Friends.",
-            "Shelters, karma gates, and warp points forcefully activate, ignoring non-player Ripple Friends."
+            "Shelters and karma gates forcefully activate, ignoring non-player friends.",
+            "Shelters, karma gates, and warp points forcefully activate, ignoring non-player friends."
         ), tags: ["Gate Force"]))
             .Require(Core.Config.FriendSlugcat, Gate);
         GateForceTime = addon.Bind("GateForceTime", 3f, new ConfigurableInfo(Options.Config.Watcher(
-            "Sets how much longer (in seconds) the player must go without control input for shelters and karma gates to forcefully activate, ignoring non-player Ripple Friends.",
-            "Sets how much longer (in seconds) the player must go without control input for shelters, karma gates, and warp points to forcefully activate, ignoring non-player Ripple Friends."
+            "Sets how much longer (in seconds) the player must go without control input for shelters and karma gates to forcefully activate, ignoring non-player friends.",
+            "Sets how much longer (in seconds) the player must go without control input for shelters, karma gates, and warp points to forcefully activate, ignoring non-player friends."
         )))
             .Require(GateForce);
-        Passage = addon.Bind("Passage", false, new ConfigurableInfo("Tracked Ripple Friends that survive the cycle travel with the player from anywhere in the world, even through a passage.", tags: ["Passages"]))
+        Passage = addon.Bind("Passage", false, new ConfigurableInfo("Tracked friends that survive the cycle travel with the player from anywhere in the world, even through a passage.", tags: ["Passages"]))
             .Require(Core.Config.FriendSlugcat);
-        TempleGuard = addon.Bind("TempleGuard", false, new ConfigurableInfo("Will not draw a guardian's attention, nor be moved by its telekinesis, while a player Ripple Friend holds the karma required to pass.", tags: ["Guardian"]))
+        TempleGuard = addon.Bind("TempleGuard", false, new ConfigurableInfo("Will not draw a guardian's attention, nor be moved by its telekinesis, while a player friend holds the karma required to pass.", tags: ["Guardian"]))
             .Require(Core.Config.FriendSlugcat);
 
         ResonanceGate = addon.Bind("ResonanceGate", false, new ConfigurableInfo(Options.Config.Watcher(
@@ -67,15 +67,15 @@ internal static class Config
             "Automatically resonates as a shelter or a karma gate closes, or as a karma room or a warp point activates."
         ), tags: ["Gate Resonance"]))
             .Require(Core.Config.FriendSlugcat);
-        ResonanceRoom = addon.Bind("ResonanceRoom", false, new ConfigurableInfo("Resonates by holding the jump key while every player Ripple Friend gathers in one room, reaching only the Ripple Friends in that room, or every tracked one when they gather at a gate and Gate Resonance is enabled.", tags: ["Room Resonance"]))
+        ResonanceRoom = addon.Bind("ResonanceRoom", false, new ConfigurableInfo("Resonates by holding the jump key while every player friend gathers in one room, reaching only the friends in that room, or every tracked one when they gather at a gate and Gate Resonance is enabled.", tags: ["Room Resonance"]))
             .Require(Core.Config.FriendSlugcat);
-        ResonanceGrab = addon.Bind("ResonanceGrab", false, new ConfigurableInfo("Resonates by holding the jump key while a player Ripple Friend grabs a hurt or dead Ripple Friend, mending only the one in hand.", tags: ["Grab Resonance"]))
+        ResonanceGrab = addon.Bind("ResonanceGrab", false, new ConfigurableInfo("Resonates by holding the jump key while a player friend grabs a hurt or dead friend, mending only the one in hand.", tags: ["Grab Resonance"]))
             .Require(Core.Config.FriendSlugcat);
-        ResonanceWarp = addon.Bind("ResonanceWarp", false, new ConfigurableInfo("Warps eligible tracked Ripple Friends to the player's location upon resonance.", tags: ["Warp"]))
+        ResonanceWarp = addon.Bind("ResonanceWarp", false, new ConfigurableInfo("Warps eligible tracked friends to the player's location upon resonance.", tags: ["Warp"]))
             .RequireAny(ResonanceGate, ResonanceRoom);
-        ResonanceMend = addon.Bind("ResonanceMend", false, new ConfigurableInfo("Mends eligible tracked Ripple Friends upon resonance, closing their wounds and drawing out poison and cold, and bringing back the ones that have died.", tags: ["Mend"]))
+        ResonanceMend = addon.Bind("ResonanceMend", false, new ConfigurableInfo("Mends eligible tracked friends upon resonance, closing their wounds and drawing out poison and cold, and bringing back the ones that have died.", tags: ["Mend"]))
             .RequireAny(ResonanceGate, ResonanceRoom, ResonanceGrab);
-        ResonanceCost = addon.Bind("ResonanceCost", true, new ConfigurableInfo("A resonance demands a cost, which grows with the distance each Ripple Friend is called from and the time it has spent dead, and holds everyone who resonated still and out of breath.", tags: ["Cost"]))
+        ResonanceCost = addon.Bind("ResonanceCost", true, new ConfigurableInfo("A resonance demands a cost, which grows with the distance each friend is called from and the time it has spent dead, and holds everyone who resonated still and out of breath.", tags: ["Cost"]))
             .RequireAny(ResonanceWarp, ResonanceMend);
         ResonanceCostRatio = addon.Bind("ResonanceCostRatio", 1f, new ConfigurableInfo("Sets how much of the resonance cost is demanded. A value of 1 demands it in full, and 0 makes a resonance instant and free."))
             .Require(ResonanceCost);

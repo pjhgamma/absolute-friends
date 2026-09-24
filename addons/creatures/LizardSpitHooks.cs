@@ -1,8 +1,8 @@
 using MonoMod.Cil;
-using RippleFriends.Core;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Creatures;
+namespace AbsoluteFriends.Creatures;
 
 internal class LizardSpitHooks : BaseHooks
 {

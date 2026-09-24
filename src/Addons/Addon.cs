@@ -1,8 +1,8 @@
-using RippleFriends.Hooks;
-using RippleFriends.Options;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Options;
 using System.Reflection;
 
-namespace RippleFriends.Addons;
+namespace AbsoluteFriends.Addons;
 
 public sealed class Addon
 {
@@ -27,7 +27,7 @@ public sealed class Addon
         Name = plugin.Info.Metadata.Name;
         Version = plugin.Info.Metadata.Version.ToString();
         Author = mod?.authors ?? "";
-        RippleFriendsVersion = plugin.RippleFriendsVersion;
+        AbsoluteFriendsVersion = plugin.AbsoluteFriendsVersion;
         AddonDependencyIds = plugin.AddonDependencies;
         IsBuiltIn = mod != null && _host != null && mod.id == _host.id;
         AddonDescription = plugin.AddonDescription;
@@ -43,7 +43,7 @@ public sealed class Addon
         Name = mod.LocalizedName;
         Version = mod.version;
         Author = mod.authors == ModManager.Mod.authorBlank ? "" : mod.authors;
-        RippleFriendsVersion = "";
+        AbsoluteFriendsVersion = "";
         AddonDependencyIds = [];
         IsBuiltIn = false;
         AddonDescription = mod.LocalizedDescription;
@@ -61,13 +61,13 @@ public sealed class Addon
 
     public string Author { get; }
 
-    public string RippleFriendsVersion { get; }
+    public string AbsoluteFriendsVersion { get; }
 
     public bool IsBuiltIn { get; }
 
     public bool IsApplied => Plugin != null;
 
-    public bool IsMismatched => RippleFriendsVersion.Length > 0 && RippleFriendsVersion != RippleFriends.Plugin.Version;
+    public bool IsMismatched => AbsoluteFriendsVersion.Length > 0 && AbsoluteFriendsVersion != AbsoluteFriends.Plugin.Version;
 
     public string AddonDescription { get; }
 
@@ -97,7 +97,7 @@ public sealed class Addon
 
     public Configurable<bool>? Enabled { get; }
 
-    internal IEnumerable<string> Keywords => [Name, .. AddonDependencyIds.Select(AddonRegistry.NameOf), .. _keywords];
+    internal IEnumerable<string> Keywords => [Name, .. AddonDependencyIds.Select(AddonRegistry.RawNameOf), .. _keywords];
 
     internal bool HasMenu { get; }
 

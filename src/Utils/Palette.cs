@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace RippleFriends.Utils;
+namespace AbsoluteFriends.Utils;
 
 public static class Palette
 {

@@ -1,20 +1,20 @@
 using BepInEx;
-using RippleFriends.Diagnostics;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Hooks;
 using System.Security.Permissions;
 
 #pragma warning disable CS0618
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 #pragma warning restore CS0618
 
-namespace RippleFriends;
+namespace AbsoluteFriends;
 
 [BepInPlugin(GUID, Name, Version)]
 public class Plugin : BaseUnityPlugin
 {
-    public const string GUID = "pjhgamma.ripplefriends";
+    public const string GUID = "pjhgamma.absolutefriends";
 
-    public const string Name = "Ripple Friends";
+    public const string Name = "Absolute Friends";
 
     public const string Version = "0.1.3";
 

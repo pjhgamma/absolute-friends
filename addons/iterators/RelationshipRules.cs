@@ -1,8 +1,8 @@
-using RippleFriends.Core;
-using RippleFriends.Utils;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Utils;
 using Watcher;
 
-namespace RippleFriends.Iterators;
+namespace AbsoluteFriends.Iterators;
 
 internal static class RelationshipRules
 {

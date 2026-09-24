@@ -1,8 +1,8 @@
 using MonoMod.Cil;
-using RippleFriends.Core;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Items;
+namespace AbsoluteFriends.Items;
 
 internal class FlareBombHooks : BaseHooks
 {
@@ -10,7 +10,7 @@ internal class FlareBombHooks : BaseHooks
 
     [HookPatch(typeof(IL.FlareBomb), nameof(IL.FlareBomb.Update))]
     [HookTest([95, 98, 111], ["ldarg.0; ldfld PhysicalObject::abstractPhysicalObject", "beq.s; ldarg.0; ldfld UpdatableAndDeletable::room", "ldarg.0; call PhysicalObject::get_firstChunk"])]
-    private static void IL_FlareBomb_Update(ILContext il) => il.RippleBranch();
+    private static void IL_FlareBomb_Update(ILContext il) => il.FriendBranch();
 }
 
 internal class DownpourFlareBombHooks : DownpourHooks

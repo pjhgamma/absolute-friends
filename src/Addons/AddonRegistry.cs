@@ -1,18 +1,19 @@
-using RippleFriends.Diagnostics;
-using RippleFriends.Options;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 
-namespace RippleFriends.Addons;
+namespace AbsoluteFriends.Addons;
 
 internal static class AddonRegistry
 {
     private static readonly string[] _builtIn = [
-        "pjhgamma.ripplefriends.core",
-        "pjhgamma.ripplefriends.general",
-        "pjhgamma.ripplefriends.items",
-        "pjhgamma.ripplefriends.players",
-        "pjhgamma.ripplefriends.creatures",
-        "pjhgamma.ripplefriends.iterators",
-        "pjhgamma.ripplefriends.progression",
+        "pjhgamma.absolutefriends.core",
+        "pjhgamma.absolutefriends.general",
+        "pjhgamma.absolutefriends.items",
+        "pjhgamma.absolutefriends.players",
+        "pjhgamma.absolutefriends.creatures",
+        "pjhgamma.absolutefriends.iterators",
+        "pjhgamma.absolutefriends.progression",
     ];
 
     private static readonly List<Addon> _addons = [];
@@ -82,7 +83,9 @@ internal static class AddonRegistry
 
     internal static bool IsRunning(string id) => Find(id)?.Enabled?.IsActive == true;
 
-    internal static string NameOf(string id) => Find(id)?.Name ?? id;
+    internal static string NameOf(string id) => Translation.Of(RawNameOf(id));
+
+    internal static string RawNameOf(string id) => Find(id)?.Name ?? id;
 
     private static void BindDependencies()
     {

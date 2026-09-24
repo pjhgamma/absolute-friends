@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace RippleFriends.Core.Visualizer;
+namespace AbsoluteFriends.Core.Visualizer;
 
 internal abstract class TrackerOverlay<TTag> : CosmeticSprite, IOverlay
     where TTag : ITag

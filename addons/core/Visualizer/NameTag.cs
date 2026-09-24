@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace RippleFriends.Core.Visualizer;
+namespace AbsoluteFriends.Core.Visualizer;
 
 internal sealed class NameTag : ITag
 {

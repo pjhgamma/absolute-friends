@@ -1,6 +1,6 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 
-namespace RippleFriends.Core;
+namespace AbsoluteFriends.Core;
 
 public static class Config
 {
@@ -33,24 +33,24 @@ public static class Config
     internal static void Bind(Addon addon)
     {
         FriendSlugcat = addon.Bind("FriendSlugcat", true, new ConfigurableInfo(Options.Config.Downpour(
-            "Includes players as Ripple Friends, and a creature friendly to one player counts as a Ripple Friend of every player. Ripple Friends never try to attack one another.",
-            "Includes players and slugpups as Ripple Friends, and a creature friendly to one player counts as a Ripple Friend of every player. Ripple Friends never try to attack one another."
+            "Treats players as friends, shares their creature friendships, and keeps friends from targeting one another.",
+            "Treats players and slugpups as friends, shares their creature friendships, and keeps friends from targeting one another."
         ), tags: ["Slugcats"]));
-        FriendCreature = addon.Bind("FriendCreature", false, new ConfigurableInfo("Includes friendly creatures, such as lizards tamed by Ripple Friends and friendly scavengers, as Ripple Friends.", tags: ["Friendly Creatures"]));
-        FriendNeutralCreature = addon.Bind("FriendNeutralCreature", false, new ConfigurableInfo("Includes neutral creatures, such as neutralized lizards and rain deer, as Ripple Friends alongside friendly ones.", tags: ["Neutral Creatures"]))
+        FriendCreature = addon.Bind("FriendCreature", false, new ConfigurableInfo("Treats friendly creatures, such as tamed lizards and friendly scavengers, as friends.", tags: ["Friendly Creatures"]));
+        FriendNeutralCreature = addon.Bind("FriendNeutralCreature", false, new ConfigurableInfo("Treats neutral creatures, such as neutralized lizards and rain deer, as friends.", tags: ["Neutral Creatures"]))
             .Require(FriendCreature);
 
-        FriendChaining = addon.Bind("FriendChaining", false, new ConfigurableInfo("Includes the creature Ripple Friends of the same player as one another's Ripple Friends.", tags: ["Friend Chaining"]))
+        FriendChaining = addon.Bind("FriendChaining", false, new ConfigurableInfo("Treats a player's creature friends as friends with one another.", tags: ["Friend Chaining"]))
             .Require(FriendSlugcat);
-        FriendGrabbed = addon.Bind("FriendGrabbed", false, new ConfigurableInfo("Includes objects grabbed by Ripple Friends as well.", tags: ["Grabbed Objects"]))
+        FriendGrabbed = addon.Bind("FriendGrabbed", false, new ConfigurableInfo("Treats objects held by friends as friendly.", tags: ["Grabbed Objects"]))
             .Require(FriendSlugcat);
-        FriendGrabbedForce = addon.Bind("FriendGrabbedForce", true, new ConfigurableInfo("Temporarily excludes a grabbed creature from Ripple Friends while the player Ripple Friend holding it is entering a grab input.", tags: ["Force Grabbing"]))
+        FriendGrabbedForce = addon.Bind("FriendGrabbedForce", true, new ConfigurableInfo("Temporarily treats a held creature as not friendly while the player holding it enters a grab input.", tags: ["Force Grabbing"]))
             .Require(FriendGrabbed);
-        FriendArena = addon.Bind("FriendArena", false, new ConfigurableInfo("Activates the Ripple Friends relationship in the Arena.", tags: ["Arena"]));
+        FriendArena = addon.Bind("FriendArena", false, new ConfigurableInfo("Enables friendship rules in the Arena.", tags: ["Arena"]));
 
-        FriendLink = addon.Bind("FriendLink", false, new ConfigurableInfo("Draws a line between two things as the mod treats them as Ripple Friends.", tags: ["Friend Link"]));
-        FriendName = addon.Bind("FriendName", false, new ConfigurableInfo("Draws the name above every Ripple Friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.", tags: ["Friend Name"]));
-        FriendIcon = addon.Bind("FriendIcon", false, new ConfigurableInfo("Draws an icon above every Ripple Friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.", tags: ["Friend Icon"]));
+        FriendLink = addon.Bind("FriendLink", false, new ConfigurableInfo("Draws a line between two things as the mod treats them as friends.", tags: ["Friend Link"]));
+        FriendName = addon.Bind("FriendName", false, new ConfigurableInfo("Draws the name above every friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.", tags: ["Friend Name"]));
+        FriendIcon = addon.Bind("FriendIcon", false, new ConfigurableInfo("Draws an icon above every friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.", tags: ["Friend Icon"]));
         OwnerLink = addon.Bind("OwnerLink", false, new ConfigurableInfo("Draws a line between each object and its owning creature, thickest at the owner's end.", tags: ["Owner Link"]));
         OwnerName = addon.Bind("OwnerName", false, new ConfigurableInfo("Draws the owner's name above everything in view that has an owner.", tags: ["Owner Name"]));
         OwnerIcon = addon.Bind("OwnerIcon", false, new ConfigurableInfo("Draws the owner's icon above everything in view that has an owner.", tags: ["Owner Icon"]));

@@ -1,8 +1,8 @@
 using MonoMod.Cil;
-using RippleFriends.Core;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Items;
+namespace AbsoluteFriends.Items;
 
 internal class FirecrackerPlantHooks : BaseHooks
 {
@@ -10,7 +10,7 @@ internal class FirecrackerPlantHooks : BaseHooks
 
     [HookPatch(typeof(IL.FirecrackerPlant), nameof(IL.FirecrackerPlant.PopLump))]
     [HookTest([170, 173, 186, 285], ["ldarg.0; ldfld PhysicalObject::abstractPhysicalObject", "beq.s; ldarg.0; ldfld UpdatableAndDeletable::room", "ldarg.0; ldfld UpdatableAndDeletable::room", "newobj ScareObject::.ctor"])]
-    private static void IL_FirecrackerPlant_PopLump(ILContext il) => il.RippleBranch();
+    private static void IL_FirecrackerPlant_PopLump(ILContext il) => il.FriendBranch();
 
     [HookPatch(typeof(IL.FirecrackerPlant), nameof(IL.FirecrackerPlant.HitByExplosion))]
     [HookTest([8], ["ldarg.0; call FirecrackerPlant::Ignite"])]
@@ -23,5 +23,5 @@ internal class DownpourFirecrackerPlantHooks : DownpourHooks
 
     [HookPatch(typeof(IL.JokeRifle), nameof(IL.JokeRifle.Use))]
     [HookTest([367, 370, 383, 488], ["ldarg.0; ldfld PhysicalObject::abstractPhysicalObject", "beq.s; ldarg.0; ldfld UpdatableAndDeletable::room", "ldarg.0; ldfld UpdatableAndDeletable::room", "newobj ScareObject::.ctor"])]
-    private static void IL_JokeRifle_Use(ILContext il) => il.RippleBranch();
+    private static void IL_JokeRifle_Use(ILContext il) => il.FriendBranch();
 }

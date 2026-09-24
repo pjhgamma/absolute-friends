@@ -1,26 +1,26 @@
 using BepInEx;
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 using System.Security.Permissions;
 
 #pragma warning disable CS0618
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 #pragma warning restore CS0618
 
-namespace RippleFriends.Iterators;
+namespace AbsoluteFriends.Iterators;
 
-[BepInPlugin(GUID, Name, RippleFriends.Plugin.Version)]
+[BepInPlugin(GUID, Name, AbsoluteFriends.Plugin.Version)]
 [BepInDependency(Core.Plugin.GUID)]
 public class Plugin : AddonPlugin
 {
-    public const string GUID = "pjhgamma.ripplefriends.iterators";
+    public const string GUID = "pjhgamma.absolutefriends.iterators";
 
-    public const string Name = "Ripple Friends: Iterators";
+    public const string Name = "Absolute Friends: Iterators";
 
-    public override string AddonDescription => "Controls interactions with Iterators that are Ripple Friends.";
+    public override string AddonDescription => "Controls interactions with iterators.";
 
     public override string[] AddonDependencies => [Core.Plugin.GUID];
 
-    public override string RippleFriendsVersion => RippleFriends.Plugin.Version;
+    public override string AbsoluteFriendsVersion => AbsoluteFriends.Plugin.Version;
 
     protected override void Bind(Addon addon) => Iterators.Config.Bind(addon);
 

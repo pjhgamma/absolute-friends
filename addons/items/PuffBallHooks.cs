@@ -1,8 +1,8 @@
 using MonoMod.Cil;
-using RippleFriends.Core;
-using RippleFriends.Hooks;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Hooks;
 
-namespace RippleFriends.Items;
+namespace AbsoluteFriends.Items;
 
 internal class DownpourPuffBallHooks : DownpourHooks
 {

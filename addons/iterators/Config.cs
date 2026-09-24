@@ -1,6 +1,6 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 
-namespace RippleFriends.Iterators;
+namespace AbsoluteFriends.Iterators;
 
 internal static class Config
 {
@@ -14,13 +14,13 @@ internal static class Config
 
     public static void Bind(Addon addon)
     {
-        Moon = addon.Bind("Moon", false, new ConfigurableInfo("Will not lower the opinion of Moon Ripple Friend, nor make her refuse to speak.", tags: ["Moon"]))
+        Moon = addon.Bind("Moon", false, new ConfigurableInfo("Prevents players from lowering Moon's opinion or making her refuse to speak.", tags: ["Moon"]))
             .Require(Core.Config.FriendSlugcat);
-        MoonNeuron = addon.Bind("MoonNeuron", false, new ConfigurableInfo("Will not steal the Neurons of Moon Ripple Friend.", tags: ["Moon Neuron"]))
+        MoonNeuron = addon.Bind("MoonNeuron", false, new ConfigurableInfo("Prevents players from stealing Moon's neurons.", tags: ["Moon Neuron"]))
             .Require(Core.Config.FriendSlugcat);
-        Pebbles = addon.Bind("Pebbles", false, new ConfigurableInfo("Will not be killed by Pebbles Ripple Friend.", tags: ["Pebbles"]))
+        Pebbles = addon.Bind("Pebbles", false, new ConfigurableInfo("Prevents Pebbles from killing friends.", tags: ["Pebbles"]))
             .Require(Core.Config.FriendSlugcat);
-        PebblesPearl = addon.Bind("PebblesPearl", false, new ConfigurableInfo("Will not steal the pearl of Pebbles Ripple Friend.", tags: ["Pebbles Pearl"]))
+        PebblesPearl = addon.Bind("PebblesPearl", false, new ConfigurableInfo("Prevents players from stealing Pebbles' pearl.", tags: ["Pebbles Pearl"]))
             .Require(Core.Config.FriendSlugcat);
     }
 }

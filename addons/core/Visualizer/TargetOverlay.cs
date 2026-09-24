@@ -1,7 +1,7 @@
-using RippleFriends.Options;
+using AbsoluteFriends.Options;
 using UnityEngine;
 
-namespace RippleFriends.Core.Visualizer;
+namespace AbsoluteFriends.Core.Visualizer;
 
 internal abstract class TargetOverlay(UpdatableAndDeletable updatableAndDeletable) : CosmeticSprite, IOverlay
 {

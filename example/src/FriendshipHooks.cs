@@ -1,11 +1,11 @@
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using RippleFriends.Core;
-using RippleFriends.Diagnostics;
-using RippleFriends.Hooks;
-using RippleFriends.Options;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Options;
 
-namespace RippleFriendsExample;
+namespace AbsoluteFriendsExample;
 
 internal sealed class FriendshipHooks : DownpourHooks
 {

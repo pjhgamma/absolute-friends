@@ -1,6 +1,6 @@
 using Menu.Remix.MixedUI;
 
-namespace RippleFriends.Options;
+namespace AbsoluteFriends.Options;
 
 public abstract partial class MenuBuilder
 {
