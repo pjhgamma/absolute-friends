@@ -26,14 +26,20 @@ public static class FriendUtils
     {
         get
         {
-            if (!Config.FriendSlugcat.IsActive || !IsFriendSession)
+            if (!IsFriendSession)
             {
                 yield break;
             }
 
             foreach (var abstractCreature in _friendSet)
             {
-                if (abstractCreature.FriendshipRuleResult ?? (abstractCreature.IsSlugcat || Config.FriendCreature.IsActive))
+                if (abstractCreature.FriendshipRuleResult
+                    ?? (
+                        abstractCreature.IsSlugcat
+                        ? Config.FriendSlugcat.IsActive && abstractCreature.FriendshipRuleResult != false
+                        : Config.FriendCreature.IsActive
+                    )
+                )
                 {
                     yield return abstractCreature;
                 }
@@ -250,6 +256,11 @@ public static class FriendUtils
                 return true;
             }
 
+            if (!Config.FriendSharing.IsActive)
+            {
+                return direct;
+            }
+
             foreach (var sharedSlugcat in TrackedSlugcats)
             {
                 if (sharedSlugcat == abstractSlugcat || source.IsScavengerArtificerPair(sharedSlugcat))
@@ -340,12 +351,25 @@ public static class FriendUtils
                 abstractCreature = source;
             }
 
-            if (Config.FriendSlugcat.IsActive && abstractSlugcat != null && abstractCreature?.IsCreatureFriend(abstractSlugcat) is { } isCreatureFriend)
+            if (abstractSlugcat != null && abstractCreature != null)
             {
-                return isCreatureFriend;
+                if (!Config.FriendSlugcat.IsActive && abstractCreature.IsSlugcat)
+                {
+                    return false;
+                }
+
+                if (abstractCreature.IsCreatureFriend(abstractSlugcat) is { } isCreatureFriend)
+                {
+                    return isCreatureFriend;
+                }
             }
 
-            return Config.FriendChaining.IsActive && chaining && !source.IsPlayer && !target.IsPlayer && source.IsChainedFriend(target);
+            return Config.FriendChaining.IsActive
+                && chaining
+                && !source.IsPlayer
+                && !target.IsPlayer
+                && (Config.FriendSlugcat.IsActive || (!source.IsSlugcat && !target.IsSlugcat))
+                && source.IsChainedFriend(target);
         }
     }
 

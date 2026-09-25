@@ -16,6 +16,7 @@ internal static class Menu
 
         menu.AddTitle("Extended");
         menu.SetColumns(4);
+        menu.AddCheckBox(Config.FriendSharing);
         menu.AddCheckBox(Config.FriendChaining);
         menu.AddCheckBox(Config.FriendGrabbed);
         menu.AddCheckBox(Config.FriendGrabbedForce);

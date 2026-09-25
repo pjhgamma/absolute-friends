@@ -51,26 +51,21 @@ internal static class Config
             "Shelters and karma gates forcefully activate, ignoring non-player friends.",
             "Shelters, karma gates, and warp points forcefully activate, ignoring non-player friends."
         ), tags: ["Gate Force"]))
-            .Require(Core.Config.FriendSlugcat, Gate);
+            .Require(Gate);
         GateForceTime = addon.Bind("GateForceTime", 3f, new ConfigurableInfo(Options.Config.Watcher(
             "Sets how much longer (in seconds) the player must go without control input for shelters and karma gates to forcefully activate, ignoring non-player friends.",
             "Sets how much longer (in seconds) the player must go without control input for shelters, karma gates, and warp points to forcefully activate, ignoring non-player friends."
         )))
             .Require(GateForce);
-        Passage = addon.Bind("Passage", false, new ConfigurableInfo("Tracked friends that survive the cycle travel with the player from anywhere in the world, even through a passage.", tags: ["Passages"]))
-            .Require(Core.Config.FriendSlugcat);
-        TempleGuard = addon.Bind("TempleGuard", false, new ConfigurableInfo("Will not draw a guardian's attention, nor be moved by its telekinesis, while a player friend holds the karma required to pass.", tags: ["Guardian"]))
-            .Require(Core.Config.FriendSlugcat);
+        Passage = addon.Bind("Passage", false, new ConfigurableInfo("Tracked friends that survive the cycle travel with the player from anywhere in the world, even through a passage.", tags: ["Passages"]));
+        TempleGuard = addon.Bind("TempleGuard", false, new ConfigurableInfo("Will not draw a guardian's attention, nor be moved by its telekinesis, while a player friend holds the karma required to pass.", tags: ["Guardian"]));
 
         ResonanceGate = addon.Bind("ResonanceGate", false, new ConfigurableInfo(Options.Config.Watcher(
             "Automatically resonates as a shelter or a karma gate closes, or as a karma room activates.",
             "Automatically resonates as a shelter or a karma gate closes, or as a karma room or a warp point activates."
-        ), tags: ["Gate Resonance"]))
-            .Require(Core.Config.FriendSlugcat);
-        ResonanceRoom = addon.Bind("ResonanceRoom", false, new ConfigurableInfo("Resonates by holding the jump key while every player friend gathers in one room, reaching only the friends in that room, or every tracked one when they gather at a gate and Gate Resonance is enabled.", tags: ["Room Resonance"]))
-            .Require(Core.Config.FriendSlugcat);
-        ResonanceGrab = addon.Bind("ResonanceGrab", false, new ConfigurableInfo("Resonates by holding the jump key while a player friend grabs a hurt or dead friend, mending only the one in hand.", tags: ["Grab Resonance"]))
-            .Require(Core.Config.FriendSlugcat);
+        ), tags: ["Gate Resonance"]));
+        ResonanceRoom = addon.Bind("ResonanceRoom", false, new ConfigurableInfo("Resonates by holding the jump key while every player friend gathers in one room, reaching only the friends in that room, or every tracked one when they gather at a gate and Gate Resonance is enabled.", tags: ["Room Resonance"]));
+        ResonanceGrab = addon.Bind("ResonanceGrab", false, new ConfigurableInfo("Resonates by holding the jump key while a player friend grabs a hurt or dead friend, mending only the one in hand.", tags: ["Grab Resonance"]));
         ResonanceWarp = addon.Bind("ResonanceWarp", false, new ConfigurableInfo("Warps eligible tracked friends to the player's location upon resonance.", tags: ["Warp"]))
             .RequireAny(ResonanceGate, ResonanceRoom);
         ResonanceMend = addon.Bind("ResonanceMend", false, new ConfigurableInfo("Mends eligible tracked friends upon resonance, closing their wounds and drawing out poison and cold, and bringing back the ones that have died.", tags: ["Mend"]))

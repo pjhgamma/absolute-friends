@@ -79,8 +79,8 @@ Friendship applies in both directions, but nothing counts as its own friend.|친
 
 Base|기본
 Slugcats|슬러그캣
-Treats players as friends, shares their creature friendships, and keeps friends from targeting one another.|플레이어를 친구로 취급하고, 생물과의 친구 관계를 공유하며, 친구들이 서로를 노리지 않게 합니다.
-Treats players and slugpups as friends, shares their creature friendships, and keeps friends from targeting one another.|플레이어와 슬러그펍을 친구로 취급하고, 생물과의 친구 관계를 공유하며, 친구들이 서로를 노리지 않게 합니다.
+Treats players as friends and keeps friends from targeting one another.|플레이어를 친구로 취급하고, 친구들이 서로를 노리지 않게 합니다.
+Treats players and slugpups as friends and keeps friends from targeting one another.|플레이어와 슬러그펍을 친구로 취급하고, 친구들이 서로를 노리지 않게 합니다.
 Friendly Creatures|우호적인 생물
 Treats friendly creatures, such as tamed lizards and friendly scavengers, as friends.|길들인 도마뱀과 우호적인 스캐빈저 등 우호적인 생물을 친구로 취급합니다.
 Neutral Creatures|중립적인 생물
@@ -88,6 +88,8 @@ Treats neutral creatures, such as neutralized lizards and rain deer, as friends.
 
 Extended|확장
 Relationship|관계
+Friend Sharing|친구 공유
+Shares a creature's friendship, like, and reputation toward one slugcat with the others.|한 슬러그캣을 향한 생물의 친구 관계와 호감도, 평판을 다른 슬러그캣과 공유합니다.
 Friend Chaining|친구 연결
 Treats a player's creature friends as friends with one another.|한 플레이어의 생물 친구들을 서로의 친구로 취급합니다.
 Grabbed Objects|소지물

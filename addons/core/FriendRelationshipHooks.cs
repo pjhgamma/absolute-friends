@@ -6,7 +6,7 @@ namespace AbsoluteFriends.Core;
 
 internal class FriendRelationshipHooks : BaseHooks
 {
-    protected override Configurable<bool>[] Options => [Config.FriendSlugcat];
+    protected override Configurable<bool>[] Options => [Config.FriendSlugcat, Config.FriendCreature, Config.FriendChaining];
 
     protected override string? Subject => "Relationship";
 

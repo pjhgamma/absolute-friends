@@ -18,7 +18,7 @@ internal static class AddonConfig
     {
         // Addon.Bind makes settings profile-aware. Require affects both the UI and runtime IsActive checks.
         Friendship = addon.Bind("Friendship", true, new ConfigurableInfo("Treats Hunter Long Legs as a friend of players.", tags: ["Hunter Long Legs"]))
-            .Require(AbsoluteFriends.Core.Config.FriendSlugcat);
+            .Require(AbsoluteFriends.Core.Config.FriendCreature);
         AggressiveHunter = addon.Bind("AggressiveHunter", true, new ConfigurableInfo("Preserves Hunter's hostile relationship with Hunter Long Legs.", tags: ["Aggressive Hunter"]))
             .Require(Friendship);
         HunterDaddyOwnership = addon.Bind("HunterDaddyOwnership", true, new ConfigurableInfo("Makes Hunter Long Legs own anything held by its tentacles.", tags: ["Tentacle Ownership"]));

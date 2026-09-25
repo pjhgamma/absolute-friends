@@ -10,6 +10,8 @@ public static class Config
 
     public static Configurable<bool> FriendNeutralCreature = null!;
 
+    public static Configurable<bool> FriendSharing = null!;
+
     public static Configurable<bool> FriendChaining = null!;
 
     public static Configurable<bool> FriendGrabbed = null!;
@@ -33,17 +35,17 @@ public static class Config
     internal static void Bind(Addon addon)
     {
         FriendSlugcat = addon.Bind("FriendSlugcat", true, new ConfigurableInfo(Options.Config.Downpour(
-            "Treats players as friends, shares their creature friendships, and keeps friends from targeting one another.",
-            "Treats players and slugpups as friends, shares their creature friendships, and keeps friends from targeting one another."
+            "Treats players as friends and keeps friends from targeting one another.",
+            "Treats players and slugpups as friends and keeps friends from targeting one another."
         ), tags: ["Slugcats"]));
         FriendCreature = addon.Bind("FriendCreature", false, new ConfigurableInfo("Treats friendly creatures, such as tamed lizards and friendly scavengers, as friends.", tags: ["Friendly Creatures"]));
         FriendNeutralCreature = addon.Bind("FriendNeutralCreature", false, new ConfigurableInfo("Treats neutral creatures, such as neutralized lizards and rain deer, as friends.", tags: ["Neutral Creatures"]))
             .Require(FriendCreature);
 
-        FriendChaining = addon.Bind("FriendChaining", false, new ConfigurableInfo("Treats a player's creature friends as friends with one another.", tags: ["Friend Chaining"]))
-            .Require(FriendSlugcat);
-        FriendGrabbed = addon.Bind("FriendGrabbed", false, new ConfigurableInfo("Treats objects held by friends as friendly.", tags: ["Grabbed Objects"]))
-            .Require(FriendSlugcat);
+        FriendSharing = addon.Bind("FriendSharing", true, new ConfigurableInfo("Shares a creature's friendship, like, and reputation toward one slugcat with the others.", tags: ["Friend Sharing"]))
+            .Require(FriendCreature);
+        FriendChaining = addon.Bind("FriendChaining", false, new ConfigurableInfo("Treats a player's creature friends as friends with one another.", tags: ["Friend Chaining"]));
+        FriendGrabbed = addon.Bind("FriendGrabbed", false, new ConfigurableInfo("Treats objects held by friends as friendly.", tags: ["Grabbed Objects"]));
         FriendGrabbedForce = addon.Bind("FriendGrabbedForce", true, new ConfigurableInfo("Temporarily treats a held creature as not friendly while the player holding it enters a grab input.", tags: ["Force Grabbing"]))
             .Require(FriendGrabbed);
         FriendArena = addon.Bind("FriendArena", false, new ConfigurableInfo("Enables friendship rules in the Arena.", tags: ["Arena"]));

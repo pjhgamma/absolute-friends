@@ -8,7 +8,7 @@ internal class FriendMemoryHooks : BaseHooks
 {
     private static readonly ConditionalWeakTable<SocialMemory.Relationship, SocialMemory> _relationshipMemories = new();
 
-    protected override Configurable<bool>[] Options => [Config.FriendSlugcat];
+    protected override Configurable<bool>[] Options => [Config.FriendSharing];
 
     private static IEnumerable<int> SharedPlayerNumbers(CreatureCommunities communities, int playerNumber)
     {
