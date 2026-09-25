@@ -34,10 +34,21 @@ internal class FriendTrackerHooks : BaseHooks
             return;
         }
 
-        if (Config.FriendSlugcat.IsActive || Config.FriendCreature.IsActive)
+        if (abstractCreature.IsNPC)
         {
-            self.AdoptSlugcatFriend();
+            if (self.friend?.abstractCreature is { } abstractPlayer && abstractPlayer.IsPlayer && !abstractPlayer.slatedForDeletion && abstractPlayer.state?.dead != true)
+            {
+                abstractCreature.TrackPupFriend(abstractPlayer);
+            }
+            else if (!abstractCreature.HasRemotePupFriend)
+            {
+                abstractCreature.Untrack();
+            }
+
+            return;
         }
+
+        self.AdoptSlugcatFriend();
 
         if (self.HasSlugcatFriend || abstractCreature.IsFriendOfPlayer)
         {

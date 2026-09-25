@@ -14,11 +14,15 @@ public static class FriendUtils
 
     private static readonly AddonLogger _logger = Reporter.GetLogger(Plugin.Name);
 
-    private static readonly HashSet<AbstractCreature> _friendSet = [];
+    private static readonly HashSet<AbstractCreature> _trackedCreatures = [];
 
     private static readonly List<Func<AbstractCreature, AbstractCreature, bool?>> _friendshipRules = [];
 
-    private static readonly ConditionalWeakTable<FriendTracker, SocialMemory.Relationship> _adoptedFriendRelationships = new();
+    private static readonly ConditionalWeakTable<FriendTracker, SocialMemory.Relationship> _adoptedRelationships = new();
+
+    private static ConditionalWeakTable<AbstractCreature, HashSet<EntityID>> _trackedPlayerIds = new();
+
+    private static ConditionalWeakTable<AbstractCreature, HashSet<EntityID>> _pupFriendIds = new();
 
     public static bool IsFriendSession => Config.FriendArena.IsActive || RainWorldUtils.CurrentGame?.IsArenaSession == false;
 
@@ -31,7 +35,7 @@ public static class FriendUtils
                 yield break;
             }
 
-            foreach (var abstractCreature in _friendSet)
+            foreach (var abstractCreature in _trackedCreatures)
             {
                 if (abstractCreature.FriendshipRuleResult
                     ?? (
@@ -80,7 +84,7 @@ public static class FriendUtils
                 yield return abstractPlayer;
             }
 
-            foreach (var abstractCreature in _friendSet)
+            foreach (var abstractCreature in _trackedCreatures)
             {
                 if (abstractCreature.IsSlugcat)
                 {
@@ -102,7 +106,19 @@ public static class FriendUtils
 
     public static void UnregisterFriendshipRule(Func<AbstractCreature, AbstractCreature, bool?> rule) => _friendshipRules.Remove(rule);
 
-    private static bool TryGetFriendLikes(SocialMemory socialMemory, EntityID subjectID, out float like, out float tempLike)
+    internal static void ClearTrackedFriends()
+    {
+        _trackedCreatures.Clear();
+        _trackedPlayerIds = new();
+        _pupFriendIds = new();
+    }
+
+    internal static void PruneTrackedFriends() => _trackedCreatures.RemoveWhere(abstractCreature =>
+        (abstractCreature.slatedForDeletion && abstractCreature.state?.dead != true)
+        || abstractCreature.world != RainWorldUtils.CurrentGame?.world
+    );
+
+    private static bool TryGetFriendlyLikes(SocialMemory socialMemory, EntityID subjectID, out float like, out float tempLike)
     {
         like = socialMemory.GetLike(subjectID);
         tempLike = socialMemory.GetTempLike(subjectID);
@@ -121,7 +137,18 @@ public static class FriendUtils
         {
             if (source is { } abstractCreature and not AbstractOwner)
             {
-                _friendSet.Add(abstractCreature);
+                _trackedCreatures.Add(abstractCreature);
+
+                HashSet<EntityID> playerIds = _trackedPlayerIds.GetOrCreateValue(abstractCreature);
+
+                playerIds.Clear();
+                foreach (var abstractPlayer in Players)
+                {
+                    if (abstractCreature.IsFriend(abstractPlayer))
+                    {
+                        playerIds.Add(abstractPlayer.ID);
+                    }
+                }
             }
         }
 
@@ -129,8 +156,64 @@ public static class FriendUtils
         {
             if (source is { } abstractCreature)
             {
-                _friendSet.Remove(abstractCreature);
+                _trackedCreatures.Remove(abstractCreature);
+                _trackedPlayerIds.Remove(abstractCreature);
+                _pupFriendIds.Remove(abstractCreature);
             }
+        }
+
+        internal void TrackPupFriend(AbstractCreature abstractPlayer)
+        {
+            if (source is not { } abstractPup || !abstractPup.IsNPC || !abstractPlayer.IsPlayer)
+            {
+                return;
+            }
+
+            _pupFriendIds.GetOrCreateValue(abstractPup).Add(abstractPlayer.ID);
+            abstractPup.Track();
+        }
+
+        internal bool HasRemotePupFriend
+        {
+            get
+            {
+                if (source == null || !_trackedCreatures.Contains(source) || !_pupFriendIds.TryGetValue(source, out HashSet<EntityID> playerIds))
+                {
+                    return false;
+                }
+
+                foreach (var abstractPlayer in Players)
+                {
+                    if (
+                        playerIds.Contains(abstractPlayer.ID)
+                        && source.state?.socialMemory?.GetRelationship(abstractPlayer.ID) is { like: > FriendLikeThreshold, tempLike: > FriendLikeThreshold }
+                        && (abstractPlayer.realizedCreature == null || source.pos.room != abstractPlayer.pos.room)
+                    )
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        public bool IsTrackedFor(AbstractCreature? abstractPlayer)
+        {
+            if (source == null || abstractPlayer == null || !_trackedCreatures.Contains(source))
+            {
+                return false;
+            }
+
+            if (source.IsFriend(abstractPlayer))
+            {
+                return true;
+            }
+
+            return source.abstractAI?.RealAI == null
+                && source.EvaluateFriendshipRules(abstractPlayer) != false
+                && _trackedPlayerIds.TryGetValue(source, out HashSet<EntityID> playerIds)
+                && playerIds.Contains(abstractPlayer.ID);
         }
 
         public bool Likes(AbstractCreature? target)
@@ -140,7 +223,7 @@ public static class FriendUtils
                 return false;
             }
 
-            return TryGetFriendLikes(socialMemory, target.ID, out _, out _);
+            return TryGetFriendlyLikes(socialMemory, target.ID, out _, out _);
         }
 
         private float? GetReputation(AbstractCreature? target)
@@ -382,8 +465,26 @@ public static class FriendUtils
             if (
                 tracker is not { } friendTracker
                 || friendTracker.AI?.creature is not { } abstractCreature
-                || abstractCreature.state?.socialMemory is not { } socialMemory
             )
+            {
+                return;
+            }
+
+            bool adopted = _adoptedRelationships.TryGetValue(friendTracker, out SocialMemory.Relationship adoptedRelationship)
+                && ReferenceEquals(friendTracker.friendRel, adoptedRelationship);
+
+            if (!Config.FriendSharing.IsActive || abstractCreature.state?.socialMemory is not { } socialMemory)
+            {
+                if (adopted)
+                {
+                    friendTracker.friend = null;
+                    friendTracker.friendRel = null;
+                }
+
+                return;
+            }
+
+            if (!adopted && (friendTracker.friend != null || friendTracker.friendRel != null))
             {
                 return;
             }
@@ -400,12 +501,12 @@ public static class FriendUtils
                     continue;
                 }
 
-                if (!TryGetFriendLikes(socialMemory, abstractSlugcat.ID, out float like, out float tempLike))
+                if (!TryGetFriendlyLikes(socialMemory, abstractSlugcat.ID, out float like, out float tempLike))
                 {
                     continue;
                 }
 
-                SocialMemory.Relationship relationship = _adoptedFriendRelationships.GetValue(friendTracker, _ => new(abstractSlugcat.ID));
+                SocialMemory.Relationship relationship = _adoptedRelationships.GetValue(friendTracker, _ => new(abstractSlugcat.ID));
 
                 relationship.subjectID = abstractSlugcat.ID;
                 relationship.like = like;
@@ -417,7 +518,7 @@ public static class FriendUtils
                 return;
             }
 
-            if (friendTracker.friend.IsSlugcat)
+            if (adopted)
             {
                 friendTracker.friend = null;
                 friendTracker.friendRel = null;
@@ -561,8 +662,4 @@ public static class FriendUtils
             }
         }
     }
-
-    internal static void ClearTrackedFriends() => _friendSet.Clear();
-
-    internal static void PruneTrackedFriends() => _friendSet.RemoveWhere(abstractCreature => abstractCreature.slatedForDeletion || abstractCreature.world != RainWorldUtils.CurrentGame?.world);
 }
