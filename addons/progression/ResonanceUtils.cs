@@ -474,6 +474,11 @@ internal static class ResonanceUtils
         {
             List<AbstractCreature> abstractPlayers = room.game?.AlivePlayers ?? [];
 
+            if (!Core.Config.FriendSlugcat.IsActive)
+            {
+                return [.. abstractPlayers.Where(abstractPlayer => abstractPlayer?.realizedCreature is Player player && predicate(player))];
+            }
+
             if (!isUngathered && abstractPlayers.Any(abstractPlayer => abstractPlayer?.realizedCreature is not Player player || !predicate(player)))
             {
                 return [];
@@ -482,10 +487,15 @@ internal static class ResonanceUtils
             return [.. abstractPlayers];
         }
 
-        private IEnumerable<AbstractCreature> Candidates(Func<Creature, bool> predicate, ResonanceType type)
+        private IEnumerable<AbstractCreature> Candidates(List<AbstractCreature> resonators, Func<Creature, bool> predicate, ResonanceType type)
         {
             foreach (var abstractCreature in FriendUtils.TrackedFriendsIncludingPlayers)
             {
+                if (!Core.Config.FriendSlugcat.IsActive && !resonators.Any(abstractPlayer => abstractCreature.IsTrackedFor(abstractPlayer)))
+                {
+                    continue;
+                }
+
                 if (type == ResonanceType.Ungathered && !abstractCreature.IsInRoom(room))
                 {
                     continue;
@@ -500,7 +510,7 @@ internal static class ResonanceUtils
 
         private List<AbstractCreature> Resonatees(List<AbstractCreature> resonators, Func<Creature, bool> predicate, ResonanceType type, out ResonanceProfile profile)
         {
-            List<AbstractCreature> candidates = [.. room.Candidates(predicate, type)];
+            List<AbstractCreature> candidates = [.. room.Candidates(resonators, predicate, type)];
             ResonanceProfile baseProfile = candidates.Union(resonators).Profile;
 
             profile = baseProfile;
@@ -592,6 +602,12 @@ internal static class ResonanceUtils
             Room room = resonanceAnchor.room;
             Func<Creature, bool> predicate = resonanceAnchor.Predicate;
             List<AbstractCreature> resonators = room.Resonators(predicate);
+
+            if (!Core.Config.FriendSlugcat.IsActive)
+            {
+                resonators.RemoveAll(abstractPlayer => abstractPlayer.realizedCreature is not Player player || !player.IsResonating);
+            }
+
             ResonanceType type = room.IsGathered(resonators) ? ResonanceType.Gathered : ResonanceType.Ungathered;
             List<AbstractCreature> resonatees = room.Resonatees(resonators, predicate, type, out ResonanceProfile profile);
 
@@ -603,7 +619,7 @@ internal static class ResonanceUtils
                 return false;
             }
 
-            HashSet<Player> players = room.game?.AlivePlayers.Select(abstractPlayer => abstractPlayer.realizedCreature).OfType<Player>().ToHashSet() ?? [];
+            HashSet<Player> players = [.. resonators.Select(abstractPlayer => abstractPlayer.realizedCreature).OfType<Player>()];
 
             if (!resonanceAnchor.Players.SetEquals(players) || !players.All(player => player.IsResonating))
             {
@@ -652,6 +668,7 @@ internal static class ResonanceUtils
                     if (
                         grabbed.abstractPhysicalObject is not AbstractCreature abstractCreature
                         || !abstractCreature.IsTracked
+                        || (!Core.Config.FriendSlugcat.IsActive && !abstractCreature.IsTrackedFor(abstractPlayer))
                         || !abstractCreature.IsInRoom(room)
                         || !held.Add(abstractCreature))
                     {

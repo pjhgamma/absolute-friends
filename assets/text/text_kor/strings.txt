@@ -287,9 +287,9 @@ Gate Resonance|게이트 공명
 Automatically resonates as a shelter or a karma gate closes, or as a karma room activates.|피난처나 카르마 게이트가 닫힐 때, 또는 카르마 방이 작동할 때 자동으로 공명합니다.
 Automatically resonates as a shelter or a karma gate closes, or as a karma room or a warp point activates.|피난처나 카르마 게이트가 닫힐 때, 또는 카르마 방이나 워프 포인트가 작동할 때 자동으로 공명합니다.
 Room Resonance|방 공명
-Resonates by holding the jump key while every player friend gathers in one room, reaching only the friends in that room, or every tracked one when they gather at a gate and Gate Resonance is enabled.|친구인 플레이어가 모두 한 방에 모였을 때 점프 키를 꾹 눌러 그 방 안의 친구와 공명하며, 게이트 공명이 켜진 채 게이트에 모였다면 추적되는 모든 친구와 공명합니다.
+Resonates with friends in the room while the player holds the jump key. With Slugcats off, one player reaches only their own friends. At a gate, Gate Resonance reaches tracked friends anywhere.|플레이어가 점프 키를 꾹 누르고 있는 동안, 방 안의 친구와 공명합니다. 슬러그캣 옵션이 꺼져 있으면 플레이어 한 명만으로도 공명할 수 있지만 자신의 친구에게만 닿습니다. 게이트에서는 게이트 공명으로 어디에 있든 추적되는 친구에게 닿습니다.
 Grab Resonance|잡기 공명
-Resonates by holding the jump key while a player friend grabs a hurt or dead friend, mending only the one in hand.|친구인 플레이어가 다치거나 죽은 친구를 잡고 있을 때 점프 키를 꾹 눌러 잡은 친구와 공명합니다.
+Mends only the hurt or dead friend being grabbed while the player holds the jump key. With Slugcats off, it must be the holder's own friend.|플레이어가 점프 키를 꾹 누르고 있는 동안, 그 플레이어가 잡고 있는 다치거나 죽은 친구만 회복하거나 되살립니다. 슬러그캣 옵션이 꺼져 있으면 그 친구는 잡은 플레이어 자신의 친구여야 합니다.
 Warp|순간이동
 Warps eligible tracked friends to the player's location upon resonance.|공명 시 추적되는 친구를 플레이어의 곁으로 불러옵니다.
 Mend|회복
