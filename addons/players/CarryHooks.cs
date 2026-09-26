@@ -7,9 +7,12 @@ internal class CarryHooks : BaseHooks
 {
     protected override Configurable<bool>[] Options => [Config.Carry];
 
-    private static bool IsCarried(PhysicalObject? obj)
+    private static bool IsCarried(Player player, PhysicalObject? obj)
     {
-        return obj is Creature { dead: false, Template.smallCreature: false } and not Player && obj.IsTracked;
+        return obj is Creature { dead: false, Template.smallCreature: false } creature
+            && creature is not Player
+            && creature.IsTracked
+            && creature.abstractCreature.IsTrackedFor(player.abstractCreature);
     }
 
     [HookPatch(typeof(On.Player), nameof(On.Player.Grabability))]
@@ -17,12 +20,12 @@ internal class CarryHooks : BaseHooks
     {
         Player.ObjectGrabability grabability = orig(self, obj);
 
-        return grabability == Player.ObjectGrabability.CantGrab && IsCarried(obj) ? Player.ObjectGrabability.Drag : grabability;
+        return grabability == Player.ObjectGrabability.CantGrab && IsCarried(self, obj) ? Player.ObjectGrabability.Drag : grabability;
     }
 
     [HookPatch(typeof(On.Player), nameof(On.Player.IsCreatureLegalToHoldWithoutStun))]
     private static bool On_Player_IsCreatureLegalToHoldWithoutStun(On.Player.orig_IsCreatureLegalToHoldWithoutStun orig, Player self, Creature grabCheck)
     {
-        return IsCarried(grabCheck) || orig(self, grabCheck);
+        return IsCarried(self, grabCheck) || orig(self, grabCheck);
     }
 }
