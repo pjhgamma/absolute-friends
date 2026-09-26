@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
@@ -8,6 +9,36 @@ namespace AbsoluteFriends.Progression;
 
 internal static class GateUtils
 {
+    private static readonly ConditionalWeakTable<Player, GateIdleState> _idleStates = new();
+
+    internal static void UpdatePlayerIdle(Player player)
+    {
+        GateIdleState idleState = _idleStates.GetOrCreateValue(player);
+        int noInputCounter = player.touchedNoInputCounter;
+
+        if (!player.Consious)
+        {
+            idleState.WasUnconscious = true;
+        }
+        else if (idleState.WasUnconscious)
+        {
+            idleState.WasUnconscious = false;
+            idleState.ResetCounter = noInputCounter;
+        }
+        else if (noInputCounter < idleState.ResetCounter)
+        {
+            idleState.ResetCounter = 0;
+        }
+    }
+
+    private static bool IsIdleForGate(Player player, float seconds)
+    {
+        return player.Consious
+            && _idleStates.TryGetValue(player, out GateIdleState idleState)
+            && !idleState.WasUnconscious
+            && player.touchedNoInputCounter - idleState.ResetCounter > seconds * RainWorldUtils.Second;
+    }
+
     extension(ShelterDoor shelterDoor)
     {
         public bool IsInShelterDoor(Creature creature)
@@ -151,12 +182,9 @@ internal static class GateUtils
                     continue;
                 }
 
-                if (!player.IsIdlePlayer(Config.GateTime.Value))
-                {
-                    return false;
-                }
+                float idleTime = Config.GateTime.Value + (Config.GateForce.IsActive && !canActivate ? Config.GateForceTime.Value : 0f);
 
-                if (Config.GateForce.IsActive && !canActivate && !player.IsIdlePlayer(Config.GateTime.Value + Config.GateForceTime.Value))
+                if (!IsIdleForGate(player, idleTime))
                 {
                     return false;
                 }
@@ -164,5 +192,12 @@ internal static class GateUtils
 
             return true;
         }
+    }
+
+    private sealed class GateIdleState
+    {
+        public bool WasUnconscious;
+
+        public int ResetCounter;
     }
 }

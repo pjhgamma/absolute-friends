@@ -3,6 +3,7 @@ using MonoMod.Cil;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Utils;
 using Watcher;
 
 namespace AbsoluteFriends.Progression;
@@ -10,6 +11,17 @@ namespace AbsoluteFriends.Progression;
 internal class GateHooks : BaseHooks
 {
     protected override Configurable<bool>[] Options => [Config.Gate];
+
+    [HookPatch(typeof(On.Player), nameof(On.Player.Update))]
+    private static void On_Player_Update(On.Player.orig_Update orig, Player self, bool eu)
+    {
+        orig(self, eu);
+
+        if (self.IsPlayer)
+        {
+            GateUtils.UpdatePlayerIdle(self);
+        }
+    }
 
     [HookPatch(typeof(IL.Player), nameof(IL.Player.Update))]
     [HookTest([4445, 4459], ["ldc.i4.s; ble; ldarg.0", "ldarg.0; ldfld Player::touchedNoInputCounter"])]

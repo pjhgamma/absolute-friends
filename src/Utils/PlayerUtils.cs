@@ -40,12 +40,4 @@ public static class PlayerUtils
             }
         }
     }
-
-    extension(Player player)
-    {
-        public bool IsIdlePlayer(float seconds)
-        {
-            return player.Consious && player.touchedNoInputCounter > seconds * RainWorldUtils.Second;
-        }
-    }
 }

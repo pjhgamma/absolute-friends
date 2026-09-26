@@ -11,6 +11,17 @@ internal class GrabbingPlayerHooks : BaseHooks
     [HookPatch(typeof(On.Player), nameof(On.Player.CanIPickThisUp))]
     private static bool On_Player_CanIPickThisUp(On.Player.orig_CanIPickThisUp orig, Player self, PhysicalObject obj)
     {
-        return !(obj is Player player && obj.IsPlayer && !player.dead && self.IsFriend(player) && !player.IsIdlePlayer(Config.GrabbingPlayerTime.Value)) && orig(self, obj);
+        if (
+            obj is Player player
+            && obj.IsPlayer
+            && player.Consious
+            && player.touchedNoInputCounter <= Config.GrabbingPlayerTime.Value * RainWorldUtils.Second
+            && self.IsFriend(player)
+        )
+        {
+            return false;
+        }
+
+        return orig(self, obj);
     }
 }
