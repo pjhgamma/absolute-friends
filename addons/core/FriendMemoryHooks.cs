@@ -12,7 +12,7 @@ internal class FriendMemoryHooks : BaseHooks
 
     private static IEnumerable<int> SharedPlayerNumbers(CreatureCommunities communities, int playerNumber)
     {
-        if (!FriendUtils.IsFriendSession || communities.session is StoryGameSession)
+        if (!FriendUtils.IsFriendSession || !FriendUtils.HasMultipleTrackedSlugcats || communities.session is StoryGameSession)
         {
             yield break;
         }
@@ -42,6 +42,7 @@ internal class FriendMemoryHooks : BaseHooks
     {
         if (
             !FriendUtils.IsFriendSession
+            || !FriendUtils.HasMultipleTrackedSlugcats
             || !relationship.subjectID.IsTrackedSlugcat
             || !_relationshipMemories.TryGetValue(relationship, out SocialMemory socialMemory)
         )
@@ -60,7 +61,7 @@ internal class FriendMemoryHooks : BaseHooks
 
     private static float ShareLike(SocialMemory self, EntityID subjectID, float like, bool temporary)
     {
-        if (!FriendUtils.IsFriendSession || !subjectID.IsTrackedSlugcat)
+        if (!FriendUtils.IsFriendSession || !FriendUtils.HasMultipleTrackedSlugcats || !subjectID.IsTrackedSlugcat)
         {
             return like;
         }
@@ -78,7 +79,7 @@ internal class FriendMemoryHooks : BaseHooks
 
     private static float ShareKnow(SocialMemory self, EntityID subjectID, float know)
     {
-        if (!FriendUtils.IsFriendSession || !subjectID.IsTrackedSlugcat)
+        if (!FriendUtils.IsFriendSession || !FriendUtils.HasMultipleTrackedSlugcats || !subjectID.IsTrackedSlugcat)
         {
             return know;
         }

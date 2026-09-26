@@ -16,15 +16,25 @@ public static class FriendUtils
 
     private static readonly HashSet<AbstractCreature> _trackedCreatures = [];
 
+    private static readonly HashSet<AbstractCreature> _trackedSlugcats = [];
+
     private static readonly List<Func<AbstractCreature, AbstractCreature, bool?>> _friendshipRules = [];
 
     private static readonly ConditionalWeakTable<FriendTracker, SocialMemory.Relationship> _adoptedRelationships = new();
+
+    private static readonly Dictionary<(AbstractCreature, AbstractCreature), bool> _chainingFriendships = [];
+
+    private static RainWorldGame? _chainingGame;
+
+    private static int _chainingClock = -1;
 
     private static ConditionalWeakTable<AbstractCreature, HashSet<EntityID>> _trackedPlayerIds = new();
 
     private static ConditionalWeakTable<AbstractCreature, HashSet<EntityID>> _pupFriendIds = new();
 
     public static bool IsFriendSession => Config.FriendArena.IsActive || RainWorldUtils.CurrentGame?.IsArenaSession == false;
+
+    internal static bool HasMultipleTrackedSlugcats => (RainWorldUtils.CurrentGame?.Players.Count ?? 0) + _trackedSlugcats.Count > 1;
 
     public static IEnumerable<AbstractCreature> TrackedFriends
     {
@@ -37,13 +47,7 @@ public static class FriendUtils
 
             foreach (var abstractCreature in _trackedCreatures)
             {
-                if (abstractCreature.FriendshipRuleResult
-                    ?? (
-                        abstractCreature.IsSlugcat
-                        ? Config.FriendSlugcat.IsActive && abstractCreature.FriendshipRuleResult != false
-                        : Config.FriendCreature.IsActive
-                    )
-                )
+                if (abstractCreature.FriendshipRuleResult ?? (abstractCreature.IsSlugcat ? Config.FriendSlugcat.IsActive : Config.FriendCreature.IsActive))
                 {
                     yield return abstractCreature;
                 }
@@ -84,17 +88,30 @@ public static class FriendUtils
                 yield return abstractPlayer;
             }
 
-            foreach (var abstractCreature in _trackedCreatures)
+            foreach (var abstractCreature in _trackedSlugcats)
             {
-                if (abstractCreature.IsSlugcat)
-                {
-                    yield return abstractCreature;
-                }
+                yield return abstractCreature;
             }
         }
     }
 
     private static IEnumerable<AbstractCreature> Players => RainWorldUtils.CurrentGame?.Players ?? [];
+
+    private static bool IsTrackedFriend(AbstractCreature abstractCreature)
+    {
+        if (!IsFriendSession)
+        {
+            return false;
+        }
+
+        if (Config.FriendSlugcat.IsActive && RainWorldUtils.CurrentGame?.Players.Contains(abstractCreature) == true)
+        {
+            return true;
+        }
+
+        return _trackedCreatures.Contains(abstractCreature)
+            && (abstractCreature.FriendshipRuleResult ?? (abstractCreature.IsSlugcat ? Config.FriendSlugcat.IsActive : Config.FriendCreature.IsActive));
+    }
 
     public static void RegisterFriendshipRule(Func<AbstractCreature, AbstractCreature, bool?> rule)
     {
@@ -109,14 +126,22 @@ public static class FriendUtils
     internal static void ClearTrackedFriends()
     {
         _trackedCreatures.Clear();
+        _trackedSlugcats.Clear();
+        _chainingFriendships.Clear();
+        _chainingGame = null;
+        _chainingClock = -1;
         _trackedPlayerIds = new();
         _pupFriendIds = new();
     }
 
-    internal static void PruneTrackedFriends() => _trackedCreatures.RemoveWhere(abstractCreature =>
-        (abstractCreature.slatedForDeletion && abstractCreature.state?.dead != true)
-        || abstractCreature.world != RainWorldUtils.CurrentGame?.world
-    );
+    internal static void PruneTrackedFriends()
+    {
+        _trackedCreatures.RemoveWhere(abstractCreature =>
+            (abstractCreature.slatedForDeletion && abstractCreature.state?.dead != true)
+            || abstractCreature.world != RainWorldUtils.CurrentGame?.world
+        );
+        _trackedSlugcats.RemoveWhere(abstractCreature => !_trackedCreatures.Contains(abstractCreature));
+    }
 
     private static bool TryGetFriendlyLikes(SocialMemory socialMemory, EntityID subjectID, out float like, out float tempLike)
     {
@@ -139,6 +164,11 @@ public static class FriendUtils
             {
                 _trackedCreatures.Add(abstractCreature);
 
+                if (abstractCreature.IsSlugcat && !abstractCreature.IsPlayer)
+                {
+                    _trackedSlugcats.Add(abstractCreature);
+                }
+
                 HashSet<EntityID> playerIds = _trackedPlayerIds.GetOrCreateValue(abstractCreature);
 
                 playerIds.Clear();
@@ -157,6 +187,7 @@ public static class FriendUtils
             if (source is { } abstractCreature)
             {
                 _trackedCreatures.Remove(abstractCreature);
+                _trackedSlugcats.Remove(abstractCreature);
                 _trackedPlayerIds.Remove(abstractCreature);
                 _pupFriendIds.Remove(abstractCreature);
             }
@@ -327,6 +358,11 @@ public static class FriendUtils
                 return ruled;
             }
 
+            if (!source.IsSlugcat && !Config.FriendCreature.IsActive && !Config.FriendChaining.IsActive)
+            {
+                return false;
+            }
+
             if (source.IsScavengerArtificerPair(abstractSlugcat))
             {
                 return false;
@@ -404,13 +440,40 @@ public static class FriendUtils
         {
             foreach (var sharedSlugcat in TrackedSlugcats)
             {
-                if (source.IsFriend(sharedSlugcat, true, false) && target.IsFriend(sharedSlugcat, true, false))
+                if (source.IsFriendForChaining(sharedSlugcat) && target.IsFriendForChaining(sharedSlugcat))
                 {
                     return true;
                 }
             }
 
             return false;
+        }
+
+        private bool IsFriendForChaining(AbstractCreature sharedSlugcat)
+        {
+            RainWorldGame? game = RainWorldUtils.CurrentGame;
+
+            if (source == null || game == null)
+            {
+                return source.IsFriend(sharedSlugcat, true, false);
+            }
+
+            if (_chainingGame != game || _chainingClock != game.clock)
+            {
+                _chainingFriendships.Clear();
+                _chainingGame = game;
+                _chainingClock = game.clock;
+            }
+
+            var key = (source, sharedSlugcat);
+
+            if (!_chainingFriendships.TryGetValue(key, out bool isFriend))
+            {
+                isFriend = source.IsFriend(sharedSlugcat, true, false);
+                _chainingFriendships[key] = isFriend;
+            }
+
+            return isFriend;
         }
 
         private bool IsFriend(AbstractCreature? target, bool chaining)
@@ -532,7 +595,20 @@ public static class FriendUtils
         {
             get
             {
-                foreach (var abstractSlugcat in TrackedSlugcats)
+                if (!IsFriendSession)
+                {
+                    return false;
+                }
+
+                foreach (var abstractSlugcat in Players)
+                {
+                    if (abstractSlugcat.ID == id)
+                    {
+                        return true;
+                    }
+                }
+
+                foreach (var abstractSlugcat in _trackedSlugcats)
                 {
                     if (abstractSlugcat.ID == id)
                     {
@@ -547,7 +623,7 @@ public static class FriendUtils
 
     extension(AbstractPhysicalObject? source)
     {
-        public bool IsTracked => source is AbstractCreature abstractCreature && TrackedFriendsIncludingPlayers.Contains(abstractCreature);
+        public bool IsTracked => source is AbstractCreature abstractCreature && IsTrackedFriend(abstractCreature);
 
         public bool IsFriend(AbstractPhysicalObject? target, bool direct = false) => source.IsFriend(target, direct, true);
 
