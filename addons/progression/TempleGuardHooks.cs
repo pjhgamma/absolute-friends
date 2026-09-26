@@ -11,12 +11,15 @@ internal class TempleGuardHooks : BaseHooks
 
     private static bool IsPassedFriend(PhysicalObject? physicalObject)
     {
-        RainWorldGame? game = physicalObject?.room?.game;
+        if (physicalObject?.room?.game is not { } game || !physicalObject.IsTracked)
+        {
+            return false;
+        }
 
         foreach (var player in game.RealizedPlayers)
         {
             if (
-                player.KarmaCap + (game?.bestHeldScavenger != null ? game.karmaOfBestHeldScavenger : 0) >= 9
+                player.KarmaCap + (game.bestHeldScavenger != null ? game.karmaOfBestHeldScavenger : 0) >= 9
                 && physicalObject.IsFriend(player)
             )
             {

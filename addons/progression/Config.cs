@@ -58,7 +58,7 @@ internal static class Config
         )))
             .Require(GateForce);
         Passage = addon.Bind("Passage", false, new ConfigurableInfo("Tracked friends that survive the cycle travel with the player from anywhere in the world, even through a passage.", tags: ["Passages"]));
-        TempleGuard = addon.Bind("TempleGuard", false, new ConfigurableInfo("Will not draw a guardian's attention, nor be moved by its telekinesis, while a player friend holds the karma required to pass.", tags: ["Guardian"]));
+        TempleGuard = addon.Bind("TempleGuard", false, new ConfigurableInfo("Guardians do not target tracked friends or move them with telekinesis when the players meet the Karma requirement to pass.", tags: ["Guardian"]));
 
         ResonanceGate = addon.Bind("ResonanceGate", false, new ConfigurableInfo(Options.Config.Watcher(
             "Automatically resonates as a shelter or a karma gate closes, or as a karma room activates.",

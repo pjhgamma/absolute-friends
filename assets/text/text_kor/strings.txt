@@ -280,7 +280,7 @@ Sets how much longer (in seconds) the player must go without control input for s
 Passages|통행권
 Tracked friends that survive the cycle travel with the player from anywhere in the world, even through a passage.|주기를 넘긴 추적되는 친구가 세계 어디에 있든, 통행권을 사용할 때에도 플레이어와 함께 이동합니다.
 Guardian|가디언
-Will not draw a guardian's attention, nor be moved by its telekinesis, while a player friend holds the karma required to pass.|친구인 플레이어가 통과에 필요한 카르마를 지니고 있는 동안 가디언에게 주시당하거나 염력에 끌려가지 않습니다.
+Guardians do not target tracked friends or move them with telekinesis when the players meet the Karma requirement to pass.|플레이어가 통과에 필요한 카르마 조건을 충족하면 가디언은 추적되는 친구를 노리거나 염력으로 움직이지 않습니다.
 
 Resonance|공명
 Gate Resonance|게이트 공명
