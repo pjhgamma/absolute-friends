@@ -1,5 +1,7 @@
 using AbsoluteFriends.Core;
+using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
+using MoreSlugcats;
 using Watcher;
 
 namespace AbsoluteFriends.Iterators;
@@ -27,13 +29,23 @@ internal static class RelationshipRules
             return null;
         }
 
+        if (
+            abstractOwner.PhysicalObject is Oracle
+            && RainWorldUtils.CurrentGame is { IsStorySession: true } game
+            && game.TimelinePoint == SlugcatStats.Timeline.Saint
+            && abstractSlugcat.realizedObject is Player { monkAscension: true }
+        )
+        {
+            return false;
+        }
+
         return abstractOwner.PhysicalObject switch
         {
-            Oracle => RainWorldUtils.CurrentGame is not { IsStorySession: true } game
-                || game.TimelinePoint != SlugcatStats.Timeline.Saint
-                || abstractSlugcat.realizedObject is not Player { monkAscension: true },
-            SLOracleSwarmer => true,
-            Prince => true,
+            Oracle oracle when oracle.ID == Oracle.OracleID.SL => Config.Moon.IsActive,
+            SLOracleSwarmer => Config.MoonNeuron.IsActive,
+            Oracle oracle when oracle.ID == Oracle.OracleID.SS => Config.Pebbles.IsActive,
+            HalcyonPearl => Config.PebblesPearl.IsActive,
+            Prince => Config.Prince.IsActive,
             _ => null
         };
     }

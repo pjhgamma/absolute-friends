@@ -11,5 +11,6 @@ internal static class Menu
         menu.AddCheckBox(Config.MoonNeuron);
         menu.AddCheckBox(Config.Pebbles);
         menu.AddCheckBox(Config.PebblesPearl, enabled: ModManager.MSC);
+        menu.AddCheckBox(Config.Prince, enabled: ModManager.Watcher);
     }
 }

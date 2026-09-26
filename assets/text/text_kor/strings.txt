@@ -255,13 +255,15 @@ Absolute Friends: Iterators|절대적 친구: 반복자
 Controls interactions with iterators.|반복자와의 상호 작용을 설정합니다.
 
 Moon|달
-Prevents players from lowering Moon's opinion or making her refuse to speak.|플레이어가 달의 호감도를 낮추거나 대화를 거부하게 만들지 않도록 합니다.
+Treats Moon as a friend and prevents players from lowering her opinion or making her refuse to speak.|달을 친구로 취급하고, 플레이어가 호감도를 낮추거나 대화를 거부하게 만들지 않도록 합니다.
 Moon Neuron|달 신경파리
-Prevents players from stealing Moon's neurons.|플레이어가 달의 뉴런을 훔치지 않도록 합니다.
+Treats Moon's neurons as friends and prevents players from stealing them.|달의 뉴런을 친구로 취급하고, 플레이어가 훔치지 않도록 합니다.
 Pebbles|조약돌
-Prevents Pebbles from killing friends.|조약돌이 친구를 죽이지 않도록 합니다.
+Treats Pebbles as a friend and prevents him from killing friends.|조약돌를 친구로 취급하고, 친구를 죽이지 않도록 합니다.
 Pebbles Pearl|조약돌 진주
-Prevents players from stealing Pebbles' pearl.|플레이어가 조약돌의 진주를 훔치지 않도록 합니다.
+Treats Pebbles' pearl as friends and prevents players from stealing them.|조약돌의 진주를 친구로 취급하고, 플레이어가 조약돌의 훔치지 않도록 합니다.
+Prince|왕자
+Treats the Prince as a friend of players.|왕자를 플레이어의 친구로 취급합니다.
 
 Absolute Friends: Progression|절대적 친구: 진행
 Controls travelling and resonating with friends.|친구와 이동하고 공명하는 것을 조정합니다.
