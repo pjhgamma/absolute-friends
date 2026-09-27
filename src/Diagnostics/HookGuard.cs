@@ -1,5 +1,5 @@
-using MonoMod.Cil;
 using AbsoluteFriends.Hooks;
+using MonoMod.Cil;
 
 namespace AbsoluteFriends.Diagnostics;
 
@@ -14,30 +14,6 @@ public static class HookGuard
     );
 
     private static HookBinding? Manipulating { get; set; }
-
-    extension(ILCursor c)
-    {
-        public void EmitGuarded<T>(T body, T? fallback = null) where T : Delegate
-        {
-            HookBinding? binding = Manipulating;
-            string name = $"{binding?.HookName ?? "Anonymous"}_{binding?.MethodName ?? "Emitted"}";
-
-            T? guarded = null;
-
-            try
-            {
-                guarded = GuardEmitter.WrapEmitted(typeof(T), new EmittedGuard(binding, body, fallback), $"AbsoluteFriends_Emit_{name}") as T;
-            }
-            catch (Exception exception)
-            {
-                Reporter.LogWarning($"{binding?.FullName ?? "Emitted code"}: could not be guarded, emitting it directly instead", exception);
-
-                binding?.MarkWarned();
-            }
-
-            c.EmitDelegate(guarded ?? body);
-        }
-    }
 
     internal static Delegate? Wrap(HookBinding binding, Type handlerType)
     {
@@ -127,5 +103,29 @@ public static class HookGuard
         public bool ShouldRun() => HookGuard.ShouldRun(binding);
 
         public void MarkFailed(Exception exception) => HookGuard.MarkFailed(binding, exception);
+    }
+
+    extension(ILCursor c)
+    {
+        public void EmitGuarded<T>(T body, T? fallback = null) where T : Delegate
+        {
+            HookBinding? binding = Manipulating;
+            string name = $"{binding?.HookName ?? "Anonymous"}_{binding?.MethodName ?? "Emitted"}";
+
+            T? guarded = null;
+
+            try
+            {
+                guarded = GuardEmitter.WrapEmitted(typeof(T), new EmittedGuard(binding, body, fallback), $"AbsoluteFriends_Emit_{name}") as T;
+            }
+            catch (Exception exception)
+            {
+                Reporter.LogWarning($"{binding?.FullName ?? "Emitted code"}: could not be guarded, emitting it directly instead", exception);
+
+                binding?.MarkWarned();
+            }
+
+            c.EmitDelegate(guarded ?? body);
+        }
     }
 }

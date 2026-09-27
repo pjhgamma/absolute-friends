@@ -1,8 +1,8 @@
-using MonoMod.Cil;
-using MoreSlugcats;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
+using MonoMod.Cil;
+using MoreSlugcats;
 
 namespace AbsoluteFriends.General;
 

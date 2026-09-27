@@ -1,6 +1,6 @@
+using AbsoluteFriends.Hooks;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using AbsoluteFriends.Hooks;
 
 namespace AbsoluteFriends.Iterators;
 

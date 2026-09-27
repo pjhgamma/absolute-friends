@@ -1,6 +1,6 @@
+using System.Runtime.CompilerServices;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
-using System.Runtime.CompilerServices;
 
 namespace AbsoluteFriends.Core;
 
@@ -207,7 +207,6 @@ public static partial class FriendUtils
                 && _trackedPlayerIds.TryGetValue(source, out HashSet<EntityID> playerIds)
                 && playerIds.Contains(abstractPlayer.ID);
         }
-
     }
 
     extension(FriendTracker? tracker)
@@ -311,5 +310,4 @@ public static partial class FriendUtils
             }
         }
     }
-
 }

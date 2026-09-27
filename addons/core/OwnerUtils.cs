@@ -1,5 +1,5 @@
-using AbsoluteFriends.Options;
 using System.Runtime.CompilerServices;
+using AbsoluteFriends.Options;
 
 namespace AbsoluteFriends.Core;
 
@@ -22,6 +22,12 @@ public static class OwnerUtils
     }
 
     public static void UnregisterSelfOwnershipRule(Func<PhysicalObject, bool> rule) => _selfOwnershipRules.Remove(rule);
+
+    internal static void ClearOwners()
+    {
+        _owners = new();
+        _selfOwners = new();
+    }
 
     extension(PhysicalObject? physicalObject)
     {
@@ -164,11 +170,5 @@ public static class OwnerUtils
         public void SetOwner(AbstractCreature? target = null) => source?.realizedObject.SetOwner(target);
 
         public void SetOwner(Creature? target) => source.SetOwner(target?.abstractCreature);
-    }
-
-    internal static void ClearOwners()
-    {
-        _owners = new();
-        _selfOwners = new();
     }
 }

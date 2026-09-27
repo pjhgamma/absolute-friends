@@ -1,7 +1,7 @@
-using Menu.Remix.MixedUI;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Profiles;
 using AbsoluteFriends.Utils;
+using Menu.Remix.MixedUI;
 
 namespace AbsoluteFriends.Options;
 
@@ -404,7 +404,7 @@ internal sealed partial class RemixMenu
                 selector.AddItems(sort: false, [fallback]);
             }
 
-            selector.RemoveItems(selectNext: false, existing.Where(id => id != Config.NoProfile).ToArray());
+            selector.RemoveItems(selectNext: false, [.. existing.Where(id => id != Config.NoProfile)]);
 
             if (_profiles.Count > 0)
             {

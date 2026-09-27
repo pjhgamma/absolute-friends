@@ -1,5 +1,5 @@
-using AbsoluteFriends.Diagnostics;
 using System.Reflection;
+using AbsoluteFriends.Diagnostics;
 
 namespace AbsoluteFriends.Hooks;
 

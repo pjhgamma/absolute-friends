@@ -1,8 +1,8 @@
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 
 namespace AbsoluteFriends.Players;
 

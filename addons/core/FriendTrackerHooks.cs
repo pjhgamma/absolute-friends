@@ -1,5 +1,4 @@
 using AbsoluteFriends.Hooks;
-using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 
 namespace AbsoluteFriends.Core;

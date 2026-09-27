@@ -1,5 +1,5 @@
-using AbsoluteFriends.Hooks;
 using System.Runtime.CompilerServices;
+using AbsoluteFriends.Hooks;
 
 namespace AbsoluteFriends.Core.Visualizer;
 

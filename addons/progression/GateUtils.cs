@@ -39,6 +39,13 @@ internal static class GateUtils
             && player.touchedNoInputCounter - idleState.ResetCounter > seconds * RainWorldUtils.Second;
     }
 
+    private sealed class GateIdleState
+    {
+        public bool WasUnconscious;
+
+        public int ResetCounter;
+    }
+
     extension(ShelterDoor shelterDoor)
     {
         public bool IsInShelterDoor(Creature creature)
@@ -194,10 +201,4 @@ internal static class GateUtils
         }
     }
 
-    private sealed class GateIdleState
-    {
-        public bool WasUnconscious;
-
-        public int ResetCounter;
-    }
 }

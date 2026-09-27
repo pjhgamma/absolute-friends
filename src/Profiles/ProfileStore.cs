@@ -1,5 +1,5 @@
-using AbsoluteFriends.Diagnostics;
 using System.Runtime.Serialization.Json;
+using AbsoluteFriends.Diagnostics;
 
 namespace AbsoluteFriends.Profiles;
 

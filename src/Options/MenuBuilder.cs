@@ -1,7 +1,7 @@
-using Menu.Remix.MixedUI;
-using Menu.Remix.MixedUI.ValueTypes;
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Utils;
+using Menu.Remix.MixedUI.ValueTypes;
+using Menu.Remix.MixedUI;
 using UnityEngine;
 
 namespace AbsoluteFriends.Options;

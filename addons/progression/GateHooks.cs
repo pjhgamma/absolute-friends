@@ -1,9 +1,9 @@
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Utils;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 using Watcher;
 
 namespace AbsoluteFriends.Progression;

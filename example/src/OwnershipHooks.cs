@@ -1,7 +1,7 @@
+using System.Runtime.CompilerServices;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Options;
-using System.Runtime.CompilerServices;
 
 namespace AbsoluteFriendsExample;
 

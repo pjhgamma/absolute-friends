@@ -1,7 +1,7 @@
+using System.Runtime.CompilerServices;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Utils;
 using RWCustom;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace AbsoluteFriends.Core.Visualizer;
@@ -82,6 +82,10 @@ internal static class OverlayUtils
 
         return false;
     }
+
+    private static Vector2 Interpolate(Vector2 last, Vector2 now, float timeStacker) => Vector2.Lerp(last, now, timeStacker);
+
+    private static Vector2 Interpolate(BodyChunk chunk, float timeStacker) => Interpolate(chunk.lastPos, chunk.pos, timeStacker);
 
     extension(RoomCamera camera)
     {
@@ -201,8 +205,4 @@ internal static class OverlayUtils
             }
         }
     }
-
-    private static Vector2 Interpolate(Vector2 last, Vector2 now, float timeStacker) => Vector2.Lerp(last, now, timeStacker);
-
-    private static Vector2 Interpolate(BodyChunk chunk, float timeStacker) => Interpolate(chunk.lastPos, chunk.pos, timeStacker);
 }

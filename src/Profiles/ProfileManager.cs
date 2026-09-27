@@ -128,7 +128,7 @@ internal static class ProfileManager
 
     internal static ProfileSummary Summarize(Profile profile)
     {
-        int enabledAddons = profile.Addons.Count(pair => AddonRegistry.Find(pair.Key) is { Enabled: { } enabled } && IsEnabled(profile, enabled));
+        int enabledAddons = 0;
         int enabledOptions = 0;
         int options = 0;
         int unavailableAddons = 0;
@@ -141,25 +141,31 @@ internal static class ProfileManager
             if (addon == null)
             {
                 unavailableAddons++;
-                unavailableOptions += pair.Value.Options.Count(option => IsBoolean(null, option));
+            }
+            else if (addon.Enabled is { } enabled && IsEnabled(profile, enabled))
+            {
+                enabledAddons++;
             }
 
             foreach (var option in pair.Value.Options)
             {
-                if (IsBoolean(addon, option))
+                if (addon?.ProfileOptions.TryGetValue(option.Key, out ConfigurableBase configurable) == true)
                 {
-                    options++;
-
-                    if (addon?.ProfileOptions.TryGetValue(option.Key, out ConfigurableBase configurable) == true && IsEnabled(profile, configurable))
+                    if (configurable is Configurable<bool>)
                     {
-                        enabledOptions++;
+                        options++;
+
+                        if (IsEnabled(profile, configurable))
+                        {
+                            enabledOptions++;
+                        }
                     }
                 }
-            }
-
-            if (addon != null)
-            {
-                unavailableOptions += pair.Value.Options.Count(option => !addon.ProfileOptions.ContainsKey(option.Key) && IsBoolean(null, option));
+                else if (IsBoolean(null, option))
+                {
+                    options++;
+                    unavailableOptions++;
+                }
             }
         }
 

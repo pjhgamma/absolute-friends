@@ -1,5 +1,3 @@
-using AbsoluteFriends.Options;
-
 namespace AbsoluteFriends.Iterators;
 
 internal static class Config

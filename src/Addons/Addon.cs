@@ -1,6 +1,6 @@
+using System.Reflection;
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Options;
-using System.Reflection;
 
 namespace AbsoluteFriends.Addons;
 

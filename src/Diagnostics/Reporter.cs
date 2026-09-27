@@ -1,78 +1,11 @@
+using System.Reflection;
+using System.Text;
 using AbsoluteFriends.Addons;
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Options;
-using System.Reflection;
-using System.Text;
 using UnityEngine;
 
 namespace AbsoluteFriends.Diagnostics;
-
-internal static class Report
-{
-    private const string Fence = "```";
-
-    extension(string text)
-    {
-        public string Item => $"- {text}";
-
-        public string Bold => $"**{text}**";
-
-        public string Code => $"`{text}`";
-
-        public string Heading(int level) => $"{new string('#', level)} {text}";
-    }
-
-    extension(IEnumerable<string> values)
-    {
-        public string Code => string.Join(", ", values.Select(value => value.Code));
-    }
-
-    extension(StringBuilder builder)
-    {
-        public void AppendHeading(string heading, int level)
-        {
-            builder.AppendLine(heading.Heading(level)).AppendLine();
-        }
-
-        public void AppendLines(List<string> lines)
-        {
-            foreach (var line in lines)
-            {
-                builder.AppendLine(line);
-            }
-
-            builder.AppendLine();
-        }
-
-        public void AppendBlock(List<string> lines, string language = "")
-        {
-            if (lines.Count == 0)
-            {
-                return;
-            }
-
-            builder.AppendLine(Fence + language);
-
-            foreach (var line in lines)
-            {
-                builder.AppendLine(line);
-            }
-
-            builder.AppendLine(Fence).AppendLine();
-        }
-
-        public void AppendSection(string heading, List<string> lines, string language = "")
-        {
-            if (lines.Count == 0)
-            {
-                return;
-            }
-
-            builder.AppendHeading(heading, 2);
-            builder.AppendBlock(lines, language);
-        }
-    }
-}
 
 public static class Reporter
 {
@@ -369,26 +302,5 @@ public static class Reporter
             RecordError($"Could not write report: {exception.Message}");
             LogDetail([exception.ToString()]);
         }
-    }
-}
-
-internal class ReportHooks : BaseHooks
-{
-    protected override Configurable<bool>[] Options => [Config.Debug];
-
-    [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.ctor))]
-    private static void On_RainWorldGame_ctor(On.RainWorldGame.orig_ctor orig, RainWorldGame self, ProcessManager manager)
-    {
-        orig(self, manager);
-
-        Reporter.SaveReport();
-    }
-
-    [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.ShutDownProcess))]
-    private static void On_RainWorldGame_ShutDownProcess(On.RainWorldGame.orig_ShutDownProcess orig, RainWorldGame self)
-    {
-        orig(self);
-
-        Reporter.SaveReport();
     }
 }

@@ -1,10 +1,10 @@
+using System.Runtime.CompilerServices;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Utils;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using Watcher;
 

@@ -1,7 +1,7 @@
+using System.Runtime.CompilerServices;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using RWCustom;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace AbsoluteFriends.Core.Visualizer;

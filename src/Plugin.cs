@@ -1,7 +1,7 @@
-using BepInEx;
+using System.Security.Permissions;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
-using System.Security.Permissions;
+using BepInEx;
 
 #pragma warning disable CS0618
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]

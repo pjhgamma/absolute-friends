@@ -1,7 +1,7 @@
+using AbsoluteFriends.Diagnostics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MoreSlugcats;
-using AbsoluteFriends.Diagnostics;
 
 namespace AbsoluteFriends.Core;
 

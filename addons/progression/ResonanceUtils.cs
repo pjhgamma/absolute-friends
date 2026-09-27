@@ -1,8 +1,8 @@
+using System.Runtime.CompilerServices;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using RWCustom;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -57,6 +57,8 @@ internal static class ResonanceUtils
     {
         _trackers = new();
     }
+
+    private static bool ShouldVibrate(float progress, int reflection) => progress >= 0.1f || reflection >= 5;
 
     extension(AbstractCreature abstractCreature)
     {
@@ -708,6 +710,4 @@ internal static class ResonanceUtils
             return false;
         }
     }
-
-    private static bool ShouldVibrate(float progress, int reflection) => progress >= 0.1f || reflection >= 5;
 }

@@ -1,6 +1,6 @@
-using Menu.Remix.MixedUI;
 using AbsoluteFriends.Addons;
 using AbsoluteFriends.Utils;
+using Menu.Remix.MixedUI;
 
 namespace AbsoluteFriends.Options;
 

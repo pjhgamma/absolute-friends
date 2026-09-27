@@ -1,6 +1,6 @@
-using MonoMod.Cil;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Hooks;
+using MonoMod.Cil;
 
 namespace AbsoluteFriends.General;
 

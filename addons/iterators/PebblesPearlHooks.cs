@@ -1,5 +1,5 @@
-using MoreSlugcats;
 using AbsoluteFriends.Hooks;
+using MoreSlugcats;
 
 namespace AbsoluteFriends.Iterators;
 

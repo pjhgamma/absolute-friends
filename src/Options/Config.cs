@@ -18,6 +18,14 @@ public static class Config
 
     public static string Watcher(string text, string watcherText) => ModManager.Watcher ? watcherText : text;
 
+    internal static void Bind(OptionInterface oi)
+    {
+        ProfileSelection = oi.config.Bind("ProfileSelection", NoProfile, new ConfigurableInfo("Selects a profile to load or modify.", tags: ["Selected Profile"]));
+
+        Debug = oi.config.Bind("Debug", true, new ConfigurableInfo("Records patch locations and behavior in the diagnostics report.", tags: ["Debug"]));
+        HookBaselines = oi.config.Bind("HookBaselines", false, new ConfigurableInfo("Records hook baselines as HookTest attributes in the diagnostics report.", tags: ["Record Hook Baselines"])).Require(Debug);
+    }
+
     extension(ConfigurableBase? configurableBase)
     {
         public string? Label => configurableBase?.info?.Tags is { Length: > 0 } tags ? tags[0] as string : null;
@@ -67,13 +75,5 @@ public static class Config
 
             return target;
         }
-    }
-
-    internal static void Bind(OptionInterface oi)
-    {
-        ProfileSelection = oi.config.Bind("ProfileSelection", NoProfile, new ConfigurableInfo("Selects a profile to load or modify.", tags: ["Selected Profile"]));
-
-        Debug = oi.config.Bind("Debug", true, new ConfigurableInfo("Records patch locations and behavior in the diagnostics report.", tags: ["Debug"]));
-        HookBaselines = oi.config.Bind("HookBaselines", false, new ConfigurableInfo("Records hook baselines as HookTest attributes in the diagnostics report.", tags: ["Record Hook Baselines"])).Require(Debug);
     }
 }

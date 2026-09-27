@@ -1,7 +1,7 @@
-using MoreSlugcats;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Options;
+using MoreSlugcats;
 using RWCustom;
 using UnityEngine;
 

@@ -1,7 +1,7 @@
-using Mono.Cecil;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
 using System.Text;
+using Mono.Cecil.Cil;
+using Mono.Cecil;
+using MonoMod.Cil;
 
 namespace AbsoluteFriends.Diagnostics;
 

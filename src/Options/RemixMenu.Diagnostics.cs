@@ -1,5 +1,5 @@
-using Menu.Remix.MixedUI;
 using AbsoluteFriends.Diagnostics;
+using Menu.Remix.MixedUI;
 
 namespace AbsoluteFriends.Options;
 

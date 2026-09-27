@@ -1,6 +1,6 @@
-using BepInEx;
 using AbsoluteFriends.Addons;
 using AbsoluteFriends.Options;
+using BepInEx;
 
 namespace AbsoluteFriendsExample;
 

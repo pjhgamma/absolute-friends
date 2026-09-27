@@ -1,5 +1,5 @@
-using Mono.Cecil.Cil;
 using System.Runtime.CompilerServices;
+using Mono.Cecil.Cil;
 
 namespace AbsoluteFriends.Diagnostics;
 

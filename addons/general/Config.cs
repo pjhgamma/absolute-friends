@@ -4,9 +4,9 @@ namespace AbsoluteFriends.General;
 
 internal static class Config
 {
-    public static Configurable<bool> Violence = null!;
-
     public static Configurable<bool> Collision = null!;
+
+    public static Configurable<bool> Violence = null!;
 
     public static Configurable<bool> Explosion = null!;
 

@@ -83,10 +83,34 @@ public abstract partial class MenuBuilder
 
         public bool Match(string query)
         {
-            string[] named = [.. names.OfType<string>()];
+            if (gate?.Invoke() == false)
+            {
+                return false;
+            }
 
-            return (gate?.Invoke() ?? true)
-                && (named.Length == 0 || query.Length == 0 || named.Any(name => name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0));
+            if (query.Length == 0)
+            {
+                return true;
+            }
+
+            bool hasName = false;
+
+            foreach (string? name in names)
+            {
+                if (name == null)
+                {
+                    continue;
+                }
+
+                hasName = true;
+
+                if (name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
+
+            return !hasName;
         }
 
         public void Place(bool visible, float offset)

@@ -135,13 +135,10 @@ public abstract partial class MenuBuilder
 
             _heights = heights;
 
-            float[] offsets = new float[_sections.Length];
             float hidden = 0f;
 
             for (int index = 0; index < _sections.Length; index++)
             {
-                offsets[index] = hidden;
-
                 hidden += _sections[index].Height - heights[index];
             }
 
@@ -150,9 +147,13 @@ public abstract partial class MenuBuilder
 
             _scrollBox?.SetContentSize(content, sortToTop: false);
 
+            float offset = 0f;
+
             for (int index = 0; index < _sections.Length; index++)
             {
-                _sections[index].Place(visible[index], shift + offsets[index]);
+                _sections[index].Place(visible[index], shift + offset);
+
+                offset += _sections[index].Height - heights[index];
             }
 
             if (_scrollBox is { } scrollBox)

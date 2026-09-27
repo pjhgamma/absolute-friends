@@ -1,6 +1,6 @@
-using BepInEx;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Options;
+using BepInEx;
 
 namespace AbsoluteFriends.Addons;
 
