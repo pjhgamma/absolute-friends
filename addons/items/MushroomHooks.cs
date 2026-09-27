@@ -1,65 +1,94 @@
-using MonoMod.Cil;
 using AbsoluteFriends.Core;
+using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
-using System.Runtime.CompilerServices;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 
 namespace AbsoluteFriends.Items;
 
 internal class MushroomHooks : BaseHooks
 {
-    private static readonly ConditionalWeakTable<AbstractCreature, StrongBox<int>> _mushroomCounters = new();
-
-    private static readonly ConditionalWeakTable<AbstractCreature, StrongBox<float>> _mushroomEffects = new();
-
     protected override Configurable<bool>[] Options => [Config.Mushroom];
 
-    private static void SynchronizeMushroom<T>(Player self, ConditionalWeakTable<AbstractCreature, StrongBox<T>> shared, Func<Player, T> read, Action<Player, T> write)
+    [HookPatch(typeof(IL.Player), nameof(IL.Player.Update))]
+    [HookTest([1702], ["callvirt List`1::GetEnumerator"])]
+    private static void IL_Player_Update(ILContext il)
     {
-        T value = read(self);
+        ILCursor cursor = new(il);
 
-        if (shared.TryGetValue(self.abstractCreature, out StrongBox<T> pending) && !EqualityComparer<T>.Default.Equals(value, pending.Value))
+        if (cursor.TryGotoNext(i => i.MatchCallvirt<RainWorldGame>("get_AlivePlayers")))
         {
-            write(self, pending.Value);
-            shared.Remove(self.abstractCreature);
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitGuarded((RainWorldGame game, Player source) =>
+            {
+                List<AbstractCreature> friends = [];
 
+                if (!source.IsTracked || source.inShortcut)
+                {
+                    return friends;
+                }
+
+                foreach (var abstractCreature in FriendUtils.TrackedFriendsIncludingPlayers)
+                {
+                    if (abstractCreature.world?.game == game && abstractCreature.realizedCreature is Player player && !player.dead && !player.inShortcut && source.IsFriend(player))
+                    {
+                        friends.Add(abstractCreature);
+                    }
+                }
+
+                return friends;
+            }, (game, _) => game.AlivePlayers);
+        }
+    }
+
+    [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.Update))]
+    private static void On_RainWorldGame_Update(On.RainWorldGame.orig_Update orig, RainWorldGame self)
+    {
+        orig(self);
+
+        List<Player> players = [];
+        Dictionary<Player, (int Counter, float Effect)> active = [];
+
+        foreach (var abstractCreature in FriendUtils.TrackedFriendsIncludingPlayers)
+        {
+            if (abstractCreature.world?.game == self && abstractCreature.realizedCreature is Player { dead: false } player)
+            {
+                players.Add(player);
+
+                if (!player.inShortcut)
+                {
+                    active[player] = (player.mushroomCounter, player.mushroomEffect);
+                }
+            }
+        }
+
+        if (active.Count == 0)
+        {
             return;
         }
 
-        foreach (var abstractSlugcat in FriendUtils.TrackedFriendsIncludingPlayers)
+        foreach (var player in players)
         {
-            if (abstractSlugcat.realizedCreature is Player slugcat && !EqualityComparer<T>.Default.Equals(read(slugcat), value))
+            int counter = 0;
+            float effect = 0f;
+            bool hasSource = false;
+
+            foreach (var source in active)
             {
-                shared.GetOrCreateValue(abstractSlugcat).Value = value;
+                if (source.Key == player || player.IsFriend(source.Key))
+                {
+                    counter = hasSource ? Math.Max(counter, source.Value.Counter) : source.Value.Counter;
+                    effect = hasSource ? Math.Max(effect, source.Value.Effect) : source.Value.Effect;
+                    hasSource = true;
+                }
+            }
+
+            if (hasSource)
+            {
+                player.mushroomCounter = counter;
+                player.mushroomEffect = effect;
             }
         }
     }
-
-    [HookPatch(typeof(On.Player), nameof(On.Player.Update))]
-    private static void On_Player_Update(On.Player.orig_Update orig, Player self, bool eu)
-    {
-        orig(self, eu);
-
-        SynchronizeMushroom(self, _mushroomCounters, slugcat => slugcat.mushroomCounter, (slugcat, mushroomCounter) => slugcat.mushroomCounter = mushroomCounter);
-        SynchronizeMushroom(self, _mushroomEffects, slugcat => slugcat.mushroomEffect, (slugcat, mushroomEffect) => slugcat.mushroomEffect = mushroomEffect);
-    }
-
-    [HookPatch(typeof(IL.Mushroom), nameof(IL.Mushroom.BitByPlayer))]
-    [HookTest([16], ["ldarg.1; ldfld Grasp::grabber"])]
-    private static void IL_Mushroom_BitByPlayer(ILContext il) => il.MushroomShare();
-
-    [HookPatch(typeof(IL.Spear), nameof(IL.Spear.HitSomethingWithoutStopping))]
-    [HookTest([92], ["ldarg.1; callvirt UpdatableAndDeletable::Destroy"])]
-    private static void IL_Spear_HitSomethingWithoutStopping(ILContext il) => il.MushroomShare();
-
-    [HookPatch(typeof(IL.Lizard), nameof(IL.Lizard.Update))]
-    [HookTest([1319], ["ldloc.s; ldc.i4.1; add"])]
-    private static void IL_Lizard_Update(ILContext il) => il.MushroomShare();
-
-    [HookPatch(typeof(IL.Player), nameof(IL.Player.ProcessChatLog))]
-    [HookTest([22], ["ldarg.0; ldc.i4.s; callvirt Creature::Stun"])]
-    private static void IL_Player_ProcessChatLog(ILContext il) => il.MushroomShare();
-
-    [HookPatch(typeof(IL.Expedition.ExpeditionGame.SlowTimeTracker), nameof(IL.Expedition.ExpeditionGame.SlowTimeTracker.Update))]
-    [HookTest([95], ["ldloc.s; ldc.i4.1; add"])]
-    private static void IL_SlowTimeTracker_Update(ILContext il) => il.MushroomShare();
 }

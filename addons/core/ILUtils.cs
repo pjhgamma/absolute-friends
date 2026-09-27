@@ -103,30 +103,6 @@ public static class ILUtils
             }
         }
 
-        public void MushroomShare()
-        {
-            ILCursor c = new(il);
-
-            while (c.TryGotoNext(
-                i => i.MatchStfld<Player>("mushroomCounter")
-            ))
-            {
-                c.Remove();
-                c.EmitGuarded((Player slugcat, int mushroomCounter) =>
-                {
-                    slugcat.mushroomCounter = mushroomCounter;
-
-                    foreach (var abstractCreature in FriendUtils.TrackedFriendsIncludingPlayers)
-                    {
-                        if (abstractCreature.realizedCreature is Player player)
-                        {
-                            player.mushroomCounter = Math.Max(mushroomCounter, player.mushroomCounter);
-                        }
-                    }
-                }, (slugcat, mushroomCounter) => slugcat.mushroomCounter = mushroomCounter);
-            }
-        }
-
         public void TongueUpdate<T>(Func<T, Creature?> getOwner)
         {
             ILCursor c = new(il);
