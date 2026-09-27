@@ -16,7 +16,7 @@ public class Plugin : BaseUnityPlugin
 
     public const string Name = "Absolute Friends";
 
-    public const string Version = "0.1.4";
+    public const string Version = "0.1.5";
 
     private bool _isInit;
 
