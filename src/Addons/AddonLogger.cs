@@ -8,6 +8,8 @@ public sealed class AddonLogger
 
     internal AddonLogger(string name) => _tag = $"({name}) ";
 
+    public void LogConsole(string message) => Reporter.LogConsole(_tag + message);
+
     public void LogInfo(string message) => Reporter.LogInfo(_tag + message);
 
     public void LogWarning(string message) => Reporter.LogWarning(_tag + message);
