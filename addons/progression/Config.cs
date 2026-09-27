@@ -61,11 +61,11 @@ internal static class Config
         TempleGuard = addon.Bind("TempleGuard", false, new ConfigurableInfo("Guardians do not target tracked friends or move them with telekinesis when the players meet the Karma requirement to pass.", tags: ["Guardian"]));
 
         ResonanceGate = addon.Bind("ResonanceGate", false, new ConfigurableInfo(Options.Config.Watcher(
-            "Automatically resonates as a shelter or a karma gate closes, or as a karma room activates.",
-            "Automatically resonates as a shelter or a karma gate closes, or as a karma room or a warp point activates."
+            "Resonance occurs automatically when a shelter or karma gate closes, or a karma room activates, reaching tracked friends anywhere in the world.",
+            "Resonance occurs automatically when a shelter or karma gate closes, or a karma room or warp point activates, reaching tracked friends anywhere in the world."
         ), tags: ["Gate Resonance"]));
-        ResonanceRoom = addon.Bind("ResonanceRoom", false, new ConfigurableInfo("Resonates with friends in the room while the player holds the jump key. With Slugcats off, one player reaches only their own friends. At a gate, Gate Resonance reaches tracked friends anywhere.", tags: ["Room Resonance"]));
-        ResonanceGrab = addon.Bind("ResonanceGrab", false, new ConfigurableInfo("Mends only the hurt or dead friend being grabbed while the player holds the jump key. With Slugcats off, it must be the holder's own friend.", tags: ["Grab Resonance"]));
+        ResonanceRoom = addon.Bind("ResonanceRoom", false, new ConfigurableInfo("Resonance occurs when a player presses jump, reaching friends in the room. With Gate Resonance enabled, resonance inside a gate also reaches tracked friends in other rooms.", tags: ["Room Resonance"]));
+        ResonanceGrab = addon.Bind("ResonanceGrab", false, new ConfigurableInfo("Resonance occurs when a player holds a tracked friend and presses jump, mending or reviving that friend.", tags: ["Grab Resonance"]));
         ResonanceWarp = addon.Bind("ResonanceWarp", false, new ConfigurableInfo("Warps eligible tracked friends to the player's location upon resonance.", tags: ["Warp"]))
             .RequireAny(ResonanceGate, ResonanceRoom);
         ResonanceMend = addon.Bind("ResonanceMend", false, new ConfigurableInfo("Mends eligible tracked friends upon resonance, closing their wounds and drawing out poison and cold, and bringing back the ones that have died.", tags: ["Mend"]))
