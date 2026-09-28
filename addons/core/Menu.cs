@@ -20,7 +20,13 @@ internal static class Menu
         menu.AddCheckBox(Config.FriendChaining);
         menu.AddCheckBox(Config.FriendGrabbed);
         menu.AddCheckBox(Config.FriendGrabbedForce);
+
+        menu.AddTitle("Sessions");
+        menu.SetColumns(4);
+        menu.AddCheckBox(Config.FriendStory);
+        menu.AddCheckBox(Config.FriendExpedition, enabled: ModManager.Expedition);
         menu.AddCheckBox(Config.FriendArena);
+        menu.AddCheckBox(Config.FriendSafari, enabled: ModManager.MSC);
 
         menu.AddTitle("Visualizer");
         menu.SetColumns(3);

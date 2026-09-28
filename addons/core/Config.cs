@@ -18,7 +18,13 @@ public static class Config
 
     public static Configurable<bool> FriendGrabbedForce = null!;
 
+    public static Configurable<bool> FriendStory = null!;
+
+    public static Configurable<bool> FriendExpedition = null!;
+
     public static Configurable<bool> FriendArena = null!;
+
+    public static Configurable<bool> FriendSafari = null!;
 
     public static Configurable<bool> FriendLink = null!;
 
@@ -48,7 +54,10 @@ public static class Config
         FriendGrabbed = addon.Bind("FriendGrabbed", false, new ConfigurableInfo("Treats objects held by friends as friendly.", tags: ["Grabbed Objects"]));
         FriendGrabbedForce = addon.Bind("FriendGrabbedForce", true, new ConfigurableInfo("Temporarily treats a held creature as not friendly while the player holding it enters a grab input.", tags: ["Force Grabbing"]))
             .Require(FriendGrabbed);
-        FriendArena = addon.Bind("FriendArena", false, new ConfigurableInfo("Enables friendship rules in the Arena.", tags: ["Arena"]));
+        FriendStory = addon.Bind("FriendStory", true, new ConfigurableInfo("Enables friendship rules in Story mode.", tags: ["Story"]));
+        FriendExpedition = addon.Bind("FriendExpedition", true, new ConfigurableInfo("Enables friendship rules in Expedition mode.", tags: ["Expedition"]));
+        FriendArena = addon.Bind("FriendArena", false, new ConfigurableInfo("Enables friendship rules in Arena mode.", tags: ["Arena"]));
+        FriendSafari = addon.Bind("FriendSafari", false, new ConfigurableInfo("Enables friendship rules in Safari mode.", tags: ["Safari"]));
 
         FriendLink = addon.Bind("FriendLink", false, new ConfigurableInfo("Draws a line between two things as the mod treats them as friends.", tags: ["Friend Link"]));
         FriendName = addon.Bind("FriendName", false, new ConfigurableInfo("Draws the name above every friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.", tags: ["Friend Name"]));

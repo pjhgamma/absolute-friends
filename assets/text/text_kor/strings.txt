@@ -96,8 +96,16 @@ Grabbed Objects|소지물
 Treats objects held by friends as friendly.|친구가 들고 있는 물건을 친구로 취급합니다.
 Force Grabbing|강제 잡기
 Temporarily treats a held creature as not friendly while the player holding it enters a grab input.|플레이어가 잡기를 입력하는 동안, 그 플레이어가 들고 있는 생물을 임시로 친구로 취급하지 않습니다.
+
+Sessions|세션
+Story|스토리
+Enables friendship rules in Story mode.|스토리 모드에서 친구 관계 규칙을 활성화합니다.
+Expedition|원정
+Enables friendship rules in Expedition mode.|원정 모드에서 친구 관계 규칙을 활성화합니다.
 Arena|아레나
-Enables friendship rules in the Arena.|아레나에서 친구 관계 규칙을 활성화합니다.
+Enables friendship rules in Arena mode.|아레나 모드에서 친구 관계 규칙을 활성화합니다.
+Safari|사파리
+Enables friendship rules in Safari mode.|사파리 모드에서 친구 관계 규칙을 활성화합니다.
 
 Visualizer|시각화
 Friend Link|친구 연결선

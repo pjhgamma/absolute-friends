@@ -21,7 +21,33 @@ public static partial class FriendUtils
 
     private static int _chainingClock = -1;
 
-    public static bool IsFriendSession => Config.FriendArena.IsActive || RainWorldUtils.CurrentGame?.IsArenaSession == false;
+    public static bool IsFriendSession
+    {
+        get
+        {
+            if (RainWorldUtils.CurrentGame is not { } game)
+            {
+                return false;
+            }
+
+            if (Custom.rainWorld?.safariMode == true)
+            {
+                return Config.FriendSafari.IsActive;
+            }
+
+            if (game.IsArenaSession)
+            {
+                return Config.FriendArena.IsActive;
+            }
+
+            if (!game.IsStorySession)
+            {
+                return false;
+            }
+
+            return Custom.rainWorld?.ExpeditionMode == true ? Config.FriendExpedition.IsActive : Config.FriendStory.IsActive;
+        }
+    }
 
     public static void RegisterFriendshipRule(Func<AbstractCreature, AbstractCreature, bool?> rule)
     {
