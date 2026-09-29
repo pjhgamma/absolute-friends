@@ -4,11 +4,19 @@ namespace AbsoluteFriends.Core;
 
 public static class Config
 {
+    internal const string NoConfiguredRule = "__none0";
+
     public static Configurable<bool> FriendSlugcat = null!;
 
     public static Configurable<bool> FriendCreature = null!;
 
     public static Configurable<bool> FriendNeutralCreature = null!;
+
+    internal static Configurable<string> SelectedCreatureType = null!;
+
+    internal static Configurable<string> SelectedCreatureRule = null!;
+
+    internal static Configurable<string> SelectedConfiguredCreatureRules = null!;
 
     public static Configurable<bool> FriendSharing = null!;
 
@@ -45,11 +53,16 @@ public static class Config
             "Treats players and slugpups as friends and keeps friends from targeting one another."
         ), tags: ["Slugcats"]));
         FriendCreature = addon.Bind("FriendCreature", false, new ConfigurableInfo("Treats friendly creatures, such as tamed lizards and friendly scavengers, as friends.", tags: ["Friendly Creatures"]));
-        FriendNeutralCreature = addon.Bind("FriendNeutralCreature", false, new ConfigurableInfo("Treats neutral creatures, such as neutralized lizards and rain deer, as friends.", tags: ["Neutral Creatures"]))
+        FriendNeutralCreature = addon.Bind("FriendNeutralCreature", false, new ConfigurableInfo("Also treats neutral creatures, such as neutralized lizards and rain deer, as friends.", tags: ["Neutral Creatures"]))
             .Require(FriendCreature);
 
-        FriendSharing = addon.Bind("FriendSharing", true, new ConfigurableInfo("Shares a creature's friendship, like, and reputation toward one slugcat with the others.", tags: ["Friend Sharing"]))
-            .Require(FriendCreature);
+        CreatureRules.Bind(addon);
+
+        SelectedCreatureType = addon.Bind("SelectedCreatureType", CreatureRules.Options.Select(pair => pair.Key).FirstOrDefault() ?? "", new ConfigurableInfo("Choose the creature type to configure.", tags: ["Creature Type"]));
+        SelectedCreatureRule = addon.Bind("SelectedCreatureRule", nameof(CreatureRule.Allow), new ConfigurableInfo("Choose when this creature counts as a friend, overriding the global friendship options.", tags: ["Creature Rule"]));
+        SelectedConfiguredCreatureRules = addon.Bind("SelectedConfiguredCreatureRules", NoConfiguredRule, new ConfigurableInfo("Select a configured creature rule to edit or remove.", tags: ["Configured Creature Rules"]));
+
+        FriendSharing = addon.Bind("FriendSharing", true, new ConfigurableInfo("Shares a creature's friendship, like, and reputation toward one slugcat with the others.", tags: ["Friend Sharing"]));
         FriendChaining = addon.Bind("FriendChaining", false, new ConfigurableInfo("Treats a player's creature friends as friends with one another.", tags: ["Friend Chaining"]));
         FriendGrabbed = addon.Bind("FriendGrabbed", false, new ConfigurableInfo("Treats objects held by friends as friendly.", tags: ["Grabbed Objects"]));
         FriendGrabbedForce = addon.Bind("FriendGrabbedForce", true, new ConfigurableInfo("Temporarily treats a held creature as not friendly while the player holding it enters a grab input.", tags: ["Force Grabbing"]))

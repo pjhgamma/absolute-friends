@@ -47,14 +47,20 @@ internal sealed partial class RemixMenu : MenuBuilder
     {
         base.Initialize();
 
+        _profileSelector = null;
+        _profileRadioGroup = null;
+        _profileFilter = null;
+        _createEditor = null;
+        _profileChoices = "";
+
         OpTab addonTab = new(this, Translate("Addons"));
         OpTab profileTab = new(this, Translate("Profiles"));
         OpTab diagnosticsTab = new(this, Translate("Diagnostics"));
 
         Tabs = [addonTab, profileTab, diagnosticsTab];
 
-        BuildAddonGroups(addonTab);
         BuildProfiles(profileTab);
+        BuildAddonGroups(addonTab);
         BuildDiagnostics(diagnosticsTab);
         EndTab();
 

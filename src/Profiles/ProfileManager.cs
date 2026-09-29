@@ -119,6 +119,14 @@ internal static class ProfileManager
                     options++;
                 }
             }
+
+            foreach (var option in addon.ProfileOptions)
+            {
+                if (!pair.Value.Options.ContainsKey(option.Key))
+                {
+                    Set(option.Value, option.Value.defaultValue, ref unavailableOptions);
+                }
+            }
         }
 
         return new(addons, options, unavailableAddons, unavailableOptions);
@@ -301,16 +309,23 @@ internal static class ProfileManager
     {
         try
         {
-            if (configurable?.BoundUIconfig is not { } control)
+            if (configurable == null)
             {
                 unavailable++;
 
                 return;
             }
 
-            control.value = value;
+            if (configurable.BoundUIconfig is { } control)
+            {
+                control.value = value;
+            }
+            else
+            {
+                configurable.BoxedValue = value;
+            }
 
-            if (!string.Equals(control.value, value, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(ValueOf(configurable), value, StringComparison.OrdinalIgnoreCase))
             {
                 unavailable++;
             }

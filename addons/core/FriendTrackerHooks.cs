@@ -5,7 +5,11 @@ namespace AbsoluteFriends.Core;
 
 internal class FriendTrackerHooks : BaseHooks
 {
-    protected override Configurable<bool>[] Options => [Config.FriendSlugcat, Config.FriendCreature, Config.FriendChaining];
+    protected override Configurable<bool>[] Options => [Config.FriendSlugcat, Config.FriendCreature, Config.FriendNeutralCreature, Config.FriendChaining];
+
+    protected override bool IsOptionEnabled => base.IsOptionEnabled || CreatureRules.HasConfiguredRules;
+
+    protected override string? Subject => "Friend Tracker";
 
     [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.ctor))]
     private static void On_RainWorldGame_ctor(On.RainWorldGame.orig_ctor orig, RainWorldGame self, ProcessManager manager)
@@ -49,7 +53,10 @@ internal class FriendTrackerHooks : BaseHooks
 
         self.AdoptSlugcatFriend();
 
-        if (self.HasSlugcatFriend || abstractCreature.IsFriendOfPlayer)
+        if (
+            (self.HasSlugcatFriend && (abstractCreature.IsFriendlyAllowed || abstractCreature.IsFriend(self.friend?.abstractCreature)))
+            || abstractCreature.IsFriendOfPlayer
+        )
         {
             abstractCreature.Track();
         }

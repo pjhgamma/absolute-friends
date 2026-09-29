@@ -16,6 +16,71 @@ public abstract partial class MenuBuilder
         _columns = columns;
     }
 
+    public void AddParallelColumns(params Action[] columns)
+    {
+        if (columns == null)
+        {
+            throw new ArgumentNullException(nameof(columns));
+        }
+
+        if (columns.Length < 2)
+        {
+            throw new ArgumentException("At least two columns are required.", nameof(columns));
+        }
+
+        if (columns.Any(column => column == null))
+        {
+            throw new ArgumentException("Column callbacks cannot be null.", nameof(columns));
+        }
+
+        if (_currentTab == null)
+        {
+            return;
+        }
+
+        FinishRow();
+
+        Vector2 margins = _marginX;
+        int previousColumns = _columns;
+        float top = _pos.y;
+        float edge = _edge;
+        float columnWidth = (margins.y - margins.x) / columns.Length;
+        float bottom = top;
+
+        void BuildColumn(Action content, Vector2 columnMargins)
+        {
+            _marginX = columnMargins;
+            _columns = 1;
+            _pos = new(columnMargins.x, top);
+            _currentColumn = 0f;
+            _edge = top;
+
+            content();
+            FinishRow();
+
+            bottom = Mathf.Min(bottom, Mathf.Min(_pos.y, _edge));
+        }
+
+        try
+        {
+            for (int index = 0; index < columns.Length; index++)
+            {
+                float left = margins.x + columnWidth * index + (index == 0 ? 0f : Gap);
+                float right = margins.x + columnWidth * (index + 1) - (index == columns.Length - 1 ? 0f : Gap);
+
+                BuildColumn(columns[index], new(left, right));
+            }
+        }
+        finally
+        {
+            _marginX = margins;
+            _columns = previousColumns;
+            _pos = new(margins.x, bottom);
+            _edge = Mathf.Min(edge, bottom);
+            _currentColumn = 0f;
+        }
+    }
+
     public void AddColumn(float span = 1f)
     {
         ValidateSpan(span);
@@ -421,20 +486,24 @@ public abstract partial class MenuBuilder
 
     public OpComboBox? AddComboBox(Configurable<string> configurable, ListItem[] choices, string? text = null, float span = 1f, bool enabled = true)
     {
+        return AddComboBox(configurable, choices, static (option, position, width, items) => new OpComboBox(option, position, width, items), text, span, enabled);
+    }
+
+    public OpComboBox? AddComboBox(Configurable<string> configurable, ListItem[] choices, Func<Configurable<string>, Vector2, float, List<ListItem>, OpComboBox> create, string? text = null, float span = 1f, bool enabled = true)
+    {
         if (choices.Length == 0 || !TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
         {
             return null;
         }
 
-        OpComboBox comboBox = new(
+        OpComboBox comboBox = create(
             configurable,
             layout.Position,
             layout.Width,
             [.. choices]
-        )
-        {
-            description = layout.Description
-        };
+        );
+
+        comboBox.description = layout.Description;
 
         return CompleteControl(configurable, comboBox, layout.Label, span);
     }
@@ -485,6 +554,11 @@ public abstract partial class MenuBuilder
 
     public OpListBox? AddListBox(Configurable<string> configurable, ListItem[] choices, string? text = null, ushort visibleItems = 5, float? span = null, bool enabled = true)
     {
+        return AddListBox(configurable, choices, static (option, position, width, items, count) => new OpListBox(option, position, width, items, count, true), text, visibleItems, span, enabled);
+    }
+
+    public OpListBox? AddListBox(Configurable<string> configurable, ListItem[] choices, Func<Configurable<string>, Vector2, float, List<ListItem>, ushort, OpListBox> create, string? text = null, ushort visibleItems = 5, float? span = null, bool enabled = true)
+    {
         if (choices.Length == 0)
         {
             return null;
@@ -496,7 +570,7 @@ public abstract partial class MenuBuilder
             visibleItems,
             span,
             enabled,
-            (position, width) => new OpListBox(configurable, position, width, [.. choices], visibleItems, true),
+            (position, width) => create(configurable, position, width, [.. choices], visibleItems),
             listBox => listBox._listHeight
         );
     }

@@ -21,7 +21,12 @@ internal sealed partial class RemixMenu
 
         _profiles.Clear();
         _profiles.AddRange(ProfileStore.Load());
-        _profileIndex = _profiles.Count > 0 ? 0 : -1;
+        _profileIndex = _profiles.FindIndex(profile => profile.Id == Config.ProfileSelection.Value);
+
+        if (_profileIndex < 0 && _profiles.Count > 0)
+        {
+            _profileIndex = 0;
+        }
         _profileFilter = AddListSearch("_searchProfiles", "Shows only the profiles whose name contains what is typed here.");
         _profileViews.Clear();
 
@@ -371,12 +376,12 @@ internal sealed partial class RemixMenu
         }
     }
 
-    private ListItem[] ProfileChoices(bool includeFallback = false)
+    private ListItem[] ProfileChoices()
     {
         ListItem[] profiles = [.. _profiles.Select((profile, index) => new ListItem(profile.Id, profile.Name, index))];
 
-        return _profiles.Count == 0 || includeFallback
-            ? [new ListItem(Config.NoProfile, Translate("No profiles saved")), .. profiles]
+        return _profiles.Count == 0
+            ? [new ListItem(Config.NoProfile, Translate("No profiles saved"))]
             : profiles;
     }
 
@@ -397,20 +402,9 @@ internal sealed partial class RemixMenu
             _profileChoices = choiceState;
 
             string[] existing = [.. selector.GetItemList().Select(item => item.name)];
-            ListItem fallback = new(Config.NoProfile, Translate("No profiles saved"));
 
-            if (!existing.Contains(Config.NoProfile))
-            {
-                selector.AddItems(sort: false, [fallback]);
-            }
-
-            selector.RemoveItems(selectNext: false, [.. existing.Where(id => id != Config.NoProfile)]);
-
-            if (_profiles.Count > 0)
-            {
-                selector.AddItems(sort: false, choices);
-                selector.RemoveItems(selectNext: false, [Config.NoProfile]);
-            }
+            selector.AddItems(sort: false, choices);
+            selector.RemoveItems(selectNext: false, existing);
         }
 
         string selected = CurrentProfile?.Id ?? Config.NoProfile;

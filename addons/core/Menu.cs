@@ -2,17 +2,19 @@ using AbsoluteFriends.Options;
 
 namespace AbsoluteFriends.Core;
 
-internal static class Menu
+internal static partial class Menu
 {
     public static void Build(MenuBuilder menu)
     {
-        menu.AddLabel("Friendship applies in both directions, but nothing counts as its own friend.");
-
-        menu.AddTitle("Base");
+        menu.AddTitle("Friendship");
+        menu.AddLabel("Friendship works both ways, but nothing is its own friend.");
+        menu.AddLabel("Creature rules override the Friendly Creatures and Neutral Creatures options.");
         menu.SetColumns(3);
         menu.AddCheckBox(Config.FriendSlugcat);
         menu.AddCheckBox(Config.FriendCreature);
         menu.AddCheckBox(Config.FriendNeutralCreature);
+
+        BuildCreatureTypes(menu);
 
         menu.AddTitle("Extended");
         menu.SetColumns(4);

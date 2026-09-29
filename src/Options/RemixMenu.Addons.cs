@@ -13,7 +13,7 @@ internal sealed partial class RemixMenu
         AddLabel("Select a profile, then enable addons and configure their options.");
 
         SetColumns(2);
-        _profileSelector = AddComboBox(Config.ProfileSelection, ProfileChoices(includeFallback: true), "Selected Profile", span: 2f);
+        _profileSelector = AddComboBox(Config.ProfileSelection, ProfileChoices(), "Selected Profile", span: 2f);
 
         if (_profileSelector != null)
         {

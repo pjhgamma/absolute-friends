@@ -75,16 +75,34 @@ Absolute Friends: an error turned off <PLACEHOLDER>. See the Remix menu.|Absolut
 
 Absolute Friends: Core|절대적 친구: 핵심
 Controls which things are friendly and how friendship is shared and shown.|무엇을 친구로 취급할지와 친구 관계를 공유하고 표시하는 방식을 설정합니다.
-Friendship applies in both directions, but nothing counts as its own friend.|친구 관계는 양방향으로 적용되지만, 누구도 자기 자신을 친구로 취급하지는 않습니다.
 
-Base|기본
+Friendship|친구 관계
+Friendship works both ways, but nothing is its own friend.|친구 관계는 양방향으로 적용되지만, 자기 자신은 친구가 아닙니다.
+Creature rules override the Friendly Creatures and Neutral Creatures options.|생물 규칙은 우호적인 생물과 중립적인 생물 옵션보다 우선합니다.
+Friend Tracker|친구 추적기
+Owner Tracker|소유자 추적기
 Slugcats|슬러그캣
 Treats players as friends and keeps friends from targeting one another.|플레이어를 친구로 취급하고, 친구들이 서로를 노리지 않게 합니다.
 Treats players and slugpups as friends and keeps friends from targeting one another.|플레이어와 슬러그펍을 친구로 취급하고, 친구들이 서로를 노리지 않게 합니다.
 Friendly Creatures|우호적인 생물
 Treats friendly creatures, such as tamed lizards and friendly scavengers, as friends.|길들인 도마뱀과 우호적인 스캐빈저 등 우호적인 생물을 친구로 취급합니다.
 Neutral Creatures|중립적인 생물
-Treats neutral creatures, such as neutralized lizards and rain deer, as friends.|중립화된 도마뱀과 토끼사슴 등 중립적인 생물을 친구로 취급합니다.
+Also treats neutral creatures, such as neutralized lizards and rain deer, as friends.|중립화된 도마뱀과 토끼사슴 등 중립적인 생물도 친구로 취급합니다.
+Creature Type|생물 유형
+Choose the creature type to configure.|설정할 생물 유형을 선택합니다.
+Overrides how this creature type is treated as a friend without changing vanilla relationships.|바닐라 친구 관계를 바꾸지 않고 이 생물 유형을 친구로 취급하는 방식을 재정의합니다.
+Choose when this creature counts as a friend, overriding the global friendship options.|이 생물을 친구로 취급할 조건을 선택합니다. 전역 친구 관계 옵션보다 우선합니다.
+Creature Rule|생물 규칙
+Select a configured creature rule to edit or remove.|변경하거나 제거할 생물 규칙을 선택합니다.
+Configured Creature Rules|설정된 생물 규칙
+No creature rules|생물 규칙 없음
+Apply Creature Rule|생물 규칙 적용
+Add or update the selected creature rule.|선택한 생물 규칙을 추가하거나 변경합니다.
+Remove Creature Rule|생물 규칙 제거
+Remove the selected creature rule and use the global friendship options again.|선택한 생물 규칙을 제거하고 전역 친구 관계 옵션을 다시 따릅니다.
+Allow friendly|우호적이면 허용
+Allow friendly & neutral|우호적 또는 중립적이면 허용
+Deny friendship|친구 관계 거부
 
 Extended|확장
 Relationship|관계
