@@ -77,6 +77,18 @@ internal sealed class RemixMenu : MenuBuilder
         button.colorFill = color;
     }
 
+    private static void StyleListItem(ListItem item, FLabel label, bool selectedRow)
+    {
+        Color color = item.name switch
+        {
+            "Ripple" or "lizard" => Palette.Primary,
+            "Gold" or "scavenger" => Palette.Secondary,
+            _ => Color.white
+        };
+
+        label.color = selectedRow ? Menu.MenuColorEffect.MidToDark(color) : color;
+    }
+
     private void BuildOverviewTab()
     {
         AddTitle("Plugin Overview", "Adds a profile-aware addon and an independent Remix menu.");
@@ -96,7 +108,7 @@ internal sealed class RemixMenu : MenuBuilder
 
         AddIntSlider(Config.Volume, "Test Volume", span: 4f);
 
-        OpSimpleButton? button = AddSimpleButton("Play Sound", "Logs an action and plays the game-over sound.", TestButton, span: 4f);
+        OpSimpleButton? button = AddSimpleButton("Play Sound", "Logs an action and plays the game-over sound.", TestButton, span: 4f, requirement: Config.Announcements);
 
         if (style != null && button != null)
         {
@@ -141,7 +153,7 @@ internal sealed class RemixMenu : MenuBuilder
 
             // Action controls.
             SetColumns(4);
-            AddSimpleButton("Play Sound", "Logs an action and plays the game-over sound.", TestButton, span: 2f);
+            AddSimpleButton("Play Sound", "Logs an action and plays the game-over sound.", TestButton, span: 2f, requirement: Config.Announcements);
             // A narrow image button can be aligned left, center, or right within its span.
             AddSimpleImageButton("FriendA", "Logs an image-button action.", LogAction, width: 24f, alignment: FLabelAlignment.Center);
             AddHoldButton("Hold to Log", "Hold to log an action.", LogAction);
@@ -154,8 +166,8 @@ internal sealed class RemixMenu : MenuBuilder
             SetColumns(4);
             // Compact selection controls. String arrays use identical stored and displayed values.
             AddComboBox(Config.SimpleChoice, ["Alpha", "Beta", "Gamma"], "Simple Choice", span: 2f);
-            // ListItem keeps persisted values stable while display names can be translated.
-            AddComboBox(Config.NamedChoice, styles, "Named Choice", span: 2f);
+            // ListItem keeps persisted values stable while display names can be translated. The callback styles each visible item and the selected value.
+            AddComboBox(Config.NamedChoice, styles, StyleListItem, "Named Choice", span: 2f);
             // Enum configurables infer their values; SpecialEnum loads values from Rain World's resources.
             AddResourceSelector(Config.ResourceChoice, "Enum Selector", span: 2f);
             AddResourceSelector(Config.RegionChoice, OpResourceSelector.SpecialEnum.Regions, "Region Selector", span: 2f);
@@ -170,7 +182,7 @@ internal sealed class RemixMenu : MenuBuilder
                 visibleItems: 4,
                 span: 3f
             );
-            AddListBox(Config.NamedListedChoice, namedCreatures, "Named List", visibleItems: 3, span: 2f);
+            AddListBox(Config.NamedListedChoice, namedCreatures, StyleListItem, "Named List", visibleItems: 3, span: 2f);
             AddColumn(3f);
             AddResourceList(Config.ResourceListChoice, "Enum List", visibleItems: 2, span: 1f);
             AddResourceList(Config.RegionListChoice, OpResourceSelector.SpecialEnum.Regions, "Region List", visibleItems: 3, span: 4f);
@@ -180,6 +192,25 @@ internal sealed class RemixMenu : MenuBuilder
             SetColumns(4);
             AddColumn(1f);
             AddColorPicker(Config.Tint, "Tint", span: 2f);
+
+            // Each callback starts at the same height and advances independently.
+            AddParallelColumns(
+                () =>
+                {
+                    AddLabel("Left Column");
+                    AddSimpleButton("Play Sound", "Logs an action and plays the game-over sound.", TestButton, requirement: Config.Announcements);
+                },
+                () =>
+                {
+                    AddLabel("Middle Column");
+                    AddParagraph("Remix saves these values; gameplay ignores them.", 55f);
+                },
+                () =>
+                {
+                    AddLabel("Right Column");
+                    AddParagraph("Columns advance independently.", 55f);
+                }
+            );
         });
     }
 }

@@ -352,9 +352,9 @@ public abstract partial class MenuBuilder
         return CompleteControl(configurable, updown, layout.Label, span);
     }
 
-    public OpSimpleButton? AddSimpleButton(string text, string description, Action action, float span = 1f)
+    public OpSimpleButton? AddSimpleButton(string text, string description, Action action, float span = 1f, Configurable<bool>? requirement = null, bool enabled = true)
     {
-        if (!BeginElement(span))
+        if (!enabled || !BeginElement(span))
         {
             return null;
         }
@@ -368,10 +368,7 @@ public abstract partial class MenuBuilder
             description = Translate(description)
         };
 
-        simpleButton.OnClick += delegate
-        {
-            action();
-        };
+        simpleButton.OnClick += BindButton(simpleButton, action, requirement);
 
         AddColumn(span);
         AddElements(simpleButton);
@@ -379,9 +376,9 @@ public abstract partial class MenuBuilder
         return simpleButton;
     }
 
-    public OpSimpleImageButton? AddSimpleImageButton(string image, string description, Action action, float span = 1f, float? width = null, FLabelAlignment alignment = FLabelAlignment.Right)
+    public OpSimpleImageButton? AddSimpleImageButton(string image, string description, Action action, float span = 1f, float? width = null, FLabelAlignment alignment = FLabelAlignment.Right, Configurable<bool>? requirement = null, bool enabled = true)
     {
-        if (!BeginElement(span))
+        if (!enabled || !BeginElement(span))
         {
             return null;
         }
@@ -403,10 +400,7 @@ public abstract partial class MenuBuilder
             description = Translate(description)
         };
 
-        imageButton.OnClick += delegate
-        {
-            action();
-        };
+        imageButton.OnClick += BindButton(imageButton, action, requirement);
 
         AddColumn(span);
         AddElements(imageButton);
@@ -414,9 +408,9 @@ public abstract partial class MenuBuilder
         return imageButton;
     }
 
-    public OpHoldButton? AddHoldButton(string text, string description, Action action, float span = 1f)
+    public OpHoldButton? AddHoldButton(string text, string description, Action action, float span = 1f, Configurable<bool>? requirement = null, bool enabled = true)
     {
-        if (!BeginElement(span))
+        if (!enabled || !BeginElement(span))
         {
             return null;
         }
@@ -430,10 +424,7 @@ public abstract partial class MenuBuilder
             description = Translate(description)
         };
 
-        holdButton.OnPressDone += delegate
-        {
-            action();
-        };
+        holdButton.OnPressDone += BindButton(holdButton, action, requirement);
 
         AddColumn(span);
         AddElements(holdButton);
@@ -489,6 +480,16 @@ public abstract partial class MenuBuilder
         return AddComboBox(configurable, choices, static (option, position, width, items) => new OpComboBox(option, position, width, items), text, span, enabled);
     }
 
+    public OpComboBox? AddComboBox(Configurable<string> configurable, ListItem[] choices, Action<ListItem, FLabel, bool> styleItem, string? text = null, float span = 1f, bool enabled = true)
+    {
+        if (styleItem == null)
+        {
+            throw new ArgumentNullException(nameof(styleItem));
+        }
+
+        return AddComboBox(configurable, choices, (option, position, width, items) => new StyledComboBox(option, position, width, items, styleItem), text, span, enabled);
+    }
+
     public OpComboBox? AddComboBox(Configurable<string> configurable, ListItem[] choices, Func<Configurable<string>, Vector2, float, List<ListItem>, OpComboBox> create, string? text = null, float span = 1f, bool enabled = true)
     {
         if (choices.Length == 0 || !TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
@@ -504,6 +505,14 @@ public abstract partial class MenuBuilder
         );
 
         comboBox.description = layout.Description;
+
+        Watch(() =>
+        {
+            if (comboBox.held)
+            {
+                comboBox.MoveToFront();
+            }
+        });
 
         return CompleteControl(configurable, comboBox, layout.Label, span);
     }
@@ -555,6 +564,16 @@ public abstract partial class MenuBuilder
     public OpListBox? AddListBox(Configurable<string> configurable, ListItem[] choices, string? text = null, ushort visibleItems = 5, float? span = null, bool enabled = true)
     {
         return AddListBox(configurable, choices, static (option, position, width, items, count) => new OpListBox(option, position, width, items, count, true), text, visibleItems, span, enabled);
+    }
+
+    public OpListBox? AddListBox(Configurable<string> configurable, ListItem[] choices, Action<ListItem, FLabel, bool> styleItem, string? text = null, ushort visibleItems = 5, float? span = null, bool enabled = true)
+    {
+        if (styleItem == null)
+        {
+            throw new ArgumentNullException(nameof(styleItem));
+        }
+
+        return AddListBox(configurable, choices, (option, position, width, items, count) => new StyledListBox(option, position, width, items, count, styleItem), text, visibleItems, span, enabled);
     }
 
     public OpListBox? AddListBox(Configurable<string> configurable, ListItem[] choices, Func<Configurable<string>, Vector2, float, List<ListItem>, ushort, OpListBox> create, string? text = null, ushort visibleItems = 5, float? span = null, bool enabled = true)
@@ -701,6 +720,30 @@ public abstract partial class MenuBuilder
         AddElements(searchBox);
 
         return filter;
+    }
+
+    private OnSignalHandler BindButton(UIfocusable button, Action action, Configurable<bool>? requirement)
+    {
+        Configurable<bool>? addonRequirement = _buttonRequirement;
+
+        bool CanPress() => (addonRequirement == null || IsMasterActive(addonRequirement))
+            && (requirement == null || IsMasterActive(requirement));
+
+        if (addonRequirement != null || requirement != null)
+        {
+            void UpdateButton() => button.greyedOut = !CanPress();
+
+            UpdateButton();
+            Watch(UpdateButton);
+        }
+
+        return _ =>
+        {
+            if (!button.greyedOut && CanPress())
+            {
+                action();
+            }
+        };
     }
 
     private void FinishRow()

@@ -112,7 +112,7 @@ public abstract partial class MenuBuilder
 
     private protected static Configurable<T> CreateTransientConfigurable<T>(T value, ConfigurableInfo info)
     {
-        return (Configurable<T>)Activator.CreateInstance(typeof(Configurable<T>), value, info)!;
+        return (Configurable<T>)Activator.CreateInstance(typeof(Configurable<T>), value, info);
     }
 
     private protected ProfileEditor? AddProfileCreator(string text, string description, string value, Action<string> save, float span = 1f)

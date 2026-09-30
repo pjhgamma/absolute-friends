@@ -1,7 +1,9 @@
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Utils;
-using Menu.Remix.MixedUI.ValueTypes;
+using Menu.Remix;
 using Menu.Remix.MixedUI;
+using Menu.Remix.MixedUI.ValueTypes;
+using RWCustom;
 using UnityEngine;
 
 namespace AbsoluteFriends.Options;
@@ -40,6 +42,8 @@ public abstract partial class MenuBuilder : OptionInterface
 
     private SectionFilter? _filter;
 
+    private Configurable<bool>? _buttonRequirement;
+
     private OpRect? _box;
 
     private int _boxIndex;
@@ -70,6 +74,7 @@ public abstract partial class MenuBuilder : OptionInterface
         _radioButtonGroup = null;
         _section = null;
         _filter = null;
+        _buttonRequirement = null;
         _box = null;
         _marginX = _defaultMarginX;
         _headerIndex = -1;
@@ -181,6 +186,7 @@ public abstract partial class MenuBuilder : OptionInterface
             scrollBox = new(new Vector2(0f, 0f), new Vector2(CanvasSize, view), height, false, false, true);
             _currentTab.AddItems(scrollBox);
             scrollBox.AddItems(body);
+            scrollBox.OnUpdate += () => FocusScrollChild(scrollBox, body);
         }
         else
         {
@@ -317,6 +323,22 @@ public abstract partial class MenuBuilder : OptionInterface
         _externals.Add(update);
     }
 
+    internal void WithButtonRequirement(Configurable<bool>? requirement, Action build)
+    {
+        Configurable<bool>? previous = _buttonRequirement;
+
+        _buttonRequirement = requirement;
+
+        try
+        {
+            build();
+        }
+        finally
+        {
+            _buttonRequirement = previous;
+        }
+    }
+
     private static float ListBoxHeight(int visibleItems)
     {
         return visibleItems * 20f + 34f;
@@ -325,6 +347,25 @@ public abstract partial class MenuBuilder : OptionInterface
     private static void Snap(UIelement element)
     {
         element.lastScreenPos = element.ScreenPos;
+    }
+
+    private static void FocusScrollChild(OpScrollBox scrollBox, UIelement[] body)
+    {
+        if (!ReferenceEquals(ConfigContainer.FocusedElement, scrollBox)
+            || scrollBox.held
+            || Custom.rainWorld?.processManager?.menuesMouseMode == true)
+        {
+            return;
+        }
+
+        UIfocusable? firstVisible = body.OfType<UIfocusable>()
+            .FirstOrDefault(item => !item.IsInactive && item.CurrentlyFocusableNonMouse && OpScrollBox.IsChildVisible(item))
+            ?? body.OfType<UIfocusable>().FirstOrDefault(item => !item.IsInactive && item.CurrentlyFocusableNonMouse);
+
+        if (firstVisible != null)
+        {
+            ConfigConnector.FocusNewElement(firstVisible);
+        }
     }
 
     private OpLabel? AddLabel(string text, string? value, bool bigText, FLabelAlignment alignment, bool enabled)

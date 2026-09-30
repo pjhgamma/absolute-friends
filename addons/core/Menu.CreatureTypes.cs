@@ -141,11 +141,21 @@ internal static partial class Menu
                 menu.AddLabel("Creature Type", alignment: FLabelAlignment.Left);
                 typePicker = menu.AddComboBox(Config.SelectedCreatureType, types);
                 menu.AddLabel("Creature Rule", alignment: FLabelAlignment.Left);
-                rulePicker = menu.AddComboBox(Config.SelectedCreatureRule, rules, static (option, position, width, items) => new RuleComboBox(option, position, width, items));
+                rulePicker = menu.AddComboBox(
+                    Config.SelectedCreatureRule,
+                    rules,
+                    static (item, label, selectedRow) => ApplyRuleColor(label, CreatureRules.Parse(item.name), selectedRow)
+                );
             },
             () =>
             {
-                configuredRules = menu.AddListBox(Config.SelectedConfiguredCreatureRules, initialRules, static (option, position, width, items, count) => new ConfiguredRuleListBox(option, position, width, items, count), "Configured Creature Rules", visibleItems: VisibleRuleItems);
+                configuredRules = menu.AddListBox(
+                    Config.SelectedConfiguredCreatureRules,
+                    initialRules,
+                    static (item, label, selectedRow) => ApplyRuleColor(label, CreatureRules.Get(item.name), selectedRow),
+                    "Configured Creature Rules",
+                    visibleItems: VisibleRuleItems
+                );
             }
         );
 
@@ -217,59 +227,20 @@ internal static partial class Menu
         return [.. items];
     }
 
-    private sealed class RuleComboBox(Configurable<string> option, Vector2 position, float width, List<ListItem> items)
-        : OpComboBox(option, position, width, items)
+    private static void ApplyRuleColor(FLabel label, CreatureRule rule, bool selectedRow)
     {
-        public override void GrafUpdate(float timeStacker)
+        if (rule == CreatureRule.Inherit)
         {
-            base.GrafUpdate(timeStacker);
-
-            RuleColors.Apply(_lblText, _lblList, _searchMode ? _searchList : _itemList, _listTop, value, CreatureRules.Parse);
-        }
-    }
-
-    private sealed class ConfiguredRuleListBox(Configurable<string> option, Vector2 position, float width, List<ListItem> items, ushort visibleItems)
-        : OpListBox(option, position, width, items, visibleItems, true)
-    {
-        public override void GrafUpdate(float timeStacker)
-        {
-            base.GrafUpdate(timeStacker);
-
-            RuleColors.Apply(_lblText, _lblList, _searchMode ? _searchList : _itemList, _listTop, value, CreatureRules.Get);
-        }
-    }
-
-    private static class RuleColors
-    {
-        internal static void Apply(FLabel? selected, FLabel[]? labels, IReadOnlyList<ListItem>? items, int top, string value, Func<string, CreatureRule> ruleFor)
-        {
-            if (selected != null && Get(ruleFor(value)) is { } color)
-            {
-                selected.color = color;
-            }
-
-            if (labels == null || items == null)
-            {
-                return;
-            }
-
-            for (int index = 0; index < labels.Length; index++)
-            {
-                int itemIndex = top + index;
-
-                if (itemIndex >= 0 && itemIndex < items.Count && labels[index] is { } label && Get(ruleFor(items[itemIndex].name)) is { } color2)
-                {
-                    label.color = color2;
-                }
-            }
+            return;
         }
 
-        private static Color? Get(CreatureRule rule) => rule switch
+        Color color = rule switch
         {
             CreatureRule.Allow => Color.green,
-            CreatureRule.AllowNeutral => Color.white,
             CreatureRule.Deny => Color.red,
-            _ => null
+            _ => Color.white
         };
+
+        label.color = color * (selectedRow ? 0.7f : 1f);
     }
 }

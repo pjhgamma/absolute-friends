@@ -18,13 +18,6 @@ internal sealed partial class RemixMenu
         if (_profileSelector != null)
         {
             _profileSelector.OnValueUpdate += (_, value, _) => SelectProfile(value);
-            Watch(() =>
-            {
-                if (_profileSelector.held)
-                {
-                    _profileSelector.MoveToFront();
-                }
-            });
             RefreshProfileSelector();
         }
 
@@ -117,7 +110,7 @@ internal sealed partial class RemixMenu
         BeginFold(() => IsExpanded(addon));
 
         SetColumns(4);
-        AddonRegistry.BuildMenu(addon, this);
+        WithButtonRequirement(addon.Enabled, () => AddonRegistry.BuildMenu(addon, this));
 
         container = EndBox();
     }
