@@ -173,7 +173,10 @@ Blindness gradually fades toward that of the least blinded friend in the same ro
 Sets how much of the remaining difference in blindness fades away each frame while a less blinded friend is in the same room. A value of 1 closes the difference at once, and 0 disables the additional fading.|실명이 더 옅은 친구가 같은 방에 있을 때 남은 실명 차이가 매 프레임 얼마나 옅어질지 설정합니다. 1은 그 차이를 단숨에 메우며, 0은 추가로 옅어지지 않습니다.
 Hypothermia|저체온증
 Hypothermia gradually fades toward that of the least frozen friend in the same room.|저체온증이 같은 방에 있는 친구 중 가장 옅은 쪽을 향해 서서히 옅어집니다.
-Sets how much of the remaining difference in hypothermia fades away each frame while a less frozen friend is in the same room. A value of 1 closes the difference at once, and 0 disables the warmth.|저체온증이 더 옅은 친구가 같은 방에 있을 때 남은 저체온증 차이가 매 프레임 얼마나 옅어질지 설정합니다. 1은 그 차이를 단숨에 메우며, 0은 추가로 옅어지지 않습니다.
+Sets how much of the remaining difference in hypothermia fades away each frame while a less frozen friend is in the same room. A value of 1 closes the difference at once, and 0 disables the warmth.|저체온증이 더 옅은 친구가 같은 방에 있을 때 남은 저체온증 차이가 매 프레임 얼마나 회복될지 설정합니다. 1은 그 차이를 단숨에 메우며, 0은 추가로 회복되지 않습니다.
+Breath|숨
+Breath gradually recovers toward that of the friend with the most air in the same room.|숨이 같은 방에 있는 친구 중 가장 많이 남은 쪽을 향해 서서히 회복됩니다.
+Sets how much of the remaining difference in breath recovers each frame while a friend with more air is in the same room. A value of 1 closes the difference at once, and 0 disables the recovery.|숨이 더 많이 남은 친구가 같은 방에 있을 때 남은 숨의 차이가 매 프레임 얼마나 회복될지 설정합니다. 1은 그 차이를 단숨에 메우며, 0은 추가로 회복되지 않습니다.
 Forgiveness|자비
 Reputation loss between friends is reduced.|친구끼리 떨어지는 평판이 줄어듭니다.
 Sets how much reputation loss between friends is forgiven. A value of 1 lets the deed pass unnoticed, and 0 leaves the reputation loss untouched.|친구끼리 평판 손실을 얼마나 용서할지 정합니다. 값이 1이면 그 일을 아예 없던 일로 삼고, 0이면 평판이 깎이는 그대로 둡니다.

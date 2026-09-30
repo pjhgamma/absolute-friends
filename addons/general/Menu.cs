@@ -19,6 +19,8 @@ internal static class Menu
         menu.AddFloatSlider(Config.BlindRatio, span: 3f);
         menu.AddCheckBox(Config.Hypothermia, enabled: ModManager.HypothermiaModule);
         menu.AddFloatSlider(Config.HypothermiaRatio, span: 3f, enabled: ModManager.HypothermiaModule);
+        menu.AddCheckBox(Config.Breath);
+        menu.AddFloatSlider(Config.BreathRatio, span: 3f);
         menu.AddCheckBox(Config.Forgiveness);
         menu.AddFloatSlider(Config.ForgivenessRatio, span: 3f);
     }
