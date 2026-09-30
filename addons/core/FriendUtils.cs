@@ -273,9 +273,9 @@ public static partial class FriendUtils
 
         private bool IsChainedFriend(AbstractCreature target)
         {
-            foreach (var slugcat in TrackedSlugcats)
+            foreach (var abstractSlugcat in TrackedSlugcats)
             {
-                if (source.IsFriendForChaining(slugcat) && target.IsFriendForChaining(slugcat))
+                if (source.IsFriendForChaining(abstractSlugcat) && target.IsFriendForChaining(abstractSlugcat))
                 {
                     return true;
                 }

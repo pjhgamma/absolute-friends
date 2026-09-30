@@ -22,7 +22,7 @@ internal class PomegranateHooks : WatcherHooks
         {
             c.Emit(OpCodes.Dup);
             c.Emit(OpCodes.Ldarg_0);
-            c.EmitGuarded((Player player, Pomegranate pomegranate) => pomegranate.SetOwner(player));
+            c.EmitGuarded((Player slugcat, Pomegranate pomegranate) => pomegranate.SetOwner(slugcat));
         }
     }
 

@@ -8,9 +8,9 @@ public static partial class FriendUtils
 {
     private static ConditionalWeakTable<AbstractCreature, HashSet<EntityID>> _trackedPlayerIds = new();
 
-    private static ConditionalWeakTable<AbstractCreature, HashSet<EntityID>> _pupFriendIds = new();
+    private static ConditionalWeakTable<AbstractCreature, HashSet<EntityID>> _slugpupFriendIds = new();
 
-    private static readonly HashSet<AbstractCreature> _trackedSlugcats = [];
+    private static readonly HashSet<AbstractCreature> _trackedSlugpups = [];
 
     private static readonly HashSet<AbstractCreature> _trackedCreatures = [];
 
@@ -70,26 +70,26 @@ public static partial class FriendUtils
                 yield return abstractPlayer;
             }
 
-            foreach (var abstractSlugpup in _trackedSlugcats)
+            foreach (var abstractSlugpup in _trackedSlugpups)
             {
                 yield return abstractSlugpup;
             }
         }
     }
 
-    internal static bool HasMultipleTrackedSlugcats => (RainWorldUtils.CurrentGame?.Players.Count ?? 0) + _trackedSlugcats.Count > 1;
+    internal static bool HasMultipleTrackedSlugcats => (RainWorldUtils.CurrentGame?.Players.Count ?? 0) + _trackedSlugpups.Count > 1;
 
     private static IEnumerable<AbstractCreature> Players => RainWorldUtils.CurrentGame?.Players ?? [];
 
     internal static void ClearTrackedFriends()
     {
-        _trackedSlugcats.Clear();
+        _trackedSlugpups.Clear();
         _trackedCreatures.Clear();
         _chainingFriendships.Clear();
         _chainingGame = null;
         _chainingClock = -1;
         _trackedPlayerIds = new();
-        _pupFriendIds = new();
+        _slugpupFriendIds = new();
     }
 
     internal static void PruneTrackedFriends()
@@ -98,7 +98,7 @@ public static partial class FriendUtils
             (abstractCreature.slatedForDeletion && abstractCreature.state?.dead != true)
             || abstractCreature.world != RainWorldUtils.CurrentGame?.world
         );
-        _trackedSlugcats.RemoveWhere(abstractCreature => !_trackedCreatures.Contains(abstractCreature));
+        _trackedSlugpups.RemoveWhere(abstractCreature => !_trackedCreatures.Contains(abstractCreature));
     }
 
     extension(AbstractCreature? source)
@@ -107,9 +107,9 @@ public static partial class FriendUtils
         {
             if (source is { } abstractCreature and not AbstractOwner)
             {
-                if (abstractCreature.IsNPC)
+                if (abstractCreature.IsSlugpup)
                 {
-                    _trackedSlugcats.Add(abstractCreature);
+                    _trackedSlugpups.Add(abstractCreature);
                 }
 
                 _trackedCreatures.Add(abstractCreature);
@@ -131,7 +131,7 @@ public static partial class FriendUtils
         {
             if (source is { } abstractCreature)
             {
-                _trackedSlugcats.Remove(abstractCreature);
+                _trackedSlugpups.Remove(abstractCreature);
                 _trackedCreatures.Remove(abstractCreature);
                 _trackedPlayerIds.Remove(abstractCreature);
             }
@@ -155,22 +155,22 @@ public static partial class FriendUtils
                 && playerIds.Contains(abstractPlayer.ID);
         }
 
-        internal void TrackPupFriend(AbstractCreature abstractPlayer)
+        internal void TrackSlugpupFriend(AbstractCreature abstractPlayer)
         {
-            if (source is not { } abstractSlugpup || !abstractSlugpup.IsNPC || !abstractPlayer.IsPlayer)
+            if (source is not { } abstractSlugpup || !abstractSlugpup.IsSlugpup || !abstractPlayer.IsPlayer)
             {
                 return;
             }
 
-            _pupFriendIds.GetOrCreateValue(abstractSlugpup).Add(abstractPlayer.ID);
+            _slugpupFriendIds.GetOrCreateValue(abstractSlugpup).Add(abstractPlayer.ID);
             abstractSlugpup.Track();
         }
 
-        internal bool HasRemotePupFriend
+        internal bool IsSlugpupWithAbsentFriend
         {
             get
             {
-                if (source == null || !_trackedCreatures.Contains(source) || !_pupFriendIds.TryGetValue(source, out HashSet<EntityID> playerIds))
+                if (source == null || !_trackedCreatures.Contains(source) || !_slugpupFriendIds.TryGetValue(source, out HashSet<EntityID> playerIds))
                 {
                     return false;
                 }
@@ -269,9 +269,9 @@ public static partial class FriendUtils
                 return;
             }
 
-            if (abstractCreature.IsNPC
+            if (abstractCreature.IsSlugpup
                 && tracker.friend?.abstractCreature?.IsPlayer != true
-                && (!_pupFriendIds.TryGetValue(abstractCreature, out HashSet<EntityID> playerIds)
+                && (!_slugpupFriendIds.TryGetValue(abstractCreature, out HashSet<EntityID> playerIds)
                     || !playerIds.Any(id => abstractCreature.state?.socialMemory?.GetRelationship(id) is { like: > FriendLikeThreshold, tempLike: > FriendLikeThreshold })))
             {
                 return;
@@ -302,7 +302,7 @@ public static partial class FriendUtils
                 if (
                     abstractSlugcat == abstractCreature
                     || abstractSlugcat is not { slatedForDeletion: false, state.dead: false, realizedCreature: { } slugcat }
-                    || abstractCreature.IsNPC
+                    || abstractCreature.IsSlugpup
                     || !abstractCreature.IsFriend(abstractSlugcat)
                 )
                 {
@@ -351,17 +351,17 @@ public static partial class FriendUtils
                     return false;
                 }
 
-                foreach (var abstractSlugcat in Players)
+                foreach (var abstractPlayer in Players)
                 {
-                    if (abstractSlugcat.ID == id)
+                    if (abstractPlayer.ID == id)
                     {
                         return true;
                     }
                 }
 
-                foreach (var abstractSlugcat in _trackedSlugcats)
+                foreach (var abstractSlugpup in _trackedSlugpups)
                 {
-                    if (abstractSlugcat.ID == id)
+                    if (abstractSlugpup.ID == id)
                     {
                         return true;
                     }

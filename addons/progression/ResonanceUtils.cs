@@ -343,12 +343,12 @@ internal static class ResonanceUtils
 
             creature.Stun(duration);
 
-            if (creature is Player player)
+            if (creature is Player slugcat)
             {
-                player.Blink(duration);
-                player.airInLungs *= 0.1f;
-                player.exhausted = true;
-                player.aerobicLevel = Mathf.Max(player.aerobicLevel, 1.5f);
+                slugcat.Blink(duration);
+                slugcat.airInLungs *= 0.1f;
+                slugcat.exhausted = true;
+                slugcat.aerobicLevel = Mathf.Max(slugcat.aerobicLevel, 1.5f);
             }
         }
     }
@@ -393,9 +393,9 @@ internal static class ResonanceUtils
                 }
             }
 
-            if (creature is Player player)
+            if (creature is Player slugcat)
             {
-                player.Blink(5);
+                slugcat.Blink(5);
             }
         }
 
@@ -408,10 +408,10 @@ internal static class ResonanceUtils
 
             creature.Stun(Random.Range(20, 80));
 
-            if (creature is Player player)
+            if (creature is Player slugcat)
             {
-                player.Blink(100);
-                player.exhausted = true;
+                slugcat.Blink(100);
+                slugcat.exhausted = true;
             }
         }
 

@@ -22,7 +22,7 @@ internal class LizardPoisonHooks : WatcherHooks
         ))
         {
             c.Emit(OpCodes.Ldarg_0);
-            c.EmitGuarded((Player? player, Lizard lizard) => lizard.IsFriend(player) ? null : player, (player, _) => player);
+            c.EmitGuarded((Player? slugcat, Lizard lizard) => lizard.IsFriend(slugcat) ? null : slugcat, (slugcat, _) => slugcat);
         }
     }
 

@@ -31,7 +31,7 @@ internal class MushroomHooks : BaseHooks
 
                 foreach (var abstractCreature in FriendUtils.TrackedFriendsIncludingPlayers)
                 {
-                    if (abstractCreature.world?.game == game && abstractCreature.realizedCreature is Player player && !player.dead && !player.inShortcut && source.IsFriend(player))
+                    if (abstractCreature.world?.game == game && abstractCreature.realizedCreature is Player slugcat && !slugcat.dead && !slugcat.inShortcut && source.IsFriend(slugcat))
                     {
                         friends.Add(abstractCreature);
                     }
@@ -47,18 +47,18 @@ internal class MushroomHooks : BaseHooks
     {
         orig(self);
 
-        List<Player> players = [];
+        List<Player> slugcats = [];
         Dictionary<Player, (int Counter, float Effect)> active = [];
 
         foreach (var abstractCreature in FriendUtils.TrackedFriendsIncludingPlayers)
         {
-            if (abstractCreature.world?.game == self && abstractCreature.realizedCreature is Player { dead: false } player)
+            if (abstractCreature.world?.game == self && abstractCreature.realizedCreature is Player { dead: false } slugcat)
             {
-                players.Add(player);
+                slugcats.Add(slugcat);
 
-                if (!player.inShortcut)
+                if (!slugcat.inShortcut)
                 {
-                    active[player] = (player.mushroomCounter, player.mushroomEffect);
+                    active[slugcat] = (slugcat.mushroomCounter, slugcat.mushroomEffect);
                 }
             }
         }
@@ -68,7 +68,7 @@ internal class MushroomHooks : BaseHooks
             return;
         }
 
-        foreach (var player in players)
+        foreach (var slugcat in slugcats)
         {
             int counter = 0;
             float effect = 0f;
@@ -76,7 +76,7 @@ internal class MushroomHooks : BaseHooks
 
             foreach (var source in active)
             {
-                if (source.Key == player || player.IsFriend(source.Key))
+                if (source.Key == slugcat || slugcat.IsFriend(source.Key))
                 {
                     counter = hasSource ? Math.Max(counter, source.Value.Counter) : source.Value.Counter;
                     effect = hasSource ? Math.Max(effect, source.Value.Effect) : source.Value.Effect;
@@ -86,8 +86,8 @@ internal class MushroomHooks : BaseHooks
 
             if (hasSource)
             {
-                player.mushroomCounter = counter;
-                player.mushroomEffect = effect;
+                slugcat.mushroomCounter = counter;
+                slugcat.mushroomEffect = effect;
             }
         }
     }

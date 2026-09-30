@@ -10,7 +10,7 @@ internal class GrabbingHooks : BaseHooks
 
     private static bool CanTake(Creature self, PhysicalObject obj)
     {
-        return (self.IsPlayer && (obj.IsSlugcat || obj.Grabber.IsNPC)) || !self.IsFriend(obj.Grabber);
+        return (self.IsPlayer && (obj.IsSlugcat || obj.Grabber.IsSlugpup)) || !self.IsFriend(obj.Grabber);
     }
 
     [HookPatch(typeof(On.Creature), nameof(On.Creature.Grab))]

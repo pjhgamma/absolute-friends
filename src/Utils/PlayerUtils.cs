@@ -10,16 +10,16 @@ public static class PlayerUtils
 
         public bool IsPlayer => abstractPhysicalObject.Template == CreatureTemplate.Type.Slugcat;
 
-        public bool IsNPC => abstractPhysicalObject.Template == MoreSlugcatsEnums.CreatureTemplateType.SlugNPC;
+        public bool IsSlugpup => abstractPhysicalObject.Template == MoreSlugcatsEnums.CreatureTemplateType.SlugNPC;
 
-        public bool IsSlugcat => abstractPhysicalObject.IsPlayer || abstractPhysicalObject.IsNPC;
+        public bool IsSlugcat => abstractPhysicalObject.IsPlayer || abstractPhysicalObject.IsSlugpup;
     }
 
     extension(PhysicalObject? physicalObject)
     {
         public bool IsPlayer => physicalObject?.abstractPhysicalObject.IsPlayer == true;
 
-        public bool IsNPC => physicalObject?.abstractPhysicalObject.IsNPC == true;
+        public bool IsSlugpup => physicalObject?.abstractPhysicalObject.IsSlugpup == true;
 
         public bool IsSlugcat => physicalObject?.abstractPhysicalObject.IsSlugcat == true;
     }

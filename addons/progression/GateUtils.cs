@@ -59,7 +59,7 @@ internal static class GateUtils
                 && room.LocalCoordinateOfNode(0).Tile is { } nodeTile
                 && Custom.ManhattanDistance(creatureTile, nodeTile) > 6
                 && ShelterDoor.IsTileInsideShelterRange(room.abstractRoom, creatureTile)
-                && (creature is not Player player || !player.stillInStartShelter);
+                && (creature is not Player slugcat || !slugcat.stillInStartShelter);
         }
     }
 

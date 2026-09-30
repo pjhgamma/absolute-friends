@@ -126,8 +126,8 @@ public static class OwnerUtils
                         && (
                             !Config.FriendGrabbedForce.IsActive
                             || source is not Creature
-                            || grabber is not Player player
-                            || !player.input[0].pckp
+                            || grabber is not Player slugcat
+                            || !slugcat.input[0].pckp
                         )
                     )
                     {

@@ -7,12 +7,12 @@ internal class CarryHooks : BaseHooks
 {
     protected override Configurable<bool>[] Options => [Config.Carry];
 
-    private static bool IsCarried(Player player, PhysicalObject? obj)
+    private static bool IsCarried(Player slugcat, PhysicalObject? obj)
     {
         return obj is Creature { dead: false, Template.smallCreature: false } creature
             && creature is not Player
             && creature.IsTracked
-            && creature.abstractCreature.IsTrackedFor(player.abstractCreature);
+            && creature.abstractCreature.IsTrackedFor(slugcat.abstractCreature);
     }
 
     [HookPatch(typeof(On.Player), nameof(On.Player.Grabability))]

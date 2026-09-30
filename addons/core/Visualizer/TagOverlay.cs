@@ -133,19 +133,19 @@ internal class TagOverlay : TrackerOverlay<SubjectTag>
 
     private static Color GetColor(IconSymbol.IconSymbolData iconData, AbstractCreature abstractCreature)
     {
-        return ModManager.MSC && abstractCreature.creatureTemplate.type == MoreSlugcats.MoreSlugcatsEnums.CreatureTemplateType.SlugNPC
+        return ModManager.MSC && abstractCreature.IsSlugpup
             ? GetSlugpupColor(abstractCreature)
             : CreatureSymbol.ColorOfCreature(iconData);
     }
 
-    private static Color GetSlugpupColor(AbstractCreature abstractCreature)
+    private static Color GetSlugpupColor(AbstractCreature abstractSlugpup)
     {
-        if (abstractCreature.realizedCreature is Player player)
+        if (abstractSlugpup.realizedCreature is Player slugpup)
         {
-            return player.ShortCutColor();
+            return slugpup.ShortCutColor();
         }
 
-        Color? story = abstractCreature.ID.RandomSeed switch
+        Color? story = abstractSlugpup.ID.RandomSeed switch
         {
             1000 => new Color(0.6f, 0.7f, 0.9f),
             1001 => new Color(0.48f, 0.87f, 0.81f),
@@ -160,7 +160,7 @@ internal class TagOverlay : TrackerOverlay<SubjectTag>
 
         Random.State state = Random.state;
 
-        Random.InitState(abstractCreature.ID.RandomSeed);
+        Random.InitState(abstractSlugpup.ID.RandomSeed);
 
         NextStat();
         float met = NextStat();
