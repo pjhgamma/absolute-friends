@@ -249,7 +249,9 @@ Sets the maximum control input time (in seconds) during which a player friend ca
 Wiggle|흔들기
 Can wiggle free from the grasp of player friends.|몸을 흔들어 친구인 플레이어의 손에서 벗어날 수 있습니다.
 Carry|들기
-Can pick up and carry tracked friends that are otherwise too large to be held. A carried friend rests still, and stirs again once it is let go.|평소에는 너무 커서 들 수 없는 추적되는 친구를 들어 옮길 수 있습니다. 들려 있는 동안에는 잠잠해지며, 내려놓으면 다시 깨어납니다.
+Can pick up and carry large tracked friends with both hands.|추적되는 큰 친구를 두 손으로 들어 옮길 수 있습니다.
+Carry Stun|들기 기절
+Keeps a carried tracked friend stunned until released.|들고 있는 추적되는 친구를 내려놓을 때까지 기절시킵니다.
 Mauling|물어뜯기
 Will not eat friends.|친구를 잡아먹지 않습니다.
 Will not maul or eat friends.|친구를 물어뜯거나 잡아먹지 않습니다.

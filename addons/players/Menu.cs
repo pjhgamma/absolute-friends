@@ -11,6 +11,7 @@ internal static class Menu
         menu.AddFloatSlider(Config.GrabbingPlayerTime, span: 3f, max: 5f);
         menu.AddCheckBox(Config.Wiggle);
         menu.AddCheckBox(Config.Carry);
+        menu.AddCheckBox(Config.CarryStun);
         menu.AddCheckBox(Config.Mauling);
         menu.AddCheckBox(Config.GourmandSlam, enabled: ModManager.MSC);
         menu.AddCheckBox(Config.ArtificerParry, enabled: ModManager.MSC);

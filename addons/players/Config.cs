@@ -12,6 +12,8 @@ internal static class Config
 
     public static Configurable<bool> Carry = null!;
 
+    public static Configurable<bool> CarryStun = null!;
+
     public static Configurable<bool> Mauling = null!;
 
     public static Configurable<bool> GourmandSlam = null!;
@@ -32,7 +34,9 @@ internal static class Config
             .Require(GrabbingPlayer);
         Wiggle = addon.Bind("Wiggle", true, new ConfigurableInfo("Can wiggle free from the grasp of player friends.", tags: ["Wiggle"]))
             .Require(Core.Config.FriendSlugcat);
-        Carry = addon.Bind("Carry", false, new ConfigurableInfo("Can pick up and carry tracked friends that are otherwise too large to be held. A carried friend rests still, and stirs again once it is let go.", tags: ["Carry"]));
+        Carry = addon.Bind("Carry", false, new ConfigurableInfo("Can pick up and carry large tracked friends with both hands.", tags: ["Carry"]));
+        CarryStun = addon.Bind("CarryStun", true, new ConfigurableInfo("Keeps a carried tracked friend stunned until released.", tags: ["Carry Stun"]))
+            .Require(Carry);
         Mauling = addon.Bind("Mauling", false, new ConfigurableInfo(Options.Config.Downpour(
             "Will not eat friends.",
             "Will not maul or eat friends."
