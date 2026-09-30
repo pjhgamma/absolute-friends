@@ -1,7 +1,8 @@
 using System.Runtime.CompilerServices;
+using AbsoluteFriends.Utils;
 using UnityEngine;
 
-namespace AbsoluteFriends.Core.Visualizer;
+namespace AbsoluteFriends.Visualizer;
 
 internal abstract class TrackerOverlay<TTag> : CosmeticSprite, IOverlay
     where TTag : ITag
@@ -12,9 +13,61 @@ internal abstract class TrackerOverlay<TTag> : CosmeticSprite, IOverlay
 
     private readonly ConditionalWeakTable<AbstractPhysicalObject, StrongBox<Vector2>> _lastPlaces = new();
 
+    private readonly List<AbstractPhysicalObject> _sources = [];
+
+    private readonly UpdateTimer _timer = new();
+
+    private bool _isViewed;
+
     protected abstract bool IsEnabled { get; }
 
     protected abstract IEnumerable<AbstractPhysicalObject> Sources { get; }
+
+    public override void Update(bool eu)
+    {
+        base.Update(eu);
+
+        try
+        {
+            if (RainWorldUtils.MainCamera(room?.game)?.room != room)
+            {
+                if (_isViewed)
+                {
+                    _isViewed = false;
+                    _sources.Clear();
+
+                    Refresh(_sources);
+                }
+
+                return;
+            }
+
+            if (!_isViewed)
+            {
+                _isViewed = true;
+
+                _timer.Reset();
+            }
+
+            if (!_timer.Elapse())
+            {
+                return;
+            }
+
+            _sources.Clear();
+
+            if (IsEnabled)
+            {
+                _sources.AddRange(Sources);
+            }
+
+            Refresh(_sources);
+        }
+        catch (Exception exception)
+        {
+            this.Destroy(exception);
+        }
+    }
 
     public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
@@ -39,7 +92,7 @@ internal abstract class TrackerOverlay<TTag> : CosmeticSprite, IOverlay
 
             if (IsEnabled && OverlayUtils.ShouldDraw(rCam, room))
             {
-                foreach (var abstractPhysicalObject in Sources)
+                foreach (var abstractPhysicalObject in _sources)
                 {
                     if (!TryGetScreenPosition(abstractPhysicalObject, rCam, camPos, timeStacker, out Vector2 position, out bool isDistant) || !IsDrawn(abstractPhysicalObject, isDistant))
                     {
@@ -71,6 +124,10 @@ internal abstract class TrackerOverlay<TTag> : CosmeticSprite, IOverlay
     protected abstract void Draw(TTag tag, AbstractPhysicalObject abstractPhysicalObject, Vector2 position, bool isDistant);
 
     protected virtual bool IsDrawn(AbstractPhysicalObject abstractPhysicalObject, bool isDistant) => true;
+
+    protected virtual void Refresh(IReadOnlyList<AbstractPhysicalObject> sources)
+    {
+    }
 
     private static bool TryGetWorldPosition(AbstractPhysicalObject abstractPhysicalObject, World world, float timeStacker, out Vector2 position)
     {

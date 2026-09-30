@@ -74,7 +74,7 @@ This feature was applied, but not the way it expected, so it may not be working.
 Absolute Friends: an error turned off <PLACEHOLDER>. See the Remix menu.|Absolute Friends: 오류로 <PLACEHOLDER> 기능이 꺼졌습니다. 리믹스 메뉴를 확인하세요.
 
 Absolute Friends: Core|절대적 친구: 핵심
-Controls which things are friendly and how friendship is shared and shown.|무엇을 친구로 취급할지와 친구 관계를 공유하고 표시하는 방식을 설정합니다.
+Controls which things are friendly and how friendship is shared.|무엇을 친구로 취급할지와 친구 관계를 공유하는 방식을 설정합니다.
 
 Friendship|친구 관계
 Friendship works both ways, but nothing is its own friend.|친구 관계는 양방향으로 적용되지만, 자기 자신은 친구가 아닙니다.
@@ -125,21 +125,6 @@ Arena|아레나
 Enables friendship rules in Arena mode.|아레나 모드에서 친구 관계 규칙을 활성화합니다.
 Safari|사파리
 Enables friendship rules in Safari mode.|사파리 모드에서 친구 관계 규칙을 활성화합니다.
-
-Visualizer|시각화
-Friend Link|친구 연결선
-Draws a line between two things as the mod treats them as friends.|두 대상이 친구로 판단되는 동안 그 사이에 선을 그립니다.
-Tag|표식
-Friend Name|친구 이름표
-Draws the name above every friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 이름을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 이름을 화면 가장자리에 유지합니다.
-Friend Icon|친구 아이콘
-Draws an icon above every friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 아이콘을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 아이콘을 화면 가장자리에 유지합니다.
-Owner Link|소유자 연결선
-Draws a line between each object and its owning creature, thickest at the owner's end.|각 물체와 해당 물체를 소유한 생물 사이에 선을 그립니다. 선은 소유자 쪽 끝이 가장 굵습니다.
-Owner Name|소유자 이름표
-Draws the owner's name above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 이름을 표시합니다.
-Owner Icon|소유자 아이콘
-Draws the owner's icon above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 아이콘을 표시합니다.
 
 Friend Manager|친구 관리자
 Friend Manager Shortcut|친구 관리자 단축키
@@ -356,3 +341,22 @@ The paid resonance cost lingers as an aftershock, making everyone who resonated 
 Sets how much of the paid resonance cost lingers as an aftershock. A value of 1 leaves all of it behind, and 0 leaves nothing.|공명으로 치른 대가가 후유증으로 얼마나 남을지 설정합니다. 1은 그 전부를 남기며, 0은 아무것도 남기지 않습니다.
 Visual Effects|시각적 효과
 Displays visual effects upon resonance. A gate resonance melts the room into the void, while a room or grab resonance answers with ripples.|공명 시 시각적인 효과를 보여줍니다.
+
+Absolute Friends: Visualizer|절대적 친구: 시각화
+Visually shows friends and owners.|친구와 소유자를 시각적으로 표시합니다.
+
+Tag|표식
+Friend Link|친구 연결선
+Draws a line between two things as the mod treats them as friends.|두 대상이 친구로 판단되는 동안 그 사이에 선을 그립니다.
+Friend Name|친구 이름표
+Draws the name above every friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 이름을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 이름을 화면 가장자리에 유지합니다.
+Friend Icon|친구 아이콘
+Draws an icon above every friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 아이콘을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 아이콘을 화면 가장자리에 유지합니다.
+Owner Link|소유자 연결선
+Draws a line between each object and its owning creature, thickest at the owner's end.|각 물체와 해당 물체를 소유한 생물 사이에 선을 그립니다. 선은 소유자 쪽 끝이 가장 굵습니다.
+Owner Name|소유자 이름표
+Draws the owner's name above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 이름을 표시합니다.
+Owner Icon|소유자 아이콘
+Draws the owner's icon above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 아이콘을 표시합니다.
+Update Interval|갱신 간격
+Sets how many frames pass between friend and owner checks.|친구와 소유자를 확인하는 간격을 프레임 단위로 설정합니다.

@@ -6,20 +6,23 @@ using BepInEx;
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 #pragma warning restore CS0618
 
-namespace AbsoluteFriends.Core;
+namespace AbsoluteFriends.Visualizer;
 
 [BepInPlugin(GUID, Name, AbsoluteFriends.Plugin.Version)]
+[BepInDependency(Core.Plugin.GUID)]
 public class Plugin : AddonPlugin
 {
-    public const string GUID = "pjhgamma.absolutefriends.core";
+    public const string GUID = "pjhgamma.absolutefriends.visualizer";
 
-    public const string Name = "Absolute Friends: Core";
+    public const string Name = "Absolute Friends: Visualizer";
 
-    public override string AddonDescription => "Controls which things are friendly and how friendship is shared.";
+    public override string AddonDescription => "Visually shows friends and owners.";
+
+    public override string[] AddonDependencies => [Core.Plugin.GUID];
 
     public override string AbsoluteFriendsVersion => AbsoluteFriends.Plugin.Version;
 
-    protected override void Bind(Addon addon) => Core.Config.Bind(addon);
+    protected override void Bind(Addon addon) => Visualizer.Config.Bind(addon);
 
     protected override void BuildMenu(MenuBuilder menu) => Menu.Build(menu);
 }

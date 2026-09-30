@@ -1,10 +1,14 @@
-namespace AbsoluteFriends.Core.Visualizer;
+using AbsoluteFriends.Core;
 
-internal abstract class OwnerOverlay(UpdatableAndDeletable target) : TargetOverlay(target)
+namespace AbsoluteFriends.Visualizer;
+
+internal abstract class OwnerOverlay(PhysicalObject target) : TargetOverlay(target)
 {
+    private readonly UpdateTimer _timer = new();
+
     protected AbstractCreature? Owner { get; private set; }
 
-    protected UpdatableAndDeletable? OwnerObject => Owner.RealizedOwner;
+    protected PhysicalObject? OwnerObject => Owner.RealizedOwner as PhysicalObject;
 
     protected override bool IsVisible => Owner != null;
 
@@ -15,6 +19,11 @@ internal abstract class OwnerOverlay(UpdatableAndDeletable target) : TargetOverl
     protected override void Follow()
     {
         base.Follow();
+
+        if (!_timer.Elapse())
+        {
+            return;
+        }
 
         AbstractCreature? owner = Target.ExternalOwner;
 

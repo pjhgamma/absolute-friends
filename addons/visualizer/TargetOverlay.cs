@@ -1,11 +1,11 @@
 using AbsoluteFriends.Options;
 using UnityEngine;
 
-namespace AbsoluteFriends.Core.Visualizer;
+namespace AbsoluteFriends.Visualizer;
 
-internal abstract class TargetOverlay(UpdatableAndDeletable updatableAndDeletable) : CosmeticSprite, IOverlay
+internal abstract class TargetOverlay(PhysicalObject physicalObject) : CosmeticSprite, IOverlay
 {
-    protected UpdatableAndDeletable Target => updatableAndDeletable;
+    protected PhysicalObject Target => physicalObject;
 
     protected abstract IEnumerable<FNode> Nodes { get; }
 

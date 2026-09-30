@@ -35,18 +35,6 @@ public static class Config
 
     public static Configurable<bool> FriendSafari = null!;
 
-    public static Configurable<bool> FriendLink = null!;
-
-    public static Configurable<bool> FriendName = null!;
-
-    public static Configurable<bool> FriendIcon = null!;
-
-    public static Configurable<bool> OwnerLink = null!;
-
-    public static Configurable<bool> OwnerName = null!;
-
-    public static Configurable<bool> OwnerIcon = null!;
-
     public static Configurable<KeyCode> FriendManagerKey = null!;
 
     internal static void Bind(Addon addon)
@@ -74,13 +62,6 @@ public static class Config
         FriendExpedition = addon.Bind("FriendExpedition", true, new ConfigurableInfo("Enables friendship rules in Expedition mode.", tags: ["Expedition"]));
         FriendArena = addon.Bind("FriendArena", false, new ConfigurableInfo("Enables friendship rules in Arena mode.", tags: ["Arena"]));
         FriendSafari = addon.Bind("FriendSafari", false, new ConfigurableInfo("Enables friendship rules in Safari mode.", tags: ["Safari"]));
-
-        FriendLink = addon.Bind("FriendLink", false, new ConfigurableInfo("Draws a line between two things as the mod treats them as friends.", tags: ["Friend Link"]));
-        FriendName = addon.Bind("FriendName", false, new ConfigurableInfo("Draws the name above every friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.", tags: ["Friend Name"]));
-        FriendIcon = addon.Bind("FriendIcon", false, new ConfigurableInfo("Draws an icon above every friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.", tags: ["Friend Icon"]));
-        OwnerLink = addon.Bind("OwnerLink", false, new ConfigurableInfo("Draws a line between each object and its owning creature, thickest at the owner's end.", tags: ["Owner Link"]));
-        OwnerName = addon.Bind("OwnerName", false, new ConfigurableInfo("Draws the owner's name above everything in view that has an owner.", tags: ["Owner Name"]));
-        OwnerIcon = addon.Bind("OwnerIcon", false, new ConfigurableInfo("Draws the owner's icon above everything in view that has an owner.", tags: ["Owner Icon"]));
 
         FriendManagerKey = addon.Bind("FriendManagerKey", KeyCode.F7, new ConfigurableInfo("Opens the friend manager during gameplay or while paused.", tags: ["Friend Manager Shortcut"]));
     }

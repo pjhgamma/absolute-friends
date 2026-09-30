@@ -1,10 +1,11 @@
 using System.Runtime.CompilerServices;
+using AbsoluteFriends.Core;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Utils;
 using RWCustom;
 using UnityEngine;
 
-namespace AbsoluteFriends.Core.Visualizer;
+namespace AbsoluteFriends.Visualizer;
 
 internal interface IOverlay;
 
@@ -66,7 +67,7 @@ internal static class OverlayUtils
         room.AddObject(overlay);
     }
 
-    public static bool TryGetLine(RoomCamera camera, UpdatableAndDeletable? start, UpdatableAndDeletable? end, float timeStacker, out Vector2 first, out Vector2 second)
+    public static bool TryGetLine(RoomCamera camera, PhysicalObject? start, PhysicalObject? end, float timeStacker, out Vector2 first, out Vector2 second)
     {
         if (
             start.TryGetPosition(timeStacker, out first)
@@ -114,7 +115,7 @@ internal static class OverlayUtils
         }
     }
 
-    extension(UpdatableAndDeletable? source)
+    extension(PhysicalObject? source)
     {
         public bool TryGetPosition(float timeStacker, out Vector2 position)
         {
@@ -122,8 +123,6 @@ internal static class OverlayUtils
             {
                 Creature { mainBodyChunk: { } main } => Interpolate(main, timeStacker),
                 PhysicalObject { firstChunk: { } first } => Interpolate(first, timeStacker),
-                Explosion explosion => explosion.pos,
-                SporePlant.Bee bee => Interpolate(bee.lastPos, bee.pos, timeStacker),
                 _ => null,
             };
 

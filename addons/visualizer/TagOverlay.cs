@@ -1,8 +1,9 @@
+using AbsoluteFriends.Core;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using UnityEngine;
 
-namespace AbsoluteFriends.Core.Visualizer;
+namespace AbsoluteFriends.Visualizer;
 
 internal class TagOverlay : TrackerOverlay<SubjectTag>
 {
@@ -18,6 +19,8 @@ internal class TagOverlay : TrackerOverlay<SubjectTag>
 
     private const int HellSpearData = 3;
 
+    private readonly Dictionary<AbstractPhysicalObject, (bool IsTracked, bool IsFriend, AbstractCreature? Owner)> _subjects = [];
+
     protected override bool IsEnabled => Config.FriendName.IsActive || Config.FriendIcon.IsActive || Config.OwnerName.IsActive || Config.OwnerIcon.IsActive;
 
     protected override IEnumerable<AbstractPhysicalObject> Sources => room.TaggedObjects;
@@ -26,7 +29,7 @@ internal class TagOverlay : TrackerOverlay<SubjectTag>
 
     protected override bool IsDrawn(AbstractPhysicalObject abstractPhysicalObject, bool isDistant)
     {
-        return !isDistant || abstractPhysicalObject.IsTracked;
+        return !isDistant || (_subjects.TryGetValue(abstractPhysicalObject, out var subject) && subject.IsTracked);
     }
 
     protected override void Draw(SubjectTag tag, AbstractPhysicalObject abstractPhysicalObject, Vector2 position, bool isDistant)
@@ -35,18 +38,35 @@ internal class TagOverlay : TrackerOverlay<SubjectTag>
 
         tag.Clear();
 
-        if (abstractPhysicalObject.IsTracked || abstractPhysicalObject.IsFriendOfPlayer)
+        if (!_subjects.TryGetValue(abstractPhysicalObject, out var subject))
         {
-            DrawFriend(tag.Friend, abstractPhysicalObject, position, isDistant, ref row);
+            return;
         }
 
-        if (!isDistant && abstractPhysicalObject.ExternalOwner is { } owner)
+        if (subject.IsFriend)
+        {
+            DrawFriend(tag.Friend, abstractPhysicalObject, subject.IsTracked, position, isDistant, ref row);
+        }
+
+        if (!isDistant && subject.Owner is { } owner)
         {
             DrawOwner(tag.Owner, owner, position, ref row);
         }
     }
 
-    private static void DrawFriend(SideTag tag, AbstractPhysicalObject abstractPhysicalObject, Vector2 position, bool isDistant, ref int row)
+    protected override void Refresh(IReadOnlyList<AbstractPhysicalObject> sources)
+    {
+        _subjects.Clear();
+
+        foreach (var abstractPhysicalObject in sources)
+        {
+            bool isTracked = abstractPhysicalObject.IsTracked;
+
+            _subjects[abstractPhysicalObject] = (isTracked, isTracked || abstractPhysicalObject.IsFriendOfPlayer, abstractPhysicalObject.ExternalOwner);
+        }
+    }
+
+    private static void DrawFriend(SideTag tag, AbstractPhysicalObject abstractPhysicalObject, bool isTracked, Vector2 position, bool isDistant, ref int row)
     {
         if (Config.FriendName.IsActive)
         {
@@ -68,7 +88,7 @@ internal class TagOverlay : TrackerOverlay<SubjectTag>
         {
             tag.SetIcon(GetSymbol(abstractPhysicalObject), Palette.Primary, position, gap);
         }
-        else if (!abstractCreature.IsTracked)
+        else if (!isTracked)
         {
             tag.SetIcon(UntrackedSymbol, Palette.Primary, position, gap);
         }

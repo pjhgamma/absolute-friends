@@ -14,6 +14,7 @@ internal static class AddonRegistry
         "pjhgamma.absolutefriends.creatures",
         "pjhgamma.absolutefriends.iterators",
         "pjhgamma.absolutefriends.progression",
+        "pjhgamma.absolutefriends.visualizer",
     ];
 
     private static readonly List<Addon> _addons = [];

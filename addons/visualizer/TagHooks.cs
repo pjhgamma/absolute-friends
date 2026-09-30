@@ -1,4 +1,4 @@
-namespace AbsoluteFriends.Core.Visualizer;
+namespace AbsoluteFriends.Visualizer;
 
 internal class TagHooks : RoomOverlayHooks<TagOverlay>
 {

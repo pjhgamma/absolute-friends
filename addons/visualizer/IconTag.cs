@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AbsoluteFriends.Core.Visualizer;
+namespace AbsoluteFriends.Visualizer;
 
 internal sealed class IconTag : ITag
 {

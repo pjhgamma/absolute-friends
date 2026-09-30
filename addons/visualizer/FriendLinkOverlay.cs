@@ -1,10 +1,10 @@
-using System.Runtime.CompilerServices;
+using AbsoluteFriends.Core;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using RWCustom;
 using UnityEngine;
 
-namespace AbsoluteFriends.Core.Visualizer;
+namespace AbsoluteFriends.Visualizer;
 
 internal class FriendLinkOverlay : CosmeticSprite, IOverlay
 {
@@ -16,42 +16,31 @@ internal class FriendLinkOverlay : CosmeticSprite, IOverlay
 
     private const int QuietFrames = RainWorldUtils.Second;
 
-    private static readonly HashSet<Pair> _pairs = [];
+    private static readonly List<(PhysicalObject First, PhysicalObject Second)> _pairs = [];
 
-    private static RoomCamera? _camera;
+    private static readonly List<PhysicalObject> _objects = [];
+
+    private static readonly UpdateTimer _timer = new();
+
+    private static Room? _scanned;
 
     private int _quiet;
 
     public static void Refresh(RainWorldGame? game)
     {
-        _camera = RainWorldUtils.MainCamera(game);
+        Room? viewed = RainWorldUtils.MainCamera(game)?.room;
 
-        _pairs.RemoveWhere(pair => !pair.IsCurrentFriend(_camera?.room));
-    }
-
-    public static void Track(UpdatableAndDeletable? source, UpdatableAndDeletable? target)
-    {
-        if (
-            !Config.FriendLink.IsActive
-            || source == null
-            || target == null
-            || ReferenceEquals(source, target)
-            || _camera is not { room: { } viewed } camera
-            || source.room != viewed
-            || target.room != viewed
-        )
+        if (!ReferenceEquals(viewed, _scanned))
         {
-            return;
+            _scanned = viewed;
+
+            _timer.Reset();
         }
 
-        Pair pair = new(source, target);
-
-        if (_pairs.Contains(pair) || !OverlayUtils.TryGetLine(camera, source, target, 1f, out _, out _))
+        if (_timer.Elapse())
         {
-            return;
+            Scan(viewed);
         }
-
-        _pairs.Add(pair);
     }
 
     public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
@@ -74,16 +63,16 @@ internal class FriendLinkOverlay : CosmeticSprite, IOverlay
 
         try
         {
-            if (OverlayUtils.ShouldDraw(rCam, room))
+            if (Config.FriendLink.IsActive && OverlayUtils.ShouldDraw(rCam, room))
             {
                 Fit(sLeaser, rCam, _pairs.Count);
 
-                foreach (var link in _pairs)
+                foreach (var (firstObject, secondObject) in _pairs)
                 {
                     if (
-                        link.First.room != room
-                        || link.Second.room != room
-                        || !OverlayUtils.TryGetLine(rCam, link.First, link.Second, timeStacker, out Vector2 first, out Vector2 second)
+                        firstObject.room != room
+                        || secondObject.room != room
+                        || !OverlayUtils.TryGetLine(rCam, firstObject, secondObject, timeStacker, out Vector2 first, out Vector2 second)
                     )
                     {
                         continue;
@@ -168,28 +157,29 @@ internal class FriendLinkOverlay : CosmeticSprite, IOverlay
         Array.Resize(ref sLeaser.sprites, size / 2);
     }
 
-    private readonly struct Pair(UpdatableAndDeletable first, UpdatableAndDeletable second) : IEquatable<Pair>
+    private static void Scan(Room? room)
     {
-        public UpdatableAndDeletable First { get; } = first;
+        _pairs.Clear();
 
-        public UpdatableAndDeletable Second { get; } = second;
-
-        public bool IsCurrentFriend(Room? room)
+        if (room == null)
         {
-            return room != null
-                && First.room == room
-                && Second.room == room
-                && (First as PhysicalObject).IsFriend(Second as PhysicalObject);
+            return;
         }
 
-        public bool Equals(Pair other)
+        _objects.Clear();
+        _objects.AddRange(room.Objects);
+
+        for (int i = 0; i < _objects.Count; ++i)
         {
-            return (ReferenceEquals(First, other.First) && ReferenceEquals(Second, other.Second))
-                || (ReferenceEquals(First, other.Second) && ReferenceEquals(Second, other.First));
+            for (int j = i + 1; j < _objects.Count; ++j)
+            {
+                if (_objects[i].IsFriend(_objects[j]))
+                {
+                    _pairs.Add((_objects[i], _objects[j]));
+                }
+            }
         }
 
-        public override bool Equals(object? obj) => obj is Pair other && Equals(other);
-
-        public override int GetHashCode() => RuntimeHelpers.GetHashCode(First) ^ RuntimeHelpers.GetHashCode(Second);
+        _objects.Clear();
     }
 }

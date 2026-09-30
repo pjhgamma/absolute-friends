@@ -8,6 +8,7 @@
     <Project Path="addons/creatures/AbsoluteCreatures.csproj" />
     <Project Path="addons/iterators/AbsoluteIterators.csproj" />
     <Project Path="addons/progression/AbsoluteProgression.csproj" />
+    <Project Path="addons/visualizer/AbsoluteVisualizer.csproj" />
   </Folder>
 
   <Project Path="src/AbsoluteFriends.csproj" />

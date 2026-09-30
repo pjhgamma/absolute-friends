@@ -1,6 +1,6 @@
 using AbsoluteFriends.Hooks;
 
-namespace AbsoluteFriends.Core.Visualizer;
+namespace AbsoluteFriends.Visualizer;
 
 internal class FriendLinkHooks : RoomOverlayHooks<FriendLinkOverlay>
 {

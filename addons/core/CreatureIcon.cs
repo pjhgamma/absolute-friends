@@ -3,7 +3,7 @@ using Random = UnityEngine.Random;
 
 namespace AbsoluteFriends.Core;
 
-internal static class CreatureIcon
+public static class CreatureIcon
 {
     private static Color SlugpupColor(AbstractCreature creature)
     {
@@ -49,7 +49,7 @@ internal static class CreatureIcon
 
     extension(AbstractCreature creature)
     {
-        internal (string Symbol, Color Color) Icon
+        public (string Symbol, Color Color) Icon
         {
             get
             {

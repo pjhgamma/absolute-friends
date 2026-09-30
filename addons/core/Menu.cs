@@ -30,15 +30,6 @@ internal static partial class Menu
         menu.AddCheckBox(Config.FriendArena);
         menu.AddCheckBox(Config.FriendSafari, enabled: ModManager.MSC);
 
-        menu.AddTitle("Visualizer");
-        menu.SetColumns(3);
-        menu.AddCheckBox(Config.FriendLink);
-        menu.AddCheckBox(Config.FriendName);
-        menu.AddCheckBox(Config.FriendIcon);
-        menu.AddCheckBox(Config.OwnerLink);
-        menu.AddCheckBox(Config.OwnerName);
-        menu.AddCheckBox(Config.OwnerIcon);
-
         menu.AddTitle("Friend Manager");
         menu.AddRow(0.5f);
         menu.SetColumns(2);

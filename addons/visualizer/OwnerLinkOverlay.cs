@@ -1,9 +1,9 @@
 using AbsoluteFriends.Utils;
 using UnityEngine;
 
-namespace AbsoluteFriends.Core.Visualizer;
+namespace AbsoluteFriends.Visualizer;
 
-internal class OwnerLinkOverlay(UpdatableAndDeletable target) : OwnerOverlay(target)
+internal class OwnerLinkOverlay(PhysicalObject target) : OwnerOverlay(target)
 {
     private const float OwnerWidth = 2.5f;
 

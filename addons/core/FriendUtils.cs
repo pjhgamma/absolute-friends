@@ -363,27 +363,20 @@ public static partial class FriendUtils
             AbstractCreature? sourceSelf = source as AbstractCreature;
             AbstractCreature? targetSelf = target as AbstractCreature;
 
-            if (sourceSelf.IsDenied || targetSelf.IsDenied)
+            if (sourceSelf.IsFriend(targetSelf, chaining))
+            {
+                return true;
+            }
+
+            if (direct || sourceSelf.IsDenied || targetSelf.IsDenied)
             {
                 return false;
             }
 
-            bool isFriend = sourceSelf.IsFriend(targetSelf, chaining);
+            AbstractCreature? sourceOwner = source.Owner;
+            AbstractCreature? targetOwner = target.Owner;
 
-            if (!isFriend && !direct)
-            {
-                AbstractCreature? sourceOwner = source.Owner;
-                AbstractCreature? targetOwner = target.Owner;
-
-                isFriend = sourceSelf.IsFriend(targetOwner, chaining) || sourceOwner.IsFriend(targetSelf, chaining) || sourceOwner.IsFriend(targetOwner, chaining);
-            }
-
-            if (isFriend)
-            {
-                Visualizer.FriendLinkOverlay.Track(source?.realizedObject, target?.realizedObject);
-            }
-
-            return isFriend;
+            return sourceSelf.IsFriend(targetOwner, chaining) || sourceOwner.IsFriend(targetSelf, chaining) || sourceOwner.IsFriend(targetOwner, chaining);
         }
     }
 

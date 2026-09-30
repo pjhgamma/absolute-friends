@@ -4,7 +4,7 @@ using AbsoluteFriends.Utils;
 
 namespace AbsoluteFriends.Core;
 
-internal static class FriendDisplayNames
+public static class FriendDisplayNames
 {
     private const string SaveKey = "ABSOLUTEFRIENDS_NICKNAMES<svB>";
 
@@ -25,11 +25,11 @@ internal static class FriendDisplayNames
 
     extension(AbstractCreature abstractCreature)
     {
-        internal string PlayerName => JollyCoop.JollyCustom.GetPlayerName(
+        public string PlayerName => JollyCoop.JollyCustom.GetPlayerName(
             abstractCreature.state is PlayerState state ? state.playerNumber : 0
         );
 
-        internal string FriendName => abstractCreature.IsPlayer
+        public string FriendName => abstractCreature.IsPlayer
             ? abstractCreature.PlayerName
             : StateFor(abstractCreature)?.Get(abstractCreature) ?? abstractCreature.DefaultName;
 
@@ -60,7 +60,7 @@ internal static class FriendDisplayNames
 
     extension(AbstractPhysicalObject? abstractPhysicalObject)
     {
-        internal string DefaultName => abstractPhysicalObject switch
+        public string DefaultName => abstractPhysicalObject switch
         {
             AbstractOwner owner => owner.DisplayName,
             AbstractCreature { creatureTemplate.name: { } name } creature => $"{name} {creature.ID.number}",
