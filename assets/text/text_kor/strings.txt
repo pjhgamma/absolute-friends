@@ -82,8 +82,8 @@ Creature rules override the Friendly Creatures and Neutral Creatures options.|�
 Friend Tracker|친구 추적기
 Owner Tracker|소유자 추적기
 Slugcats|슬러그캣
-Treats players as friends and keeps friends from targeting one another.|플레이어를 친구로 취급하고, 친구들이 서로를 노리지 않게 합니다.
-Treats players and slugpups as friends and keeps friends from targeting one another.|플레이어와 슬러그펍을 친구로 취급하고, 친구들이 서로를 노리지 않게 합니다.
+Treats players as friends with one another.|플레이어끼리 친구로 취급합니다.
+Treats players and slugpups as friends with one another.|플레이어와 슬러그펍을 서로 친구로 취급합니다.
 Friendly Creatures|우호적인 생물
 Treats friendly creatures, such as tamed lizards and friendly scavengers, as friends.|길들인 도마뱀과 우호적인 스캐빈저 등 우호적인 생물을 친구로 취급합니다.
 Neutral Creatures|중립적인 생물
@@ -107,9 +107,9 @@ Deny friendship|친구 관계 거부
 Extended|확장
 Relationship|관계
 Friend Sharing|친구 공유
-Shares a creature's friendship, like, and reputation toward one slugcat with the others.|한 슬러그캣을 향한 생물의 친구 관계와 호감도, 평판을 다른 슬러그캣과 공유합니다.
+Shares a creature's friendship, like, and reputation toward one slugcat with the others. Changes to relationships and reputation remain after disabling this option.|한 슬러그캣을 향한 생물의 친구 관계와 호감도, 평판을 다른 슬러그캣과 공유합니다. 이 옵션을 꺼도 이미 변경된 관계와 평판은 그대로 유지됩니다.
 Friend Chaining|친구 연결
-Treats a player's creature friends as friends with one another.|한 플레이어의 생물 친구들을 서로의 친구로 취급합니다.
+Treats a player's creature friends as friends with one another. Changes to like and knowledge remain after disabling this option.|한 플레이어의 생물 친구들을 서로의 친구로 취급합니다. 이 옵션을 꺼도 이미 변경된 호감도와 인지도는 그대로 유지됩니다.
 Grabbed Objects|소지물
 Treats objects held by friends as friendly.|친구가 들고 있는 물건을 친구로 취급합니다.
 Force Grabbing|강제 잡기
