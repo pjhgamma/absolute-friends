@@ -11,7 +11,6 @@ internal class CarryHooks : BaseHooks
     {
         return obj is Creature { dead: false, Template.smallCreature: false } creature
             && creature is not Player
-            && creature.IsTracked
             && creature.abstractCreature.IsTrackedFor(slugcat.abstractCreature);
     }
 

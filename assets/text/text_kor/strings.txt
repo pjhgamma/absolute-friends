@@ -88,6 +88,7 @@ Friendly Creatures|우호적인 생물
 Treats friendly creatures, such as tamed lizards and friendly scavengers, as friends.|길들인 도마뱀과 우호적인 스캐빈저 등 우호적인 생물을 친구로 취급합니다.
 Neutral Creatures|중립적인 생물
 Also treats neutral creatures, such as neutralized lizards and rain deer, as friends.|중립화된 도마뱀과 토끼사슴 등 중립적인 생물도 친구로 취급합니다.
+
 Creature Type|생물 유형
 Choose the creature type to configure.|설정할 생물 유형을 선택합니다.
 Overrides how this creature type is treated as a friend without changing vanilla relationships.|바닐라 친구 관계를 바꾸지 않고 이 생물 유형을 친구로 취급하는 방식을 재정의합니다.
@@ -139,6 +140,31 @@ Owner Name|소유자 이름표
 Draws the owner's name above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 이름을 표시합니다.
 Owner Icon|소유자 아이콘
 Draws the owner's icon above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 아이콘을 표시합니다.
+
+Friend Manager|친구 관리자
+Friend Manager Shortcut|친구 관리자 단축키
+Opens the friend manager during gameplay or while paused.|게임 도중이나 일시정지한 동안 친구 관리자를 엽니다.
+
+Tracked Friends|추적 중인 친구
+Friendship is maintained when tracking is disabled.|추적을 꺼도 친구 관계는 유지됩니다.
+No trackable friends|추적할 수 있는 친구 없음
+Show this friend's details.|이 친구의 상세 정보를 표시합니다.
+Track this friend.|이 친구를 추적합니다.
+Stop tracking this friend.|이 친구의 추적을 끕니다.
+Tracked|추적 중
+Not tracked|추적 안 함
+Edit this friend's name.|이 친구의 이름을 편집합니다.
+Save this nickname.|이 별명을 저장합니다.
+Clear this nickname.|이 별명을 지웁니다.
+Location|위치
+Current room|현재 방
+Room|방
+In den|굴 안
+Location unknown|위치 알 수 없음
+Status|상태
+Alive|생존
+Dead|사망
+Unknown|알 수 없음
 
 Absolute Friends: General|절대적 친구: 일반
 Controls the general harm and effects that pass between friends.|친구 사이의 일반적인 피해나 영향을 조정합니다.

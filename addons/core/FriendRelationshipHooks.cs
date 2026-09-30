@@ -24,19 +24,15 @@ internal class FriendRelationshipHooks : BaseHooks
     [HookPatch(typeof(On.RelationshipTracker.DynamicRelationship), nameof(On.RelationshipTracker.DynamicRelationship.Update))]
     private static void On_DynamicRelationship_Update(On.RelationshipTracker.DynamicRelationship.orig_Update orig, RelationshipTracker.DynamicRelationship self)
     {
-        RelationshipTracker relationshipTracker = self.rt;
-        Tracker.CreatureRepresentation trackerRep = self.trackerRep;
-        AbstractCreature? abstractCreature = relationshipTracker?.AI?.creature;
-        AbstractCreature? targetAbstractCreature = trackerRep?.representedCreature;
-
-        if (relationshipTracker == null || trackerRep == null || abstractCreature == null || targetAbstractCreature == null || !abstractCreature.IsFriend(targetAbstractCreature, direct: true))
+        if (self is not { rt: { AI.creature: { } source } relationshipTracker, trackerRep: { representedCreature: { } target } trackerRep }
+            || !source.IsFriend(target, direct: true))
         {
             orig(self);
 
             return;
         }
 
-        if (Config.FriendChaining.IsActive && abstractCreature.state?.socialMemory?.GetOrInitiateRelationship(targetAbstractCreature.ID) is { } socialRelationship)
+        if (Config.FriendChaining.IsActive && source.state?.socialMemory?.GetOrInitiateRelationship(target.ID) is { } socialRelationship)
         {
             socialRelationship.like = Mathf.Max(socialRelationship.like, FriendUtils.FriendLikeThreshold);
             socialRelationship.tempLike = Mathf.Max(socialRelationship.tempLike, FriendUtils.FriendLikeThreshold);

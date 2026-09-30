@@ -38,5 +38,10 @@ internal static partial class Menu
         menu.AddCheckBox(Config.OwnerLink);
         menu.AddCheckBox(Config.OwnerName);
         menu.AddCheckBox(Config.OwnerIcon);
+
+        menu.AddTitle("Friend Manager");
+        menu.AddRow(0.5f);
+        menu.SetColumns(2);
+        menu.AddKeyBinder(Config.FriendManagerKey, "Friend Manager Shortcut");
     }
 }

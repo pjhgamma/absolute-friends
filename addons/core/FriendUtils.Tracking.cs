@@ -14,6 +14,10 @@ public static partial class FriendUtils
 
     private static readonly HashSet<AbstractCreature> _trackedCreatures = [];
 
+    private static readonly HashSet<AbstractCreature> _trackerCreatures = [];
+
+    private static ConditionalWeakTable<RainWorldGame, TrackingChoices> _trackingChoices = new();
+
     private static readonly ConditionalWeakTable<FriendTracker, SocialMemory.Relationship> _adoptedRelationships = new();
 
     private static readonly ConditionalWeakTable<FriendTracker, AdoptionOrigin> _adoptionOrigins = new();
@@ -29,7 +33,7 @@ public static partial class FriendUtils
 
             foreach (var abstractCreature in _trackedCreatures)
             {
-                if (abstractCreature.IsTrackingAllowed)
+                if (abstractCreature.IsTracked)
                 {
                     yield return abstractCreature;
                 }
@@ -45,7 +49,10 @@ public static partial class FriendUtils
             {
                 foreach (var abstractPlayer in Players)
                 {
-                    yield return abstractPlayer;
+                    if (abstractPlayer.IsTracked)
+                    {
+                        yield return abstractPlayer;
+                    }
                 }
             }
 
@@ -56,7 +63,7 @@ public static partial class FriendUtils
         }
     }
 
-    public static IEnumerable<AbstractCreature> TrackedSlugcats
+    public static IEnumerable<AbstractCreature> KnownSlugcats
     {
         get
         {
@@ -77,7 +84,12 @@ public static partial class FriendUtils
         }
     }
 
-    internal static bool HasMultipleTrackedSlugcats => (RainWorldUtils.CurrentGame?.Players.Count ?? 0) + _trackedSlugpups.Count > 1;
+    internal static bool HasMultipleKnownSlugcats => (RainWorldUtils.CurrentGame?.Players.Count ?? 0) + _trackedSlugpups.Count > 1;
+
+    internal static IEnumerable<AbstractCreature> ManageableFriends => Players
+        .Concat(_trackerCreatures)
+        .Distinct()
+        .Where(creature => (!creature.slatedForDeletion || creature.state?.dead == true) && creature.IsTrackingAllowed);
 
     private static IEnumerable<AbstractCreature> Players => RainWorldUtils.CurrentGame?.Players ?? [];
 
@@ -85,6 +97,7 @@ public static partial class FriendUtils
     {
         _trackedSlugpups.Clear();
         _trackedCreatures.Clear();
+        _trackerCreatures.Clear();
         _chainingFriendships.Clear();
         _chainingGame = null;
         _chainingClock = -1;
@@ -94,76 +107,37 @@ public static partial class FriendUtils
 
     internal static void PruneTrackedFriends()
     {
-        _trackedCreatures.RemoveWhere(abstractCreature =>
+        RainWorldGame? game = RainWorldUtils.CurrentGame;
+
+        bool IsStale(AbstractCreature abstractCreature) =>
             (abstractCreature.slatedForDeletion && abstractCreature.state?.dead != true)
-            || abstractCreature.world != RainWorldUtils.CurrentGame?.world
-        );
+            || abstractCreature.world != game?.world;
+
+        _trackedCreatures.RemoveWhere(IsStale);
         _trackedSlugpups.RemoveWhere(abstractCreature => !_trackedCreatures.Contains(abstractCreature));
+        _trackerCreatures.RemoveWhere(IsStale);
     }
+
+    internal static void ResetTrackingChoices() => _trackingChoices = new();
+
+    private static TrackingChoices? ChoicesFor(AbstractCreature creature) => creature.Game is { } game
+        ? _trackingChoices.GetValue(game, game => new(game.StorySaveState))
+        : null;
 
     extension(AbstractCreature? source)
     {
-        public void Track()
+        public bool IsTracked
         {
-            if (source is { } abstractCreature and not AbstractOwner)
+            get
             {
-                if (abstractCreature.IsSlugpup)
+                if (source == null || (!_trackedCreatures.Contains(source) && RainWorldUtils.CurrentGame?.Players.Contains(source) != true))
                 {
-                    _trackedSlugpups.Add(abstractCreature);
+                    return false;
                 }
 
-                _trackedCreatures.Add(abstractCreature);
-
-                HashSet<EntityID> playerIds = _trackedPlayerIds.GetOrCreateValue(abstractCreature);
-
-                playerIds.Clear();
-                foreach (var abstractPlayer in Players)
-                {
-                    if (abstractCreature.IsFriend(abstractPlayer))
-                    {
-                        playerIds.Add(abstractPlayer.ID);
-                    }
-                }
+                return source.IsTrackingAllowed
+                    && ChoicesFor(source)?.Exclusions.Contains(source.SaveDataKey) != true;
             }
-        }
-
-        public void Untrack()
-        {
-            if (source is { } abstractCreature)
-            {
-                _trackedSlugpups.Remove(abstractCreature);
-                _trackedCreatures.Remove(abstractCreature);
-                _trackedPlayerIds.Remove(abstractCreature);
-            }
-        }
-
-        public bool IsTrackedFor(AbstractCreature? abstractPlayer)
-        {
-            if (source == null || abstractPlayer == null || !_trackedCreatures.Contains(source))
-            {
-                return false;
-            }
-
-            if (source.IsFriend(abstractPlayer))
-            {
-                return true;
-            }
-
-            return source.abstractAI?.RealAI == null
-                && source.GetFriendshipVerdict(abstractPlayer) != false
-                && _trackedPlayerIds.TryGetValue(source, out HashSet<EntityID> playerIds)
-                && playerIds.Contains(abstractPlayer.ID);
-        }
-
-        internal void TrackSlugpupFriend(AbstractCreature abstractPlayer)
-        {
-            if (source is not { } abstractSlugpup || !abstractSlugpup.IsSlugpup || !abstractPlayer.IsPlayer)
-            {
-                return;
-            }
-
-            _slugpupFriendIds.GetOrCreateValue(abstractSlugpup).Add(abstractPlayer.ID);
-            abstractSlugpup.Track();
         }
 
         internal bool IsSlugpupWithAbsentFriend
@@ -192,7 +166,7 @@ public static partial class FriendUtils
             }
         }
 
-        private bool IsTrackedFriend
+        private bool IsTrackingAllowed
         {
             get
             {
@@ -201,32 +175,130 @@ public static partial class FriendUtils
                     return false;
                 }
 
-                if (Config.FriendSlugcat.IsActive && RainWorldUtils.CurrentGame?.Players.Contains(source) == true)
-                {
-                    return true;
-                }
-
-                return _trackedCreatures.Contains(source) && source.IsTrackingAllowed;
-            }
-        }
-
-        private bool IsTrackingAllowed
-        {
-            get
-            {
-                if (source == null)
-                {
-                    return false;
-                }
-
                 if (source.IsSlugcat)
                 {
-                    return Config.FriendSlugcat.IsActive && source.GetTrackedFriendshipVerdict() != false;
+                    return Config.FriendSlugcat.IsActive && source.GetSlugcatFriendshipVerdict() != false;
                 }
 
                 return !source.IsDenied
-                    && (source.GetTrackedFriendshipVerdict() ?? source.IsFriendlyAllowed);
+                    && (source.GetSlugcatFriendshipVerdict() ?? source.IsFriendlyAllowed);
             }
+        }
+
+        public void Track() => source.Track(fromTracker: false);
+
+        public void Untrack()
+        {
+            if (source is { } abstractCreature)
+            {
+                _trackedSlugpups.Remove(abstractCreature);
+                _trackedCreatures.Remove(abstractCreature);
+                _trackerCreatures.Remove(abstractCreature);
+                _trackedPlayerIds.Remove(abstractCreature);
+            }
+        }
+
+        public bool IsTrackedFor(AbstractCreature? abstractPlayer)
+        {
+            if (source is not { IsTracked: true } || abstractPlayer == null)
+            {
+                return false;
+            }
+
+            if (source.IsFriend(abstractPlayer))
+            {
+                return true;
+            }
+
+            return source.abstractAI?.RealAI == null
+                && source.RememberedFriendshipWith(abstractPlayer) == true;
+        }
+
+        internal void Track(bool fromTracker)
+        {
+            if (source is not { } abstractCreature || abstractCreature is AbstractOwner)
+            {
+                return;
+            }
+
+            if (abstractCreature.IsSlugpup)
+            {
+                _trackedSlugpups.Add(abstractCreature);
+            }
+
+            _trackedCreatures.Add(abstractCreature);
+
+            if (fromTracker)
+            {
+                _trackerCreatures.Add(abstractCreature);
+            }
+
+            if (!abstractCreature.IsSlugcat && abstractCreature.abstractAI?.RealAI == null)
+            {
+                return;
+            }
+
+            HashSet<EntityID> playerIds = _trackedPlayerIds.GetOrCreateValue(abstractCreature);
+
+            playerIds.Clear();
+
+            foreach (var abstractPlayer in Players)
+            {
+                if (abstractCreature.IsFriend(abstractPlayer))
+                {
+                    playerIds.Add(abstractPlayer.ID);
+                }
+            }
+        }
+
+        internal void TrackSlugpupFriend(AbstractCreature abstractPlayer)
+        {
+            if (source is not { } abstractSlugpup || !abstractSlugpup.IsSlugpup || !abstractPlayer.IsPlayer)
+            {
+                return;
+            }
+
+            _slugpupFriendIds.GetOrCreateValue(abstractSlugpup).Add(abstractPlayer.ID);
+            abstractSlugpup.Track(fromTracker: true);
+        }
+
+        internal void SetTracked(bool tracked)
+        {
+            if (source is not { IsTrackingAllowed: true } creature || ChoicesFor(creature) is not { } choices)
+            {
+                return;
+            }
+
+            string key = creature.SaveDataKey;
+
+            if (!tracked && !creature.IsPlayer && !_trackerCreatures.Contains(creature) && !choices.Exclusions.Contains(key))
+            {
+                return;
+            }
+
+            bool changed = tracked ? choices.Exclusions.Remove(key) : choices.Exclusions.Add(key);
+
+            if (changed)
+            {
+                choices.Write();
+            }
+        }
+
+        private bool? RememberedFriendshipWith(AbstractCreature target)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            if (source.IsDenied || target.IsDenied || source.GetFriendshipVerdict(target) == false)
+            {
+                return false;
+            }
+
+            return _trackedPlayerIds.TryGetValue(source, out HashSet<EntityID> playerIds)
+                ? playerIds.Contains(target.ID)
+                : null;
         }
     }
 
@@ -297,7 +369,7 @@ public static partial class FriendUtils
             tracker.friend = null;
             tracker.friendRel = null;
 
-            foreach (var abstractSlugcat in TrackedSlugcats)
+            foreach (var abstractSlugcat in KnownSlugcats)
             {
                 if (
                     abstractSlugcat == abstractCreature
@@ -333,16 +405,9 @@ public static partial class FriendUtils
         }
     }
 
-    private sealed class AdoptionOrigin(AbstractCreature creature, SocialMemory.Relationship? relationship)
-    {
-        public AbstractCreature Creature { get; } = creature;
-
-        public SocialMemory.Relationship? Relationship { get; } = relationship;
-    }
-
     extension(EntityID id)
     {
-        public bool IsTrackedSlugcat
+        public bool IsKnownSlugcat
         {
             get
             {
@@ -370,5 +435,40 @@ public static partial class FriendUtils
                 return false;
             }
         }
+    }
+
+    private sealed class TrackingChoices
+    {
+        private const string SaveKey = "ABSOLUTEFRIENDS_TRACKING<svB>";
+
+        private const string ExcludedSuffix = "=0";
+
+        internal readonly HashSet<string> Exclusions = new(StringComparer.Ordinal);
+
+        private readonly SaveState? _save;
+
+        internal TrackingChoices(SaveState? save)
+        {
+            _save = save;
+
+            foreach (string entry in FriendSaveData.ReadEntries(save, SaveKey))
+            {
+                if (entry.EndsWith(ExcludedSuffix, StringComparison.Ordinal))
+                {
+                    Exclusions.Add(entry.Substring(0, entry.Length - ExcludedSuffix.Length));
+                }
+            }
+        }
+
+        internal void Write() => FriendSaveData.WriteEntries(_save, SaveKey, Exclusions
+            .OrderBy(key => key, StringComparer.Ordinal)
+            .Select(key => key + ExcludedSuffix));
+    }
+
+    private sealed class AdoptionOrigin(AbstractCreature creature, SocialMemory.Relationship? relationship)
+    {
+        public AbstractCreature Creature { get; } = creature;
+
+        public SocialMemory.Relationship? Relationship { get; } = relationship;
     }
 }

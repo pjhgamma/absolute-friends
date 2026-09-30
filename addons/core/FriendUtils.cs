@@ -74,6 +74,14 @@ public static partial class FriendUtils
 
     extension(AbstractCreature? source)
     {
+        private bool IsFriendlyLizard =>
+            ModManager.CoopAvailable
+            && Custom.rainWorld?.options?.friendlyLizards == true
+            && source?.creatureTemplate?.IsLizard == true
+            && source.abstractAI?.RealAI?.friendTracker is { } tracker
+            && tracker.HasSlugcatFriend
+            && tracker.friendRel is { like: > FriendLikeThreshold, tempLike: > FriendLikeThreshold };
+
         public bool Like(AbstractCreature? target)
         {
             if (source?.state?.socialMemory is not { } socialMemory || target == null)
@@ -98,14 +106,6 @@ public static partial class FriendUtils
 
             return communities.LikeOfPlayer(communityID, source.world.RegionNumber, playerState.playerNumber);
         }
-
-        private bool IsFriendlyLizard =>
-            ModManager.CoopAvailable
-            && Custom.rainWorld?.options?.friendlyLizards == true
-            && source?.creatureTemplate?.IsLizard == true
-            && source.abstractAI?.RealAI?.friendTracker is { } tracker
-            && tracker.HasSlugcatFriend
-            && tracker.friendRel is { like: > FriendLikeThreshold, tempLike: > FriendLikeThreshold };
 
         private bool? GetFriendshipVerdict(AbstractCreature abstractSlugcat)
         {
@@ -143,7 +143,7 @@ public static partial class FriendUtils
             return granted;
         }
 
-        private bool? GetTrackedFriendshipVerdict()
+        private bool? GetSlugcatFriendshipVerdict()
         {
             if (_friendshipRules.Count == 0)
             {
@@ -153,7 +153,7 @@ public static partial class FriendUtils
             bool unresolved = false;
             bool? ruled = null;
 
-            foreach (var abstractSlugcat in TrackedSlugcats)
+            foreach (var abstractSlugcat in KnownSlugcats)
             {
                 if (source.GetFriendshipVerdict(abstractSlugcat) is not { } verdict)
                 {
@@ -173,7 +173,7 @@ public static partial class FriendUtils
             return unresolved ? null : ruled;
         }
 
-        private bool? IsCreatureFriend(AbstractCreature abstractSlugcat)
+        private bool? GetCreatureFriendship(AbstractCreature abstractSlugcat)
         {
             if (source.GetFriendshipVerdict(abstractSlugcat) is { } ruled)
             {
@@ -185,7 +185,7 @@ public static partial class FriendUtils
                 return false;
             }
 
-            bool? direct = source.IsDirectCreatureFriend(abstractSlugcat);
+            bool? direct = source.GetDirectFriendship(abstractSlugcat);
 
             if (direct == true)
             {
@@ -197,14 +197,14 @@ public static partial class FriendUtils
                 return direct;
             }
 
-            foreach (var sharedSlugcat in TrackedSlugcats)
+            foreach (var sharedSlugcat in KnownSlugcats)
             {
                 if (sharedSlugcat == abstractSlugcat)
                 {
                     continue;
                 }
 
-                if ((source.GetFriendshipVerdict(sharedSlugcat) ?? source.IsDirectCreatureFriend(sharedSlugcat)) == true)
+                if ((source.GetFriendshipVerdict(sharedSlugcat) ?? source.GetDirectFriendship(sharedSlugcat)) == true)
                 {
                     return true;
                 }
@@ -213,7 +213,7 @@ public static partial class FriendUtils
             return direct;
         }
 
-        private bool? IsDirectCreatureFriend(AbstractCreature abstractSlugcat)
+        private bool? GetDirectFriendship(AbstractCreature abstractSlugcat)
         {
             if (source.IsSlugcat)
             {
@@ -273,7 +273,7 @@ public static partial class FriendUtils
 
         private bool IsChainedFriend(AbstractCreature target)
         {
-            foreach (var abstractSlugcat in TrackedSlugcats)
+            foreach (var abstractSlugcat in KnownSlugcats)
             {
                 if (source.IsFriendForChaining(abstractSlugcat) && target.IsFriendForChaining(abstractSlugcat))
                 {
@@ -319,7 +319,7 @@ public static partial class FriendUtils
                     return false;
                 }
 
-                if (abstractCreature.IsCreatureFriend(abstractSlugcat) is { } isCreatureFriend)
+                if (abstractCreature.GetCreatureFriendship(abstractSlugcat) is { } isCreatureFriend)
                 {
                     return isCreatureFriend;
                 }
@@ -336,11 +336,7 @@ public static partial class FriendUtils
 
     extension(AbstractPhysicalObject? source)
     {
-        public bool IsTracked => source is AbstractCreature abstractCreature && abstractCreature.IsTrackedFriend;
-
-        public bool IsFriend(AbstractPhysicalObject? target, bool direct = false) => source.IsFriend(target, direct, true);
-
-        public bool IsFriend(PhysicalObject? target, bool direct = false) => source.IsFriend(target?.abstractPhysicalObject, direct);
+        public bool IsTracked => source is AbstractCreature { IsTracked: true };
 
         public bool IsFriendOfPlayer
         {
@@ -357,6 +353,10 @@ public static partial class FriendUtils
                 return false;
             }
         }
+
+        public bool IsFriend(AbstractPhysicalObject? target, bool direct = false) => source.IsFriend(target, direct, true);
+
+        public bool IsFriend(PhysicalObject? target, bool direct = false) => source.IsFriend(target?.abstractPhysicalObject, direct);
 
         private bool IsFriend(AbstractPhysicalObject? target, bool direct, bool chaining)
         {
@@ -391,11 +391,11 @@ public static partial class FriendUtils
     {
         public bool IsTracked => (source?.abstractPhysicalObject).IsTracked;
 
+        public bool IsFriendOfPlayer => (source?.abstractPhysicalObject).IsFriendOfPlayer;
+
         public bool IsFriend(AbstractPhysicalObject? target, bool direct = false) => (source?.abstractPhysicalObject).IsFriend(target, direct);
 
         public bool IsFriend(PhysicalObject? target, bool direct = false) => (source?.abstractPhysicalObject).IsFriend(target?.abstractPhysicalObject, direct);
-
-        public bool IsFriendOfPlayer => (source?.abstractPhysicalObject).IsFriendOfPlayer;
     }
 
     extension(Room? room)

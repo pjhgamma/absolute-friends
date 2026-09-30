@@ -1,4 +1,5 @@
 using AbsoluteFriends.Options;
+using UnityEngine;
 
 namespace AbsoluteFriends.Core;
 
@@ -46,6 +47,8 @@ public static class Config
 
     public static Configurable<bool> OwnerIcon = null!;
 
+    public static Configurable<KeyCode> FriendManagerKey = null!;
+
     internal static void Bind(Addon addon)
     {
         FriendSlugcat = addon.Bind("FriendSlugcat", true, new ConfigurableInfo(Options.Config.Downpour(
@@ -57,7 +60,6 @@ public static class Config
             .Require(FriendCreature);
 
         CreatureRules.Bind(addon);
-
         SelectedCreatureType = addon.Bind("SelectedCreatureType", CreatureRules.Options.Select(pair => pair.Key).FirstOrDefault() ?? "", new ConfigurableInfo("Choose the creature type to configure.", tags: ["Creature Type"]));
         SelectedCreatureRule = addon.Bind("SelectedCreatureRule", nameof(CreatureRule.Allow), new ConfigurableInfo("Choose when this creature counts as a friend, overriding the global friendship options.", tags: ["Creature Rule"]));
         SelectedConfiguredCreatureRules = addon.Bind("SelectedConfiguredCreatureRules", NoConfiguredRule, new ConfigurableInfo("Select a configured creature rule to edit or remove.", tags: ["Configured Creature Rules"]));
@@ -67,6 +69,7 @@ public static class Config
         FriendGrabbed = addon.Bind("FriendGrabbed", false, new ConfigurableInfo("Treats objects held by friends as friendly.", tags: ["Grabbed Objects"]));
         FriendGrabbedForce = addon.Bind("FriendGrabbedForce", true, new ConfigurableInfo("Temporarily treats a held creature as not friendly while the player holding it enters a grab input.", tags: ["Force Grabbing"]))
             .Require(FriendGrabbed);
+
         FriendStory = addon.Bind("FriendStory", true, new ConfigurableInfo("Enables friendship rules in Story mode.", tags: ["Story"]));
         FriendExpedition = addon.Bind("FriendExpedition", true, new ConfigurableInfo("Enables friendship rules in Expedition mode.", tags: ["Expedition"]));
         FriendArena = addon.Bind("FriendArena", false, new ConfigurableInfo("Enables friendship rules in Arena mode.", tags: ["Arena"]));
@@ -78,5 +81,7 @@ public static class Config
         OwnerLink = addon.Bind("OwnerLink", false, new ConfigurableInfo("Draws a line between each object and its owning creature, thickest at the owner's end.", tags: ["Owner Link"]));
         OwnerName = addon.Bind("OwnerName", false, new ConfigurableInfo("Draws the owner's name above everything in view that has an owner.", tags: ["Owner Name"]));
         OwnerIcon = addon.Bind("OwnerIcon", false, new ConfigurableInfo("Draws the owner's icon above everything in view that has an owner.", tags: ["Owner Icon"]));
+
+        FriendManagerKey = addon.Bind("FriendManagerKey", KeyCode.F7, new ConfigurableInfo("Opens the friend manager during gameplay or while paused.", tags: ["Friend Manager Shortcut"]));
     }
 }

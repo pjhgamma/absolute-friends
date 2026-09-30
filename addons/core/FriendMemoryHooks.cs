@@ -12,12 +12,12 @@ internal class FriendMemoryHooks : BaseHooks
 
     private static IEnumerable<int> SharedPlayerNumbers(CreatureCommunities communities, int playerNumber)
     {
-        if (!FriendUtils.IsFriendSession || !FriendUtils.HasMultipleTrackedSlugcats || communities.session is StoryGameSession)
+        if (!FriendUtils.IsFriendSession || !FriendUtils.HasMultipleKnownSlugcats || communities.session is StoryGameSession)
         {
             yield break;
         }
 
-        int[] playerNumbers = [.. FriendUtils.TrackedSlugcats
+        int[] playerNumbers = [.. FriendUtils.KnownSlugcats
             .Select(abstractSlugcat => abstractSlugcat.state)
             .OfType<PlayerState>()
             .Select(playerState => playerState.playerNumber)
@@ -42,15 +42,15 @@ internal class FriendMemoryHooks : BaseHooks
     {
         if (
             !FriendUtils.IsFriendSession
-            || !FriendUtils.HasMultipleTrackedSlugcats
-            || !relationship.subjectID.IsTrackedSlugcat
+            || !FriendUtils.HasMultipleKnownSlugcats
+            || !relationship.subjectID.IsKnownSlugcat
             || !_relationshipMemories.TryGetValue(relationship, out SocialMemory socialMemory)
         )
         {
             yield break;
         }
 
-        foreach (var abstractSlugcat in FriendUtils.TrackedSlugcats)
+        foreach (var abstractSlugcat in FriendUtils.KnownSlugcats)
         {
             if (abstractSlugcat.ID != relationship.subjectID)
             {
@@ -59,40 +59,29 @@ internal class FriendMemoryHooks : BaseHooks
         }
     }
 
-    private static float ShareLike(SocialMemory self, EntityID subjectID, float like, bool temporary)
+    private static float ShareValue(SocialMemory self, EntityID subjectID, float value, MemoryValue field)
     {
-        if (!FriendUtils.IsFriendSession || !FriendUtils.HasMultipleTrackedSlugcats || !subjectID.IsTrackedSlugcat)
+        if (!FriendUtils.IsFriendSession || !FriendUtils.HasMultipleKnownSlugcats || !subjectID.IsKnownSlugcat)
         {
-            return like;
+            return value;
         }
 
-        foreach (var abstractSlugcat in FriendUtils.TrackedSlugcats)
+        foreach (var abstractSlugcat in FriendUtils.KnownSlugcats)
         {
             if (abstractSlugcat.ID != subjectID && self.GetRelationship(abstractSlugcat.ID) is { } relationship)
             {
-                like = Mathf.Max(like, temporary ? relationship.tempLike : relationship.like);
+                float shared = field switch
+                {
+                    MemoryValue.Like => relationship.like,
+                    MemoryValue.TempLike => relationship.tempLike,
+                    _ => relationship.know,
+                };
+
+                value = Mathf.Max(value, shared);
             }
         }
 
-        return like;
-    }
-
-    private static float ShareKnow(SocialMemory self, EntityID subjectID, float know)
-    {
-        if (!FriendUtils.IsFriendSession || !FriendUtils.HasMultipleTrackedSlugcats || !subjectID.IsTrackedSlugcat)
-        {
-            return know;
-        }
-
-        foreach (var abstractSlugcat in FriendUtils.TrackedSlugcats)
-        {
-            if (abstractSlugcat.ID != subjectID && self.GetRelationship(abstractSlugcat.ID) is { } relationship)
-            {
-                know = Mathf.Max(know, relationship.know);
-            }
-        }
-
-        return know;
+        return value;
     }
 
     private static SocialMemory.Relationship? TrackRelationshipMemory(SocialMemory self, SocialMemory.Relationship? relationship)
@@ -143,13 +132,13 @@ internal class FriendMemoryHooks : BaseHooks
     [HookPatch(typeof(On.SocialMemory), nameof(On.SocialMemory.GetKnow))]
     private static float On_SocialMemory_GetKnow(On.SocialMemory.orig_GetKnow orig, SocialMemory self, EntityID subjectID)
     {
-        return ShareKnow(self, subjectID, orig(self, subjectID));
+        return ShareValue(self, subjectID, orig(self, subjectID), MemoryValue.Know);
     }
 
     [HookPatch(typeof(On.SocialMemory), nameof(On.SocialMemory.GetLike))]
     private static float On_SocialMemory_GetLike(On.SocialMemory.orig_GetLike orig, SocialMemory self, EntityID subjectID)
     {
-        return ShareLike(self, subjectID, orig(self, subjectID), false);
+        return ShareValue(self, subjectID, orig(self, subjectID), MemoryValue.Like);
     }
 
     [HookPatch(typeof(On.SocialMemory), nameof(On.SocialMemory.GetOrInitiateRelationship))]
@@ -167,7 +156,7 @@ internal class FriendMemoryHooks : BaseHooks
     [HookPatch(typeof(On.SocialMemory), nameof(On.SocialMemory.GetTempLike))]
     private static float On_SocialMemory_GetTempLike(On.SocialMemory.orig_GetTempLike orig, SocialMemory self, EntityID subjectID)
     {
-        return ShareLike(self, subjectID, orig(self, subjectID), true);
+        return ShareValue(self, subjectID, orig(self, subjectID), MemoryValue.TempLike);
     }
 
     [HookPatch(typeof(On.SocialMemory.Relationship), nameof(On.SocialMemory.Relationship.InfluenceKnow))]
@@ -201,5 +190,12 @@ internal class FriendMemoryHooks : BaseHooks
         {
             orig(relationship, change);
         }
+    }
+
+    private enum MemoryValue
+    {
+        Like,
+        TempLike,
+        Know,
     }
 }

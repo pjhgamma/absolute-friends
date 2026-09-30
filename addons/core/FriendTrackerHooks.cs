@@ -32,7 +32,7 @@ internal class FriendTrackerHooks : BaseHooks
     {
         orig(self);
 
-        if (self.AI?.creature is not { } abstractCreature || abstractCreature.IsPlayer)
+        if (self.AI?.creature is not { IsPlayer: false } abstractCreature)
         {
             return;
         }
@@ -41,7 +41,7 @@ internal class FriendTrackerHooks : BaseHooks
 
         if (abstractCreature.IsSlugpup)
         {
-            if (self.friend?.abstractCreature is { } abstractPlayer && abstractPlayer.IsPlayer && !abstractPlayer.slatedForDeletion && abstractPlayer.state?.dead != true)
+            if (self.friend?.abstractCreature is { IsPlayer: true, slatedForDeletion: false } abstractPlayer && abstractPlayer.state?.dead != true)
             {
                 abstractCreature.TrackSlugpupFriend(abstractPlayer);
             }
@@ -58,7 +58,7 @@ internal class FriendTrackerHooks : BaseHooks
             || abstractCreature.IsFriendOfPlayer
         )
         {
-            abstractCreature.Track();
+            abstractCreature.Track(fromTracker: true);
         }
         else
         {

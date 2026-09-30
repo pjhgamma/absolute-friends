@@ -177,17 +177,6 @@ internal static class OverlayUtils
         }
     }
 
-    extension(AbstractPhysicalObject? abstractPhysicalObject)
-    {
-        public string DisplayName => abstractPhysicalObject switch
-        {
-            AbstractOwner abstractOwner => abstractOwner.DisplayName,
-            AbstractCreature { creatureTemplate.name: { } name } abstractCreature => $"{name} {abstractCreature.ID.number}",
-            { type: { } type } => $"{type} {abstractPhysicalObject.ID.number}",
-            _ => "",
-        };
-    }
-
     extension(FFacetNode node)
     {
         public bool IsHologram

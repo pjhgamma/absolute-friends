@@ -239,13 +239,13 @@ internal static class ResonanceUtils
         {
             get
             {
-                Creature? creature = abstractCreature.realizedCreature;
+                CreatureCondition condition = CreatureCondition.Read(abstractCreature);
 
                 return new(
-                    abstractCreature.state is HealthState healthState ? Mathf.Max(1f - healthState.health, 0f) : 0f,
-                    abstractCreature.state is PlayerState playerState ? Mathf.Max((float)playerState.permanentDamageTracking, 0f) : 0f,
-                    Mathf.Max(creature?.injectedPoison ?? 0f, 0f),
-                    abstractCreature.state?.dead == true
+                    condition.Damage ?? 0f,
+                    condition.PermanentDamage ?? 0f,
+                    condition.Poison ?? 0f,
+                    condition.Dead == true
                 );
             }
         }
@@ -476,7 +476,7 @@ internal static class ResonanceUtils
         {
             List<AbstractCreature> abstractPlayers = room.game?.AlivePlayers ?? [];
 
-            if (!Core.Config.FriendSlugcat.IsActive)
+            if (!Core.Config.FriendSharing.IsActive)
             {
                 return [.. abstractPlayers.Where(abstractPlayer => abstractPlayer?.realizedCreature is Player player && predicate(player))];
             }
@@ -493,7 +493,7 @@ internal static class ResonanceUtils
         {
             foreach (var abstractCreature in FriendUtils.TrackedFriendsIncludingPlayers)
             {
-                if (!Core.Config.FriendSlugcat.IsActive && !resonators.Any(abstractPlayer => abstractCreature.IsTrackedFor(abstractPlayer)))
+                if (!Core.Config.FriendSharing.IsActive && !resonators.Any(abstractPlayer => abstractCreature.IsTrackedFor(abstractPlayer)))
                 {
                     continue;
                 }
@@ -605,7 +605,7 @@ internal static class ResonanceUtils
             Func<Creature, bool> predicate = resonanceAnchor.Predicate;
             List<AbstractCreature> resonators = room.Resonators(predicate);
 
-            if (!Core.Config.FriendSlugcat.IsActive)
+            if (!Core.Config.FriendSharing.IsActive)
             {
                 resonators.RemoveAll(abstractPlayer => abstractPlayer.realizedCreature is not Player player || !player.IsResonating);
             }
@@ -669,8 +669,7 @@ internal static class ResonanceUtils
                 {
                     if (
                         grabbed.abstractPhysicalObject is not AbstractCreature abstractCreature
-                        || !abstractCreature.IsTracked
-                        || (!Core.Config.FriendSlugcat.IsActive && !abstractCreature.IsTrackedFor(abstractPlayer))
+                        || !(Core.Config.FriendSharing.IsActive ? abstractCreature.IsTracked : abstractCreature.IsTrackedFor(abstractPlayer))
                         || !abstractCreature.IsInRoom(room)
                         || !held.Add(abstractCreature))
                     {

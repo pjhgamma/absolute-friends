@@ -8,6 +8,7 @@
     <Reference Include="MonoMod.Utils" HintPath="$(LibraryPath)MonoMod.Utils.dll" Private="false" />
     <Reference Include="UnityEngine" HintPath="$(LibraryPath)UnityEngine.dll" Private="false" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(LibraryPath)UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.InputLegacyModule" HintPath="$(LibraryPath)UnityEngine.InputLegacyModule.dll" Private="false" />
   </ItemGroup>
 
   <Target Name="StageArtifacts" AfterTargets="Build">
