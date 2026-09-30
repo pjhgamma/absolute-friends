@@ -1,6 +1,6 @@
 using AbsoluteFriends.Hooks;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Resonance;
 
 internal class ResonanceTrackerHooks : BaseHooks
 {

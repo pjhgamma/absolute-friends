@@ -1,7 +1,7 @@
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Options;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Resonance;
 
 internal class ResonanceAnchor : UpdatableAndDeletable
 {

@@ -2,7 +2,7 @@ using AbsoluteFriends.Utils;
 using RWCustom;
 using UnityEngine;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Resonance;
 
 internal class ResonanceEffect : UpdatableAndDeletable
 {

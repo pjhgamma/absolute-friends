@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Resonance;
 
 internal class ResonanceTracker
 {

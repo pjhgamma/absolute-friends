@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>AbsoluteFriends.Progression</AssemblyName>
-    <RootNamespace>AbsoluteFriends.Progression</RootNamespace>
+    <AssemblyName>AbsoluteFriends.Pilgrimage</AssemblyName>
+    <RootNamespace>AbsoluteFriends.Pilgrimage</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

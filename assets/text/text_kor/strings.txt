@@ -305,8 +305,8 @@ Treats Pebbles' pearl as friends and prevents players from stealing them.|조약
 Prince|왕자
 Treats the Prince as a friend of players.|왕자를 플레이어의 친구로 취급합니다.
 
-Absolute Friends: Progression|절대적 친구: 진행
-Controls travelling and resonating with friends.|친구와 이동하고 공명하는 것을 조정합니다.
+Absolute Friends: Pilgrimage|절대적 친구: 순례
+Helps tracked friends join the pilgrimage.|추적되는 친구들이 순례에 함께하도록 돕습니다.
 
 Thresholds|관문
 Gate Delay|게이트 지연
@@ -323,6 +323,28 @@ Passages|통행권
 Tracked friends that survive the cycle travel with the player from anywhere in the world, even through a passage.|주기를 넘긴 추적되는 친구가 세계 어디에 있든, 통행권을 사용할 때에도 플레이어와 함께 이동합니다.
 Guardian|가디언
 Guardians do not target tracked friends or move them with telekinesis when the players meet the Karma requirement to pass.|플레이어가 통과에 필요한 카르마 조건을 충족하면 가디언은 추적되는 친구를 노리거나 염력으로 움직이지 않습니다.
+
+Absolute Friends: Visualizer|절대적 친구: 시각화
+Visually shows friends and owners.|친구와 소유자를 시각적으로 표시합니다.
+
+Tag|표식
+Friend Link|친구 연결선
+Draws a line between two things as the mod treats them as friends.|두 대상이 친구로 판단되는 동안 그 사이에 선을 그립니다.
+Friend Name|친구 이름표
+Draws the name above every friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 이름을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 이름을 화면 가장자리에 유지합니다.
+Friend Icon|친구 아이콘
+Draws an icon above every friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 아이콘을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 아이콘을 화면 가장자리에 유지합니다.
+Owner Link|소유자 연결선
+Draws a line between each object and its owning creature, thickest at the owner's end.|각 물체와 해당 물체를 소유한 생물 사이에 선을 그립니다. 선은 소유자 쪽 끝이 가장 굵습니다.
+Owner Name|소유자 이름표
+Draws the owner's name above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 이름을 표시합니다.
+Owner Icon|소유자 아이콘
+Draws the owner's icon above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 아이콘을 표시합니다.
+Update Interval|갱신 간격
+Sets how many frames pass between friend and owner checks.|친구와 소유자를 확인하는 간격을 프레임 단위로 설정합니다.
+
+Absolute Friends: Resonance|절대적 친구: 공명
+Warps and mends tracked friends through resonance.|공명을 통해 추적되는 친구들을 불러오고 치유합니다.
 
 Resonance|공명
 Gate Resonance|게이트 공명
@@ -344,22 +366,3 @@ The paid resonance cost lingers as an aftershock, making everyone who resonated 
 Sets how much of the paid resonance cost lingers as an aftershock. A value of 1 leaves all of it behind, and 0 leaves nothing.|공명으로 치른 대가가 후유증으로 얼마나 남을지 설정합니다. 1은 그 전부를 남기며, 0은 아무것도 남기지 않습니다.
 Visual Effects|시각적 효과
 Displays visual effects upon resonance. A gate resonance melts the room into the void, while a room or grab resonance answers with ripples.|공명 시 시각적인 효과를 보여줍니다.
-
-Absolute Friends: Visualizer|절대적 친구: 시각화
-Visually shows friends and owners.|친구와 소유자를 시각적으로 표시합니다.
-
-Tag|표식
-Friend Link|친구 연결선
-Draws a line between two things as the mod treats them as friends.|두 대상이 친구로 판단되는 동안 그 사이에 선을 그립니다.
-Friend Name|친구 이름표
-Draws the name above every friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 이름을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 이름을 화면 가장자리에 유지합니다.
-Friend Icon|친구 아이콘
-Draws an icon above every friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 아이콘을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 아이콘을 화면 가장자리에 유지합니다.
-Owner Link|소유자 연결선
-Draws a line between each object and its owning creature, thickest at the owner's end.|각 물체와 해당 물체를 소유한 생물 사이에 선을 그립니다. 선은 소유자 쪽 끝이 가장 굵습니다.
-Owner Name|소유자 이름표
-Draws the owner's name above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 이름을 표시합니다.
-Owner Icon|소유자 아이콘
-Draws the owner's icon above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 아이콘을 표시합니다.
-Update Interval|갱신 간격
-Sets how many frames pass between friend and owner checks.|친구와 소유자를 확인하는 간격을 프레임 단위로 설정합니다.

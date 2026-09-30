@@ -1,6 +1,6 @@
 using AbsoluteFriends.Utils;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Resonance;
 
 internal class ResonanceBurst : UpdatableAndDeletable
 {

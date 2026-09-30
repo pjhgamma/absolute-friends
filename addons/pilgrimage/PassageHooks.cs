@@ -1,7 +1,7 @@
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Hooks;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Pilgrimage;
 
 internal class PassageHooks : BaseHooks
 {

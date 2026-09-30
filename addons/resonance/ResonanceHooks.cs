@@ -1,11 +1,12 @@
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using Watcher;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Resonance;
 
 internal class ResonanceHooks : BaseHooks
 {
@@ -27,7 +28,7 @@ internal class ResonanceHooks : BaseHooks
             {
                 if (Config.ResonanceGate.IsActive && shelterDoor.closedFac == shelterDoor.closeSpeed)
                 {
-                    shelterDoor.Resonate(GateUtils.IsInShelterDoor);
+                    shelterDoor.Resonate(GateZoneUtils.IsInShelterDoor);
                 }
             });
         }
@@ -50,7 +51,7 @@ internal class ResonanceHooks : BaseHooks
             {
                 if (Config.ResonanceGate.IsActive)
                 {
-                    regionGate.Resonate(GateUtils.IsInRegionGate);
+                    regionGate.Resonate(GateZoneUtils.IsInRegionGate);
                 }
             });
         }
@@ -65,7 +66,7 @@ internal class ResonanceHooks : BaseHooks
 
         if (addKarma && !self.addKarma)
         {
-            self.ResonateApart(GateUtils.IsInKarmaIncrease);
+            self.ResonateApart(GateZoneUtils.IsInKarmaIncrease);
         }
     }
 }
@@ -94,7 +95,7 @@ internal class WatcherResonanceHooks : WatcherHooks
             {
                 if (Config.ResonanceGate.IsActive)
                 {
-                    warpPoint.ResonateApart(GateUtils.IsInWarpPoint);
+                    warpPoint.ResonateApart(GateZoneUtils.IsInWarpPoint);
                 }
             });
         }

@@ -3,7 +3,7 @@ using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Utils;
 using UnityEngine;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Pilgrimage;
 
 internal class TempleGuardHooks : BaseHooks
 {

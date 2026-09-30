@@ -6,7 +6,7 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using Watcher;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Pilgrimage;
 
 internal class GateHooks : BaseHooks
 {
@@ -67,7 +67,7 @@ internal class GateHooks : BaseHooks
                         c.Emit(OpCodes.Ldarg_0);
                         c.EmitGuarded(
                             (Player player) => player.room?.shelterDoor is ShelterDoor shelterDoor
-                                && shelterDoor.CanActivate(shelterDoor.room?.game?.AlivePlayers, GateUtils.IsInShelterDoor),
+                                && shelterDoor.CanActivate(shelterDoor.room?.game?.AlivePlayers, GateZoneUtils.IsInShelterDoor),
                             _ => true
                         );
                         c.Emit(OpCodes.Brfalse, l);
@@ -82,7 +82,7 @@ internal class GateHooks : BaseHooks
     {
         self.startCounter = 60;
 
-        return self.CanActivate(ModManager.CoopAvailable ? self.room?.game?.PlayersToProgressOrWin : self.room?.game?.Players, GateUtils.IsInRegionGate);
+        return self.CanActivate(ModManager.CoopAvailable ? self.room?.game?.PlayersToProgressOrWin : self.room?.game?.Players, GateZoneUtils.IsInRegionGate);
     }
 
     [HookPatch(typeof(On.RegionGate), nameof(On.RegionGate.AllPlayersThroughToOtherSide))]
@@ -163,7 +163,7 @@ internal class WatcherGateHooks : WatcherHooks
                     return false;
                 }
 
-                if (warpPoint.CanActivate(warpPoint.room?.game?.AlivePlayers, GateUtils.IsInWarpPoint))
+                if (warpPoint.CanActivate(warpPoint.room?.game?.AlivePlayers, GateZoneUtils.IsInWarpPoint))
                 {
                     warpPoint.triggerTime = warpPoint.triggerActivationTime;
 

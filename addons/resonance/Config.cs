@@ -1,21 +1,9 @@
 using AbsoluteFriends.Options;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Resonance;
 
 internal static class Config
 {
-    public static Configurable<bool> Gate = null!;
-
-    public static Configurable<float> GateTime = null!;
-
-    public static Configurable<bool> GateForce = null!;
-
-    public static Configurable<float> GateForceTime = null!;
-
-    public static Configurable<bool> Passage = null!;
-
-    public static Configurable<bool> TempleGuard = null!;
-
     public static Configurable<bool> ResonanceGate = null!;
 
     public static Configurable<bool> ResonanceRoom = null!;
@@ -38,28 +26,6 @@ internal static class Config
 
     public static void Bind(Addon addon)
     {
-        Gate = addon.Bind("Gate", true, new ConfigurableInfo(Options.Config.Watcher(
-            "Shelters and karma gates wait for tracked friends and will not activate while any player is entering control inputs.",
-            "Shelters, karma gates, and warp points wait for tracked friends and will not activate while any player is entering control inputs."
-        ), tags: ["Gate Delay"]));
-        GateTime = addon.Bind("GateTime", 1f, new ConfigurableInfo(Options.Config.Watcher(
-            "Sets the minimum time (in seconds) of no control input from the player required for shelters and karma gates to activate.",
-            "Sets the minimum time (in seconds) of no control input from the player required for shelters, karma gates, and warp points to activate."
-        )))
-            .Require(Gate);
-        GateForce = addon.Bind("GateForce", true, new ConfigurableInfo(Options.Config.Watcher(
-            "Shelters and karma gates forcefully activate, ignoring non-player friends.",
-            "Shelters, karma gates, and warp points forcefully activate, ignoring non-player friends."
-        ), tags: ["Gate Force"]))
-            .Require(Gate);
-        GateForceTime = addon.Bind("GateForceTime", 3f, new ConfigurableInfo(Options.Config.Watcher(
-            "Sets how much longer (in seconds) the player must go without control input for shelters and karma gates to forcefully activate, ignoring non-player friends.",
-            "Sets how much longer (in seconds) the player must go without control input for shelters, karma gates, and warp points to forcefully activate, ignoring non-player friends."
-        )))
-            .Require(GateForce);
-        Passage = addon.Bind("Passage", false, new ConfigurableInfo("Tracked friends that survive the cycle travel with the player from anywhere in the world, even through a passage.", tags: ["Passages"]));
-        TempleGuard = addon.Bind("TempleGuard", false, new ConfigurableInfo("Guardians do not target tracked friends or move them with telekinesis when the players meet the Karma requirement to pass.", tags: ["Guardian"]));
-
         ResonanceGate = addon.Bind("ResonanceGate", false, new ConfigurableInfo(Options.Config.Watcher(
             "Resonance occurs automatically when a shelter or karma gate closes, or a karma room activates, reaching tracked friends anywhere in the world.",
             "Resonance occurs automatically when a shelter or karma gate closes, or a karma room or warp point activates, reaching tracked friends anywhere in the world."

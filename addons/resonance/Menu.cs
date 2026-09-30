@@ -1,20 +1,11 @@
 using AbsoluteFriends.Options;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Resonance;
 
 internal static class Menu
 {
     public static void Build(MenuBuilder menu)
     {
-        menu.AddTitle("Thresholds");
-        menu.SetColumns(4);
-        menu.AddCheckBox(Config.Gate);
-        menu.AddFloatSlider(Config.GateTime, span: 3f, max: 5f);
-        menu.AddCheckBox(Config.GateForce);
-        menu.AddFloatSlider(Config.GateForceTime, span: 3f, max: 5f);
-        menu.AddCheckBox(Config.Passage);
-        menu.AddCheckBox(Config.TempleGuard);
-
         menu.AddTitle("Resonance");
         menu.SetColumns(3);
         menu.AddCheckBox(Config.ResonanceGate);

@@ -6,7 +6,7 @@ using RWCustom;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace AbsoluteFriends.Progression;
+namespace AbsoluteFriends.Resonance;
 
 internal enum ResonanceType
 {
