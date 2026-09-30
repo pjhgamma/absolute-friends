@@ -16,6 +16,8 @@ public static partial class FriendUtils
 
     private static readonly ConditionalWeakTable<FriendTracker, SocialMemory.Relationship> _adoptedRelationships = new();
 
+    private static readonly ConditionalWeakTable<FriendTracker, AdoptionOrigin> _adoptionOrigins = new();
+
     public static IEnumerable<AbstractCreature> TrackedFriends
     {
         get
@@ -132,7 +134,6 @@ public static partial class FriendUtils
                 _trackedSlugcats.Remove(abstractCreature);
                 _trackedCreatures.Remove(abstractCreature);
                 _trackedPlayerIds.Remove(abstractCreature);
-                _pupFriendIds.Remove(abstractCreature);
             }
         }
 
@@ -178,6 +179,7 @@ public static partial class FriendUtils
                 {
                     if (
                         playerIds.Contains(abstractPlayer.ID)
+                        && abstractPlayer is { slatedForDeletion: false, state.dead: false }
                         && source.state?.socialMemory?.GetRelationship(abstractPlayer.ID) is { like: > FriendLikeThreshold, tempLike: > FriendLikeThreshold }
                         && (abstractPlayer.realizedCreature == null || source.pos.room != abstractPlayer.pos.room)
                     )
@@ -242,7 +244,7 @@ public static partial class FriendUtils
             bool adopted = _adoptedRelationships.TryGetValue(tracker, out SocialMemory.Relationship adoptedRelationship)
                 && ReferenceEquals(tracker.friendRel, adoptedRelationship);
 
-            if (!Config.FriendSharing.IsActive || abstractCreature.IsDenied || abstractCreature.state?.socialMemory is not { } socialMemory)
+            if (!Config.FriendSharing.IsActive || abstractCreature.IsDenied)
             {
                 if (adopted)
                 {
@@ -250,25 +252,71 @@ public static partial class FriendUtils
                     tracker.friendRel = null;
                 }
 
+                _adoptionOrigins.Remove(tracker);
+
                 return;
             }
 
-            if (!adopted && (tracker.friend != null || tracker.friendRel != null))
+            if (_adoptionOrigins.TryGetValue(tracker, out AdoptionOrigin origin)
+                && origin.Creature is { slatedForDeletion: false, state.dead: false, realizedCreature: { } originalFriend }
+                && !originalFriend.dead
+                && abstractCreature.IsFriend(origin.Creature))
+            {
+                tracker.friend = originalFriend;
+                tracker.friendRel = origin.Relationship;
+                _adoptionOrigins.Remove(tracker);
+
+                return;
+            }
+
+            if (abstractCreature.IsNPC
+                && tracker.friend?.abstractCreature?.IsPlayer != true
+                && (!_pupFriendIds.TryGetValue(abstractCreature, out HashSet<EntityID> playerIds)
+                    || !playerIds.Any(id => abstractCreature.state?.socialMemory?.GetRelationship(id) is { like: > FriendLikeThreshold, tempLike: > FriendLikeThreshold })))
             {
                 return;
             }
+
+            if (!adopted && tracker.friend is { IsSlugcat: false })
+            {
+                return;
+            }
+
+            if (tracker.friend is { } currentFriend
+                && currentFriend.abstractCreature is { slatedForDeletion: false, state.dead: false } currentAbstractFriend
+                && (!adopted || abstractCreature.IsFriend(currentAbstractFriend)))
+            {
+                return;
+            }
+
+            if (!adopted && tracker.friend?.abstractCreature is { IsSlugcat: true } originalCreature)
+            {
+                _adoptionOrigins.GetValue(tracker, _ => new(originalCreature, tracker.friendRel));
+            }
+
+            tracker.friend = null;
+            tracker.friendRel = null;
 
             foreach (var abstractSlugcat in TrackedSlugcats)
             {
                 if (
                     abstractSlugcat == abstractCreature
-                    || abstractSlugcat.pos.room != abstractCreature.pos.room
-                    || abstractSlugcat.state is not { dead: false }
-                    || abstractSlugcat.realizedCreature is not { } slugcat
-                    || !TryGetFriendlyLikes(socialMemory, abstractSlugcat.ID, out float like, out float tempLike)
+                    || abstractSlugcat is not { slatedForDeletion: false, state.dead: false, realizedCreature: { } slugcat }
+                    || abstractCreature.IsNPC
+                    || !abstractCreature.IsFriend(abstractSlugcat)
                 )
                 {
                     continue;
+                }
+
+                float like = 1f;
+                float tempLike = 1f;
+
+                if (abstractCreature.state?.socialMemory is { } socialMemory
+                    && TryGetLikes(socialMemory, abstractSlugcat.ID, out float rememberedLike, out float rememberedTempLike))
+                {
+                    like = rememberedLike;
+                    tempLike = rememberedTempLike;
                 }
 
                 SocialMemory.Relationship relationship = _adoptedRelationships.GetValue(tracker, _ => new(abstractSlugcat.ID));
@@ -282,13 +330,14 @@ public static partial class FriendUtils
 
                 return;
             }
-
-            if (adopted)
-            {
-                tracker.friend = null;
-                tracker.friendRel = null;
-            }
         }
+    }
+
+    private sealed class AdoptionOrigin(AbstractCreature creature, SocialMemory.Relationship? relationship)
+    {
+        public AbstractCreature Creature { get; } = creature;
+
+        public SocialMemory.Relationship? Relationship { get; } = relationship;
     }
 
     extension(EntityID id)

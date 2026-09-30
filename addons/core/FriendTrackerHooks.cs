@@ -5,7 +5,7 @@ namespace AbsoluteFriends.Core;
 
 internal class FriendTrackerHooks : BaseHooks
 {
-    protected override Configurable<bool>[] Options => [Config.FriendSlugcat, Config.FriendCreature, Config.FriendNeutralCreature, Config.FriendChaining];
+    protected override Configurable<bool>[] Options => [Config.FriendSlugcat, Config.FriendCreature, Config.FriendNeutralCreature, Config.FriendSharing, Config.FriendChaining];
 
     protected override bool IsOptionEnabled => base.IsOptionEnabled || CreatureRules.HasConfiguredRules;
 
@@ -37,6 +37,8 @@ internal class FriendTrackerHooks : BaseHooks
             return;
         }
 
+        self.AdoptSlugcatFriend();
+
         if (abstractCreature.IsNPC)
         {
             if (self.friend?.abstractCreature is { } abstractPlayer && abstractPlayer.IsPlayer && !abstractPlayer.slatedForDeletion && abstractPlayer.state?.dead != true)
@@ -50,8 +52,6 @@ internal class FriendTrackerHooks : BaseHooks
 
             return;
         }
-
-        self.AdoptSlugcatFriend();
 
         if (
             (self.HasSlugcatFriend && (abstractCreature.IsFriendlyAllowed || abstractCreature.IsFriend(self.friend?.abstractCreature)))

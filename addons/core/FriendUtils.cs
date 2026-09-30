@@ -59,7 +59,7 @@ public static partial class FriendUtils
 
     public static void UnregisterFriendshipRule(Func<AbstractCreature, AbstractCreature, bool?> rule) => _friendshipRules.Remove(rule);
 
-    private static bool TryGetFriendlyLikes(SocialMemory socialMemory, EntityID subjectID, out float like, out float tempLike)
+    private static bool TryGetLikes(SocialMemory socialMemory, EntityID subjectID, out float like, out float tempLike)
     {
         like = socialMemory.GetLike(subjectID);
         tempLike = socialMemory.GetTempLike(subjectID);
@@ -74,14 +74,14 @@ public static partial class FriendUtils
 
     extension(AbstractCreature? source)
     {
-        public bool Likes(AbstractCreature? target)
+        public bool Like(AbstractCreature? target)
         {
             if (source?.state?.socialMemory is not { } socialMemory || target == null)
             {
                 return false;
             }
 
-            return TryGetFriendlyLikes(socialMemory, target.ID, out _, out _);
+            return TryGetLikes(socialMemory, target.ID, out _, out _);
         }
 
         private float? GetReputation(AbstractCreature? target)
@@ -222,7 +222,7 @@ public static partial class FriendUtils
 
             ArtificialIntelligence? aiSource = source?.abstractAI?.RealAI;
 
-            if (aiSource?.friendTracker != null && source.IsFriendlyAllowed && (source.IsFriendlyLizard || source.Likes(abstractSlugcat)))
+            if (aiSource?.friendTracker != null && source.IsFriendlyAllowed && (source.IsFriendlyLizard || source.Like(abstractSlugcat)))
             {
                 return true;
             }
