@@ -162,11 +162,9 @@ Explosions|폭발
 Will not be hit by most explosions caused by friends.|친구가 일으킨 대부분의 폭발에 맞지 않습니다.
 Fear|공포
 Will not be frightened by friends, nor by the weapons and explosives they wield.|친구와 친구의 무기와 폭발물에 겁먹지 않습니다.
-Grabbing|잡기
-Friends will not grab one another, nor take what they hold. Players have their own option.|친구끼리 잡거나 물건을 빼앗지 않습니다. 플레이어끼리는 다른 옵션에서 다룹니다.
-Friends will not grab one another, nor take what they hold. A slugpup and what it holds are exempt, and players have their own option.|친구끼리 잡거나 물건을 빼앗지 않습니다. 슬러그펍은 예외이며, 플레이어끼리는 다른 옵션에서 다룹니다.
-Friends will not grab one another, nor take what they hold. Players have their own option. Jolly Co-op's No Stealing option always prevents theft between players.|친구끼리 잡거나 물건을 빼앗지 않습니다. 플레이어끼리는 다른 옵션에서 다룹니다. 졸리 협동의 날치기 금지 옵션은 플레이어끼리의 날치기를 항상 막습니다.
-Friends will not grab one another, nor take what they hold. A slugpup and what it holds are exempt, and players have their own option. Jolly Co-op's No Stealing option always prevents theft between players.|친구끼리 잡거나 물건을 빼앗지 않습니다. 슬러그펍은 예외이며, 플레이어끼리는 다른 옵션에서 다룹니다. 졸리 협동의 날치기 금지 옵션은 플레이어끼리의 날치기를 항상 막습니다.
+Stealing|빼앗기
+Friends cannot take objects held by other friends. Players can still take from slugpups.|친구가 든 물건을 다른 친구가 빼앗지 못합니다. 플레이어는 슬러그펍에게서 빼앗을 수 있습니다.
+Friends cannot take objects held by other friends. Players can still take from slugpups. Jolly Co-op's No Stealing option always prevents theft between players.|친구가 든 물건을 다른 친구가 빼앗지 못합니다. 플레이어는 슬러그펍에게서 빼앗을 수 있습니다. 졸리 협동의 날치기 금지 옵션은 플레이어끼리의 날치기를 항상 막습니다.
 Deaf|이명
 Deafness gradually fades toward that of the least deafened friend in the same room.|이명이 같은 방에 있는 친구 중 가장 옅은 쪽을 향해 서서히 옅어집니다.
 Sets how much of the remaining difference in deafness fades away each frame while a less deafened friend is in the same room. A value of 1 closes the difference at once, and 0 disables the additional fading.|이명이 더 옅은 친구가 같은 방에 있을 때 남은 이명 차이가 매 프레임 얼마나 옅어질지 설정합니다. 1은 그 차이를 단숨에 메우며, 0은 추가로 옅어지지 않습니다.

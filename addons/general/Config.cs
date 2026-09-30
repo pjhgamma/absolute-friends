@@ -12,7 +12,7 @@ internal static class Config
 
     public static Configurable<bool> Fear = null!;
 
-    public static Configurable<bool> Grabbing = null!;
+    public static Configurable<bool> Stealing = null!;
 
     public static Configurable<bool> Deaf = null!;
 
@@ -36,16 +36,10 @@ internal static class Config
         Violence = addon.Bind("Violence", false, new ConfigurableInfo("Friends take no damage from one another when the blow can be traced back to one of them.", tags: ["Violence"]));
         Explosion = addon.Bind("Explosion", false, new ConfigurableInfo("Will not be hit by most explosions caused by friends.", tags: ["Explosions"]));
         Fear = addon.Bind("Fear", false, new ConfigurableInfo("Will not be frightened by friends, nor by the weapons and explosives they wield.", tags: ["Fear"]));
-        Grabbing = addon.Bind("Grabbing", false, new ConfigurableInfo(Options.Config.JollyCoop(
-            Options.Config.Downpour(
-                "Friends will not grab one another, nor take what they hold. Players have their own option.",
-                "Friends will not grab one another, nor take what they hold. A slugpup and what it holds are exempt, and players have their own option."
-            ),
-            Options.Config.Downpour(
-                "Friends will not grab one another, nor take what they hold. Players have their own option. Jolly Co-op's No Stealing option always prevents theft between players.",
-                "Friends will not grab one another, nor take what they hold. A slugpup and what it holds are exempt, and players have their own option. Jolly Co-op's No Stealing option always prevents theft between players."
-            )
-        ), tags: ["Grabbing"]));
+        Stealing = addon.Bind("Stealing", false, new ConfigurableInfo(Options.Config.JollyCoop(
+            "Friends cannot take objects held by other friends. Players can still take from slugpups.",
+            "Friends cannot take objects held by other friends. Players can still take from slugpups. Jolly Co-op's No Stealing option always prevents theft between players."
+        ), tags: ["Stealing"]));
         Deaf = addon.Bind("Deaf", true, new ConfigurableInfo("Deafness gradually fades toward that of the least deafened friend in the same room.", tags: ["Deaf"]));
         DeafRatio = addon.Bind("DeafRatio", 0.1f, new ConfigurableInfo("Sets how much of the remaining difference in deafness fades away each frame while a less deafened friend is in the same room. A value of 1 closes the difference at once, and 0 disables the additional fading."))
             .Require(Deaf);

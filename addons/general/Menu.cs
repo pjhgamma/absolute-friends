@@ -11,7 +11,7 @@ internal static class Menu
         menu.AddCheckBox(Config.Violence);
         menu.AddCheckBox(Config.Explosion);
         menu.AddCheckBox(Config.Fear);
-        menu.AddCheckBox(Config.Grabbing);
+        menu.AddCheckBox(Config.Stealing);
         menu.SetColumns(4);
         menu.AddCheckBox(Config.Deaf);
         menu.AddFloatSlider(Config.DeafRatio, span: 3f);
