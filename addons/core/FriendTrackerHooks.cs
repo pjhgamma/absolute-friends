@@ -41,11 +41,15 @@ internal class FriendTrackerHooks : BaseHooks
 
         if (abstractCreature.IsSlugpup)
         {
-            if (self.friend?.abstractCreature is { IsPlayer: true, slatedForDeletion: false } abstractPlayer && abstractPlayer.state?.dead != true)
+            AbstractCreature? abstractPlayer = self.friend?.abstractCreature is { IsPlayer: true, slatedForDeletion: false, state.dead: false } followedPlayer
+                ? followedPlayer
+                : abstractCreature.FavoredPlayer;
+
+            if (abstractPlayer != null)
             {
                 abstractCreature.TrackSlugpupFriend(abstractPlayer);
             }
-            else if (!abstractCreature.IsSlugpupWithAbsentFriend)
+            else
             {
                 abstractCreature.Untrack();
             }
@@ -55,7 +59,7 @@ internal class FriendTrackerHooks : BaseHooks
 
         if (
             (self.HasSlugcatFriend && (abstractCreature.IsFriendlyAllowed || abstractCreature.IsFriend(self.friend?.abstractCreature)))
-            || abstractCreature.IsFriendOfPlayer
+            || abstractCreature.IsCloseFriendOfPlayer
         )
         {
             abstractCreature.Track(fromTracker: true);

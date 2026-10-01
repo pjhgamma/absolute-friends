@@ -173,7 +173,7 @@ public static partial class FriendUtils
             return unresolved ? null : ruled;
         }
 
-        private bool? GetCreatureFriendship(AbstractCreature abstractSlugcat)
+        private bool? GetCreatureFriendship(AbstractCreature abstractSlugcat, bool allowNeutral = true)
         {
             if (source.GetFriendshipVerdict(abstractSlugcat) is { } ruled)
             {
@@ -185,7 +185,7 @@ public static partial class FriendUtils
                 return false;
             }
 
-            bool? direct = source.GetDirectFriendship(abstractSlugcat);
+            bool? direct = source.GetDirectFriendship(abstractSlugcat, allowNeutral);
 
             if (direct == true)
             {
@@ -204,7 +204,7 @@ public static partial class FriendUtils
                     continue;
                 }
 
-                if ((source.GetFriendshipVerdict(sharedSlugcat) ?? source.GetDirectFriendship(sharedSlugcat)) == true)
+                if ((source.GetFriendshipVerdict(sharedSlugcat) ?? source.GetDirectFriendship(sharedSlugcat, allowNeutral)) == true)
                 {
                     return true;
                 }
@@ -213,7 +213,7 @@ public static partial class FriendUtils
             return direct;
         }
 
-        private bool? GetDirectFriendship(AbstractCreature abstractSlugcat)
+        private bool? GetDirectFriendship(AbstractCreature abstractSlugcat, bool allowNeutral = true)
         {
             if (source.IsSlugcat)
             {
@@ -239,7 +239,8 @@ public static partial class FriendUtils
                 return source.IsFriendlyAllowed ? true : null;
             }
 
-            return source.IsNeutralAllowed
+            return allowNeutral
+                && source.IsNeutralAllowed
                 && relationship.type == CreatureTemplate.Relationship.Type.Ignores
                 && source.GetReputation(abstractSlugcat) is not < FriendReputationThreshold ? true : null;
         }
