@@ -308,6 +308,8 @@ Prince|왕자
 Treats the Prince as a friend of players.|왕자를 플레이어의 친구로 취급합니다.
 Overseers|감시자
 Always treats overseers as friends of players.|감시자를 항상 플레이어의 친구로 취급합니다.
+Friend Mark|친구 표식
+Tracked friends also show the mark while their player's mark is visible.|플레이어의 표식이 보이는 동안 추적되는 친구에게도 표식이 나타납니다.
 
 Absolute Friends: Pilgrimage|절대적 친구: 순례
 Helps tracked friends join the pilgrimage.|추적되는 친구들이 순례에 함께하도록 돕습니다.

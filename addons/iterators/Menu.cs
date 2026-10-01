@@ -13,5 +13,6 @@ internal static class Menu
         menu.AddCheckBox(Config.PebblesPearl, enabled: ModManager.MSC);
         menu.AddCheckBox(Config.Prince, enabled: ModManager.Watcher);
         menu.AddCheckBox(Config.Overseer);
+        menu.AddCheckBox(Config.Mark);
     }
 }
