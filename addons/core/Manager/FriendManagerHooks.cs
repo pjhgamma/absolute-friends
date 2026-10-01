@@ -114,12 +114,17 @@ internal class FriendManagerHooks : BaseHooks
 
         bool devToolsActive = self.devToolsActive;
 
-        self.devToolsActive = false;
-        self.oDown = true;
+        try
+        {
+            self.devToolsActive = false;
+            self.oDown = true;
 
-        orig(self, dt);
-
-        self.devToolsActive = devToolsActive;
+            orig(self, dt);
+        }
+        finally
+        {
+            self.devToolsActive = devToolsActive;
+        }
     }
 
     [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.Update))]

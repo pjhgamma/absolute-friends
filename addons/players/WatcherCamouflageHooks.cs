@@ -6,7 +6,6 @@ using AbsoluteFriends.Utils;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using UnityEngine;
-using Watcher;
 
 namespace AbsoluteFriends.Players;
 
@@ -20,10 +19,6 @@ internal class WatcherCamouflageHooks : WatcherHooks
 
     protected override Configurable<bool>[] Options => [Config.WatcherCamouflage];
 
-    private static bool IsWatcher(Player? player) => player?.SlugCatClass == WatcherEnums.SlugcatStatsName.Watcher;
-
-    private static bool IsCamoPlayer(Player? player) => player is { dead: false } && player.IsPlayer && IsWatcher(player);
-
     private static bool CanToggleCamo(Player player) => player.room != null && !player.inShortcut && player.Consious && player.warpExhausionTime <= 0 && player.timeInVoidSeaRoom < RainWorldUtils.Second;
 
     private static bool CanEnterCamo(Player player) => CanToggleCamo(player) && player.camoRechargePenalty <= 0;
@@ -32,7 +27,7 @@ internal class WatcherCamouflageHooks : WatcherHooks
 
     private static Player? SharedCamoSource(Player player)
     {
-        if (!IsCamoPlayer(player) || !player.IsTracked || (player.isCamo ? !CanToggleCamo(player) : !CanEnterCamo(player)))
+        if (!player.IsCamouflagePlayer || !player.IsTracked || (player.isCamo ? !CanToggleCamo(player) : !CanEnterCamo(player)))
         {
             return null;
         }
@@ -101,14 +96,14 @@ internal class WatcherCamouflageHooks : WatcherHooks
 
     private static IEnumerable<Player> FriendPlayers(Player? player)
     {
-        if (!IsCamoPlayer(player) || !player.IsTracked)
+        if (!player.IsCamouflagePlayer || !player.IsTracked)
         {
             yield break;
         }
 
         foreach (var friendPlayer in (player?.abstractCreature?.world?.game).RealizedPlayers)
         {
-            if (friendPlayer != player && IsCamoPlayer(friendPlayer) && friendPlayer.IsTracked && player.IsFriend(friendPlayer))
+            if (friendPlayer != player && friendPlayer.IsTrackedWatcher && player.IsFriend(friendPlayer))
             {
                 yield return friendPlayer;
             }
@@ -122,7 +117,7 @@ internal class WatcherCamouflageHooks : WatcherHooks
 
         foreach (var player in game.RealizedPlayers)
         {
-            if (IsCamoPlayer(player) && player.IsTracked)
+            if (player.IsTrackedWatcher)
             {
                 watchers.Add(player);
 
@@ -185,7 +180,7 @@ internal class WatcherCamouflageHooks : WatcherHooks
 
     private static void SynchronizeCamo(Player player)
     {
-        if (!IsCamoPlayer(player) || !CanToggleCamo(player) || IsActivatingCamo(player))
+        if (!player.IsCamouflagePlayer || !CanToggleCamo(player) || IsActivatingCamo(player))
         {
             return;
         }
@@ -237,7 +232,7 @@ internal class WatcherCamouflageHooks : WatcherHooks
     [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.JollyGameUpdate))]
     private static void On_RainWorldGame_JollyGameUpdate(On.RainWorldGame.orig_JollyGameUpdate orig, RainWorldGame self)
     {
-        if (!self.RealizedPlayers.Any(player => IsCamoPlayer(player) && player.IsTracked))
+        if (!self.RealizedPlayers.Any(player => player.IsTrackedWatcher))
         {
             orig(self);
         }

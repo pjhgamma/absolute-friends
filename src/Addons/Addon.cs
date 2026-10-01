@@ -77,23 +77,7 @@ public sealed class Addon
 
     public int OptionCount => _switches.Count;
 
-    public int EnabledOptionCount
-    {
-        get
-        {
-            int applied = 0;
-
-            foreach (var option in _switches)
-            {
-                if (IsSelected(option))
-                {
-                    ++applied;
-                }
-            }
-
-            return applied;
-        }
-    }
+    public int EnabledOptionCount => _switches.Count(IsSelected);
 
     public Configurable<bool>? Enabled { get; }
 

@@ -107,13 +107,7 @@ internal static class VoidSeaUtils
         }
     }
 
-    public static void Stop(PhysicalObject physicalObject)
-    {
-        foreach (var chunk in physicalObject.bodyChunks)
-        {
-            chunk.vel = Vector2.zero;
-        }
-    }
+    public static void Stop(PhysicalObject physicalObject) => SetVelocity(physicalObject, Vector2.zero);
 
     public static void FollowWormRide(VoidSeaScene scene, VoidSeaState state, Creature[] companions, HashSet<Creature> riders)
     {
@@ -345,6 +339,11 @@ internal static class VoidSeaUtils
             Shift(physicalObject, delta);
         }
 
+        SetVelocity(physicalObject, velocity);
+    }
+
+    private static void SetVelocity(PhysicalObject physicalObject, Vector2 velocity)
+    {
         foreach (var chunk in physicalObject.bodyChunks)
         {
             chunk.vel = velocity;

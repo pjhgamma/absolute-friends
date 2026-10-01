@@ -1,3 +1,4 @@
+using System.Text;
 using AbsoluteFriends.Addons;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Options;
@@ -81,7 +82,7 @@ internal static class ProfileManager
             if (addon == null)
             {
                 unavailableAddons++;
-                unavailableOptions += pair.Value.Options.Count(option => IsBoolean(null, option));
+                unavailableOptions += CountUnavailableOptions(null, pair.Value);
 
                 continue;
             }
@@ -99,34 +100,7 @@ internal static class ProfileManager
                 continue;
             }
 
-            foreach (var option in pair.Value.Options)
-            {
-                if (!addon.ProfileOptions.TryGetValue(option.Key, out ConfigurableBase configurable))
-                {
-                    if (IsBoolean(null, option))
-                    {
-                        unavailableOptions++;
-                    }
-
-                    continue;
-                }
-
-                int before = unavailableOptions;
-                Set(configurable, option.Value, ref unavailableOptions);
-
-                if (configurable is Configurable<bool> && before == unavailableOptions)
-                {
-                    options++;
-                }
-            }
-
-            foreach (var option in addon.ProfileOptions)
-            {
-                if (!pair.Value.Options.ContainsKey(option.Key))
-                {
-                    Set(option.Value, option.Value.defaultValue, ref unavailableOptions);
-                }
-            }
+            options += ApplyOptions(addon, pair.Value, ref unavailableOptions);
         }
 
         return new(addons, options, unavailableAddons, unavailableOptions);
@@ -169,7 +143,7 @@ internal static class ProfileManager
                         }
                     }
                 }
-                else if (IsBoolean(null, option))
+                else if (IsBoolean(option))
                 {
                     options++;
                     unavailableOptions++;
@@ -182,7 +156,7 @@ internal static class ProfileManager
 
     internal static string State()
     {
-        System.Text.StringBuilder state = new();
+        StringBuilder state = new();
 
         foreach (Addon addon in AddonRegistry.Applied)
         {
@@ -229,14 +203,7 @@ internal static class ProfileManager
         }
 
         int unavailableAddons = profile.Addons.Keys.Count(id => AddonRegistry.Find(id) == null);
-        int unavailableOptions = profile.Addons.Sum(pair =>
-        {
-            Addon? addon = AddonRegistry.Find(pair.Key);
-
-            return addon == null
-                ? pair.Value.Options.Count(option => IsBoolean(null, option))
-                : pair.Value.Options.Count(option => !addon.ProfileOptions.ContainsKey(option.Key) && IsBoolean(null, option));
-        });
+        int unavailableOptions = profile.Addons.Sum(pair => CountUnavailableOptions(AddonRegistry.Find(pair.Key), pair.Value));
 
         return new(addons, options, unavailableAddons, unavailableOptions);
     }
@@ -257,11 +224,46 @@ internal static class ProfileManager
 
     private static bool IsTrue(string value) => bool.TryParse(value, out bool enabled) && enabled;
 
-    private static bool IsBoolean(Addon? addon, KeyValuePair<string, string> option)
+    private static bool IsBoolean(KeyValuePair<string, string> option) => bool.TryParse(option.Value, out _);
+
+    private static int CountUnavailableOptions(Addon? addon, ProfileAddon saved) => saved.Options.Count(option =>
+        (addon == null || !addon.ProfileOptions.ContainsKey(option.Key)) && IsBoolean(option));
+
+    private static int ApplyOptions(Addon addon, ProfileAddon saved, ref int unavailable)
     {
-        return addon?.ProfileOptions.TryGetValue(option.Key, out ConfigurableBase configurable) == true
-            ? configurable is Configurable<bool>
-            : bool.TryParse(option.Value, out _);
+        int applied = 0;
+
+        foreach (var option in saved.Options)
+        {
+            if (!addon.ProfileOptions.TryGetValue(option.Key, out ConfigurableBase configurable))
+            {
+                if (IsBoolean(option))
+                {
+                    unavailable++;
+                }
+
+                continue;
+            }
+
+            int before = unavailable;
+
+            Set(configurable, option.Value, ref unavailable);
+
+            if (configurable is Configurable<bool> && before == unavailable)
+            {
+                applied++;
+            }
+        }
+
+        foreach (var option in addon.ProfileOptions)
+        {
+            if (!saved.Options.ContainsKey(option.Key))
+            {
+                Set(option.Value, option.Value.defaultValue, ref unavailable);
+            }
+        }
+
+        return applied;
     }
 
     private static bool IsEnabled(Profile profile, ConfigurableBase configurable)
@@ -295,7 +297,7 @@ internal static class ProfileManager
         return "false";
     }
 
-    private static void Append(System.Text.StringBuilder state, string value)
+    private static void Append(StringBuilder state, string value)
     {
         state.Append(value.Length).Append(':').Append(value);
     }

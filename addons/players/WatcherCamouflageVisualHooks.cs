@@ -21,17 +21,13 @@ internal class WatcherCamouflageVisualHooks : WatcherHooks
 
     protected override Configurable<bool>[] Options => [Config.WatcherCamouflage];
 
-    private static bool IsWatcher(Player? player) => player?.SlugCatClass == WatcherEnums.SlugcatStatsName.Watcher;
-
-    private static bool IsTrackedWatcher(Player? player) => player is { dead: false } && player.IsPlayer && player.IsTracked && IsWatcher(player);
-
     private static void SynchronizeCameras(RainWorldGame game)
     {
         List<Player> watchers = [];
 
         foreach (var player in game.RealizedPlayers)
         {
-            if (IsTrackedWatcher(player))
+            if (player.IsTrackedWatcher)
             {
                 watchers.Add(player);
             }
@@ -137,7 +133,7 @@ internal class WatcherCamouflageVisualHooks : WatcherHooks
     {
         return sLeaser?.sprites is { Length: > CamoMaskSpriteIndex }
             && sLeaser.drawableObject is PlayerGraphics { useSimpleCamo: false }
-            && IsWatcher(sLeaser.DrawnObject as Player);
+            && (sLeaser.DrawnObject as Player).IsWatcher;
     }
 
     private static bool ShareCamoMask(RoomCamera camera)
@@ -261,7 +257,7 @@ internal class WatcherCamouflageVisualHooks : WatcherHooks
     [HookPatch(typeof(On.PlayerGraphics), nameof(On.PlayerGraphics.InitiateSprites))]
     private static void On_PlayerGraphics_InitiateSprites(On.PlayerGraphics.orig_InitiateSprites orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
-        if (self.owner is Player { room: not null } player && IsWatcher(player))
+        if (self.owner is Player { room: not null } player && player.IsWatcher)
         {
             player.room.watcherCamoTaken = false;
         }
@@ -274,7 +270,7 @@ internal class WatcherCamouflageVisualHooks : WatcherHooks
     {
         orig(self, sLeaser, rCam, timeStacker, camPos);
 
-        if (!IsWatcher(self.owner as Player) || sLeaser.sprites is not { Length: > CamoMaskSpriteIndex } sprites)
+        if (!(self.owner as Player).IsWatcher || sLeaser.sprites is not { Length: > CamoMaskSpriteIndex } sprites)
         {
             return;
         }

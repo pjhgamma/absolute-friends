@@ -106,18 +106,12 @@ public static class FriendDisplayNames
             }
         }
 
-        internal string? Get(AbstractCreature creature)
+        internal string? Get(AbstractCreature creature) => _cache.GetValue(creature, subject =>
         {
-            if (_cache.TryGetValue(creature, out CachedNickname cached))
-            {
-                return cached.Value;
-            }
+            Nicknames.TryGetValue(subject.SaveDataKey, out string nickname);
 
-            Nicknames.TryGetValue(creature.SaveDataKey, out string nickname);
-            _cache.Add(creature, new CachedNickname(nickname));
-
-            return nickname;
-        }
+            return new(nickname);
+        }).Value;
 
         internal void Write()
         {

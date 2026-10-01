@@ -5,188 +5,6 @@ namespace AbsoluteFriends.Options;
 
 public abstract partial class MenuBuilder
 {
-    public void SetColumns(int columns)
-    {
-        if (columns <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(columns), "Column count must be greater than zero.");
-        }
-
-        FinishRow();
-        _columns = columns;
-    }
-
-    public void AddParallelColumns(params Action[] columns)
-    {
-        if (columns == null)
-        {
-            throw new ArgumentNullException(nameof(columns));
-        }
-
-        if (columns.Length < 2)
-        {
-            throw new ArgumentException("At least two columns are required.", nameof(columns));
-        }
-
-        if (columns.Any(column => column == null))
-        {
-            throw new ArgumentException("Column callbacks cannot be null.", nameof(columns));
-        }
-
-        if (_currentTab == null)
-        {
-            return;
-        }
-
-        FinishRow();
-
-        Vector2 margins = _marginX;
-        int previousColumns = _columns;
-        float top = _pos.y;
-        float edge = _edge;
-        float columnWidth = (margins.y - margins.x) / columns.Length;
-        float bottom = top;
-
-        void BuildColumn(Action content, Vector2 columnMargins)
-        {
-            _marginX = columnMargins;
-            _columns = 1;
-            _pos = new(columnMargins.x, top);
-            _currentColumn = 0f;
-            _edge = top;
-
-            content();
-            FinishRow();
-
-            bottom = Mathf.Min(bottom, Mathf.Min(_pos.y, _edge));
-        }
-
-        try
-        {
-            for (int index = 0; index < columns.Length; index++)
-            {
-                float left = margins.x + columnWidth * index + (index == 0 ? 0f : Gap);
-                float right = margins.x + columnWidth * (index + 1) - (index == columns.Length - 1 ? 0f : Gap);
-
-                BuildColumn(columns[index], new(left, right));
-            }
-        }
-        finally
-        {
-            _marginX = margins;
-            _columns = previousColumns;
-            _pos = new(margins.x, bottom);
-            _edge = Mathf.Min(edge, bottom);
-            _currentColumn = 0f;
-        }
-    }
-
-    public void AddColumn(float span = 1f)
-    {
-        ValidateSpan(span);
-        _pos.x += ElementWidth * span;
-
-        if ((_currentColumn += span) > _columns - 0.5f)
-        {
-            FinishRow();
-        }
-    }
-
-    public void AddRow(float modifier = 1f)
-    {
-        _pos.x = _marginX.x;
-        _pos.y -= modifier * Spacing;
-        _currentColumn = 0;
-    }
-
-    public OpRect? AddContainer(Action content)
-    {
-        if (_currentTab == null || _box != null)
-        {
-            return null;
-        }
-
-        BeginBox();
-
-        OpRect? container = null;
-
-        try
-        {
-            content();
-        }
-        finally
-        {
-            container = EndBox();
-        }
-
-        return container;
-    }
-
-    public OpLabel? AddLabel(string text, bool bigText = false, FLabelAlignment alignment = FLabelAlignment.Center, bool enabled = true)
-    {
-        return AddLabel(text, null, bigText, alignment, enabled);
-    }
-
-    public OpLabel? AddLabel(string text, string value, FLabelAlignment alignment = FLabelAlignment.Center)
-    {
-        return AddLabel(text, value, false, alignment, true);
-    }
-
-    public OpLabel? AddNote(string text, FLabelAlignment alignment = FLabelAlignment.Right, float span = 1f, bool enabled = true)
-    {
-        return AddNote(text, null, alignment, span, enabled);
-    }
-
-    public OpLabel? AddNote(string text, string value, FLabelAlignment alignment = FLabelAlignment.Right, float span = 1f)
-    {
-        return AddNote(text, value, alignment, span, true);
-    }
-
-    public void AddTitle(string? title = null, string? description = null, FLabelAlignment alignment = FLabelAlignment.Center, bool enabled = true)
-    {
-        if (!enabled)
-        {
-            return;
-        }
-
-        FinishRow();
-        _pos = new(_marginX.x, _edge - Spacing);
-
-        if (title != null)
-        {
-            AddLabel(title, bigText: true, alignment: alignment);
-        }
-        if (description != null)
-        {
-            AddLabel(description, alignment: alignment);
-        }
-    }
-
-    public OpLabelLong? AddParagraph(string text, float height, float? span = null, FLabelAlignment alignment = FLabelAlignment.Left, bool enabled = true)
-    {
-        if (_currentTab == null || !enabled || height <= 0f)
-        {
-            return null;
-        }
-
-        BeginBlock(span);
-
-        float width = BlockWidth(span);
-        OpLabelLong paragraph = new(
-            new Vector2(_pos.x + Gap, _pos.y - height),
-            new Vector2(width - Gap * 2f, height),
-            Translate(text),
-            true,
-            alignment
-        );
-
-        AddElements(paragraph);
-        _pos.y -= height;
-        AddRow(0.5f);
-
-        return paragraph;
-    }
-
     public OpCheckBox? AddCheckBox(Configurable<bool> configurable, string? text = null, float span = 1f, bool enabled = true)
     {
         if (!enabled)
@@ -194,12 +12,10 @@ public abstract partial class MenuBuilder
             return null;
         }
 
-        OpCheckBox checkBox = new(
+        return AddBox(configurable, () => new OpCheckBox(
             configurable,
             new Vector2(_pos.x, _pos.y - Spacing * 0.5f)
-        );
-
-        return AddBox(configurable, checkBox, text, span);
+        ), text, span);
     }
 
     public OpRadioButtonGroup? AddRadioButtonGroup(Configurable<int> configurable, bool enabled = true)
@@ -228,12 +44,7 @@ public abstract partial class MenuBuilder
 
     public OpSlider? AddIntSlider(Configurable<int> configurable, string? text = null, float span = 1f, int min = 0, int max = 10, bool enabled = true)
     {
-        if (!TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
-        {
-            return null;
-        }
-
-        OpSlider slider = new(
+        return AddControl(configurable, text, span, enabled, layout => new OpSlider(
             configurable,
             layout.Position - new Vector2(0f, 3f),
             (int)layout.Width
@@ -242,19 +53,12 @@ public abstract partial class MenuBuilder
             description = layout.Description,
             min = min,
             max = max,
-        };
-
-        return CompleteControl(configurable, slider, layout.Label, span);
+        });
     }
 
     public OpSliderTick? AddIntSliderTick(Configurable<int> configurable, string? text = null, float span = 1f, int min = 0, int max = 10, bool enabled = true)
     {
-        if (!TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
-        {
-            return null;
-        }
-
-        OpSliderTick slider = new(
+        return AddControl(configurable, text, span, enabled, layout => new OpSliderTick(
             configurable,
             layout.Position - new Vector2(0f, 3f),
             (int)layout.Width,
@@ -264,19 +68,12 @@ public abstract partial class MenuBuilder
             description = layout.Description,
             min = min,
             max = max,
-        };
-
-        return CompleteControl(configurable, slider, layout.Label, span);
+        });
     }
 
     public OpFloatSlider? AddFloatSlider(Configurable<float> configurable, string? text = null, float span = 1f, float min = 0f, float max = 1f, byte decimals = 2, int increment = 1, bool enabled = true)
     {
-        if (!TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
-        {
-            return null;
-        }
-
-        OpFloatSlider slider = new(
+        return AddControl(configurable, text, span, enabled, layout => new OpFloatSlider(
             configurable,
             layout.Position - new Vector2(0f, 3f),
             (int)layout.Width,
@@ -287,9 +84,7 @@ public abstract partial class MenuBuilder
             min = min,
             max = max,
             Increment = increment,
-        };
-
-        return CompleteControl(configurable, slider, layout.Label, span);
+        });
     }
 
     public OpDragger? AddDragger(Configurable<int> configurable, string? text = null, float span = 1f, int min = 0, int max = 10, bool enabled = true)
@@ -299,26 +94,19 @@ public abstract partial class MenuBuilder
             return null;
         }
 
-        OpDragger dragger = new(
+        return AddBox(configurable, () => new OpDragger(
             configurable,
             new Vector2(_pos.x, _pos.y - Spacing * 0.5f)
         )
         {
             min = min,
             max = max,
-        };
-
-        return AddBox(configurable, dragger, text, span);
+        }, text, span);
     }
 
     public OpUpdown? AddIntUpdown(Configurable<int> configurable, string? text = null, float span = 1f, int increment = 1, bool enabled = true)
     {
-        if (!TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
-        {
-            return null;
-        }
-
-        OpUpdown updown = new(
+        return AddControl(configurable, text, span, enabled, layout => new OpUpdown(
             configurable,
             layout.Position,
             layout.Width
@@ -326,19 +114,12 @@ public abstract partial class MenuBuilder
         {
             description = layout.Description,
             Increment = increment,
-        };
-
-        return CompleteControl(configurable, updown, layout.Label, span);
+        });
     }
 
     public OpUpdown? AddFloatUpdown(Configurable<float> configurable, string? text = null, float span = 1f, byte decimals = 2, int increment = 1, bool enabled = true)
     {
-        if (!TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
-        {
-            return null;
-        }
-
-        OpUpdown updown = new(
+        return AddControl(configurable, text, span, enabled, layout => new OpUpdown(
             configurable,
             layout.Position,
             layout.Width,
@@ -347,277 +128,31 @@ public abstract partial class MenuBuilder
         {
             description = layout.Description,
             Increment = increment,
-        };
-
-        return CompleteControl(configurable, updown, layout.Label, span);
-    }
-
-    public OpSimpleButton? AddSimpleButton(string text, string description, Action action, float span = 1f, Configurable<bool>? requirement = null, bool enabled = true)
-    {
-        if (!enabled || !BeginElement(span))
-        {
-            return null;
-        }
-
-        OpSimpleButton simpleButton = new(
-            new Vector2(_pos.x + Gap, _pos.y - Spacing * 0.5f),
-            new(ElementWidth * span - Gap * 2f, Spacing),
-            Translate(text)
-        )
-        {
-            description = Translate(description)
-        };
-
-        simpleButton.OnClick += BindButton(simpleButton, action, requirement);
-
-        AddColumn(span);
-        AddElements(simpleButton);
-
-        return simpleButton;
-    }
-
-    public OpSimpleImageButton? AddSimpleImageButton(string image, string description, Action action, float span = 1f, float? width = null, FLabelAlignment alignment = FLabelAlignment.Right, Configurable<bool>? requirement = null, bool enabled = true)
-    {
-        if (!enabled || !BeginElement(span))
-        {
-            return null;
-        }
-
-        float spanWidth = ElementWidth * span;
-        float buttonWidth = width ?? spanWidth - Gap * 2f;
-        float buttonX = _pos.x + alignment switch
-        {
-            FLabelAlignment.Left => Gap,
-            FLabelAlignment.Center => (spanWidth - buttonWidth) * 0.5f,
-            _ => spanWidth - buttonWidth - Gap,
-        };
-        OpSimpleImageButton imageButton = new(
-            new Vector2(buttonX, _pos.y - Spacing * 0.5f),
-            new Vector2(buttonWidth, Spacing),
-            image
-        )
-        {
-            description = Translate(description)
-        };
-
-        imageButton.OnClick += BindButton(imageButton, action, requirement);
-
-        AddColumn(span);
-        AddElements(imageButton);
-
-        return imageButton;
-    }
-
-    public OpHoldButton? AddHoldButton(string text, string description, Action action, float span = 1f, Configurable<bool>? requirement = null, bool enabled = true)
-    {
-        if (!enabled || !BeginElement(span))
-        {
-            return null;
-        }
-
-        OpHoldButton holdButton = new(
-            new Vector2(_pos.x + Gap, _pos.y - Spacing * 0.5f),
-            new Vector2(ElementWidth * span - Gap * 2f, Spacing),
-            Translate(text)
-        )
-        {
-            description = Translate(description)
-        };
-
-        holdButton.OnPressDone += BindButton(holdButton, action, requirement);
-
-        AddColumn(span);
-        AddElements(holdButton);
-
-        return holdButton;
+        });
     }
 
     public OpTextBox? AddTextBox(ConfigurableBase configurable, string? text = null, float span = 1f, bool enabled = true)
     {
-        if (!TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
-        {
-            return null;
-        }
-
-        OpTextBox textBox = new(
+        return AddControl(configurable, text, span, enabled, layout => new OpTextBox(
             configurable,
             layout.Position,
             layout.Width
         )
         {
             description = layout.Description
-        };
-
-        return CompleteControl(configurable, textBox, layout.Label, span);
+        });
     }
 
     public OpKeyBinder? AddKeyBinder(Configurable<KeyCode> configurable, string? text = null, float span = 1f, bool enabled = true)
     {
-        if (!TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
-        {
-            return null;
-        }
-
-        OpKeyBinder keyBinder = new(
+        return AddControl(configurable, text, span, enabled, layout => new OpKeyBinder(
             configurable,
             layout.Position,
             new(layout.Width, Spacing)
         )
         {
             description = layout.Description
-        };
-
-        return CompleteControl(configurable, keyBinder, layout.Label, span);
-    }
-
-    public OpComboBox? AddComboBox(Configurable<string> configurable, string[] choices, string? text = null, float span = 1f, bool enabled = true)
-    {
-        return AddComboBox(configurable, [.. choices.Select(choice => new ListItem(choice))], text, span, enabled);
-    }
-
-    public OpComboBox? AddComboBox(Configurable<string> configurable, ListItem[] choices, string? text = null, float span = 1f, bool enabled = true)
-    {
-        return AddComboBox(configurable, choices, static (option, position, width, items) => new OpComboBox(option, position, width, items), text, span, enabled);
-    }
-
-    public OpComboBox? AddComboBox(Configurable<string> configurable, ListItem[] choices, Action<ListItem, FLabel, bool> styleItem, string? text = null, float span = 1f, bool enabled = true)
-    {
-        if (styleItem == null)
-        {
-            throw new ArgumentNullException(nameof(styleItem));
-        }
-
-        return AddComboBox(configurable, choices, (option, position, width, items) => new StyledComboBox(option, position, width, items, styleItem), text, span, enabled);
-    }
-
-    public OpComboBox? AddComboBox(Configurable<string> configurable, ListItem[] choices, Func<Configurable<string>, Vector2, float, List<ListItem>, OpComboBox> create, string? text = null, float span = 1f, bool enabled = true)
-    {
-        if (choices.Length == 0 || !TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
-        {
-            return null;
-        }
-
-        OpComboBox comboBox = create(
-            configurable,
-            layout.Position,
-            layout.Width,
-            [.. choices]
-        );
-
-        comboBox.description = layout.Description;
-
-        Watch(() =>
-        {
-            if (comboBox.held)
-            {
-                comboBox.MoveToFront();
-            }
         });
-
-        return CompleteControl(configurable, comboBox, layout.Label, span);
-    }
-
-    public OpResourceSelector? AddResourceSelector(ConfigurableBase configurable, string? text = null, float span = 1f, bool enabled = true)
-    {
-        if (!TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
-        {
-            return null;
-        }
-
-        OpResourceSelector resourceSelector = new(
-            configurable,
-            layout.Position,
-            layout.Width
-        )
-        {
-            description = layout.Description
-        };
-
-        return CompleteControl(configurable, resourceSelector, layout.Label, span);
-    }
-
-    public OpResourceSelector? AddResourceSelector(Configurable<string> configurable, OpResourceSelector.SpecialEnum resource, string? text = null, float span = 1f, bool enabled = true)
-    {
-        if (!TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
-        {
-            return null;
-        }
-
-        OpResourceSelector resourceSelector = new(
-            configurable,
-            layout.Position,
-            layout.Width,
-            resource
-        )
-        {
-            description = layout.Description
-        };
-
-        return CompleteControl(configurable, resourceSelector, layout.Label, span);
-    }
-
-    public OpListBox? AddListBox(Configurable<string> configurable, string[] choices, string? text = null, ushort visibleItems = 5, float? span = null, bool enabled = true)
-    {
-        return AddListBox(configurable, [.. choices.Select(choice => new ListItem(choice))], text, visibleItems, span, enabled);
-    }
-
-    public OpListBox? AddListBox(Configurable<string> configurable, ListItem[] choices, string? text = null, ushort visibleItems = 5, float? span = null, bool enabled = true)
-    {
-        return AddListBox(configurable, choices, static (option, position, width, items, count) => new OpListBox(option, position, width, items, count, true), text, visibleItems, span, enabled);
-    }
-
-    public OpListBox? AddListBox(Configurable<string> configurable, ListItem[] choices, Action<ListItem, FLabel, bool> styleItem, string? text = null, ushort visibleItems = 5, float? span = null, bool enabled = true)
-    {
-        if (styleItem == null)
-        {
-            throw new ArgumentNullException(nameof(styleItem));
-        }
-
-        return AddListBox(configurable, choices, (option, position, width, items, count) => new StyledListBox(option, position, width, items, count, styleItem), text, visibleItems, span, enabled);
-    }
-
-    public OpListBox? AddListBox(Configurable<string> configurable, ListItem[] choices, Func<Configurable<string>, Vector2, float, List<ListItem>, ushort, OpListBox> create, string? text = null, ushort visibleItems = 5, float? span = null, bool enabled = true)
-    {
-        if (choices.Length == 0)
-        {
-            return null;
-        }
-
-        return AddListControl(
-            configurable,
-            text,
-            visibleItems,
-            span,
-            enabled,
-            (position, width) => create(configurable, position, width, [.. choices], visibleItems),
-            listBox => listBox._listHeight
-        );
-    }
-
-    public OpResourceList? AddResourceList(ConfigurableBase configurable, string? text = null, ushort visibleItems = 5, float? span = null, bool enabled = true)
-    {
-        return AddListControl(
-            configurable,
-            text,
-            visibleItems,
-            span,
-            enabled,
-            (position, width) => new OpResourceList(configurable, position, width, visibleItems, true),
-            resourceList => resourceList._listHeight
-        );
-    }
-
-    public OpResourceList? AddResourceList(Configurable<string> configurable, OpResourceSelector.SpecialEnum resource, string? text = null, ushort visibleItems = 5, float? span = null, bool enabled = true)
-    {
-        return AddListControl(
-            configurable,
-            text,
-            visibleItems,
-            span,
-            enabled,
-            (position, width) => new OpResourceList(configurable, position, width, resource, visibleItems, true),
-            resourceList => resourceList._listHeight
-        );
     }
 
     public OpColorPicker? AddColorPicker(Configurable<Color> configurable, string? text = null, float? span = null, bool enabled = true)
@@ -722,35 +257,120 @@ public abstract partial class MenuBuilder
         return filter;
     }
 
-    private OnSignalHandler BindButton(UIfocusable button, Action action, Configurable<bool>? requirement)
+    private T? AddBox<T>(ConfigurableBase configurableBase, Func<T> create, string? text, float span) where T : UIfocusable
     {
-        Configurable<bool>? addonRequirement = _buttonRequirement;
-
-        bool CanPress() => (addonRequirement == null || IsMasterActive(addonRequirement))
-            && (requirement == null || IsMasterActive(requirement));
-
-        if (addonRequirement != null || requirement != null)
+        if (!BeginElement(span))
         {
-            void UpdateButton() => button.greyedOut = !CanPress();
-
-            UpdateButton();
-            Watch(UpdateButton);
+            return null;
         }
 
-        return _ =>
+        string description = Translate(configurableBase.Description ?? "");
+        T box = create();
+
+        box.description = description;
+
+        OpLabel? label = null;
+
+        if ((text ??= configurableBase.Label) != null)
         {
-            if (!button.greyedOut && CanPress())
+            label = new(
+                new Vector2(_pos.x + Spacing + Gap, _pos.y - Spacing * 0.5f),
+                new(ElementWidth * span - Spacing - Gap, Spacing),
+                Translate(text),
+                FLabelAlignment.Left
+            )
             {
-                action();
-            }
-        };
+                description = description
+            };
+
+            AddElements(box, label);
+        }
+        else
+        {
+            AddElements(box);
+        }
+
+        AddColumn(span);
+        Register(configurableBase, box, label);
+
+        return box;
     }
 
-    private void FinishRow()
+    private T? AddControl<T>(ConfigurableBase configurable, string? text, float span, bool enabled, Func<ControlLayout, T> create) where T : UIfocusable
     {
-        if (_currentColumn > 0)
+        if (!TryBeginControl(configurable, text, span, enabled, out ControlLayout layout))
         {
-            AddRow(1.5f);
+            return null;
         }
+
+        return CompleteControl(configurable, create(layout), layout.Label, span);
+    }
+
+    private bool TryBeginControl(ConfigurableBase configurable, string? text, float span, bool enabled, out ControlLayout layout)
+    {
+        layout = default;
+
+        if (!enabled || !BeginElement(span))
+        {
+            return false;
+        }
+
+        string description = Translate(configurable.Description ?? "");
+        OpLabel? label = AddControlLabel(description, text, span, out float labelWidth);
+
+        layout = new(
+            description,
+            label,
+            new Vector2(_pos.x + Gap + labelWidth, _pos.y - Spacing * 0.5f),
+            ElementWidth * span - Gap * 2f - labelWidth
+        );
+
+        return true;
+    }
+
+    private T CompleteControl<T>(ConfigurableBase configurable, T control, OpLabel? label, float span) where T : UIfocusable
+    {
+        AddColumn(span);
+        AddElements(control);
+        Register(configurable, control, label);
+
+        return control;
+    }
+
+    private OpLabel? AddControlLabel(string description, string? text, float span, out float labelWidth)
+    {
+        labelWidth = 0f;
+
+        if (text == null)
+        {
+            return null;
+        }
+
+        labelWidth = Mathf.Min(ElementWidth, ElementWidth * span * 0.5f);
+
+        OpLabel label = new(
+            new Vector2(_pos.x + Gap, _pos.y - Spacing * 0.5f),
+            new(labelWidth - Gap * 2f, Spacing),
+            Translate(text),
+            FLabelAlignment.Left
+        )
+        {
+            description = description
+        };
+
+        AddElements(label);
+
+        return label;
+    }
+
+    private readonly struct ControlLayout(string description, OpLabel? label, Vector2 position, float width)
+    {
+        internal string Description { get; } = description;
+
+        internal OpLabel? Label { get; } = label;
+
+        internal Vector2 Position { get; } = position;
+
+        internal float Width { get; } = width;
     }
 }
