@@ -265,8 +265,10 @@ Saint Tongue|성자 혀
 Will not be caught by the tongue of a Saint friend.|친구인 성자의 혀에 잡히지 않습니다.
 Saint Attunement|성자 조율
 Will not be instantly killed by the attunement of a Saint friend.|친구인 성자의 조율에 즉사하지 않습니다.
-Watcher Ripple|관찰자 잔물결
-Shares camouflage and its gauge with Watcher friends. Forced camouflage changes remain personal until synchronization resumes. Tracked friends also stay in their player's ripple space and in view.|관찰자 친구와 은신과 게이지를 공유합니다. 게임이 강제로 은신을 없애는 경우는 다시 동기화되기 전까지 개별적으로 유지됩니다. 추적되는 친구도 잔물결 공간에 함께 머물며 보입니다.
+Watcher Camouflage|관찰자 은신
+Shares camouflage and its gauge with Watcher friends. Forced camouflage changes remain personal until synchronization resumes.|관찰자 친구와 은신과 게이지를 공유합니다. 게임이 강제로 은신을 없애는 경우는 다시 동기화되기 전까지 개별적으로 유지됩니다.
+Ripple Space|잔물결 공간
+Tracked friends follow their player into ripple space and stay in view.|추적되는 친구가 플레이어를 따라 잔물결 공간에 들어가 계속 보입니다.
 
 Absolute Friends: Creatures|절대적 친구: 생물
 Controls interactions with friendly lizards and scavengers.|우호적인 도마뱀과 스캐빈저와의 상호 작용을 설정합니다.

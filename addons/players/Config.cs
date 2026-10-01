@@ -24,7 +24,9 @@ internal static class Config
 
     public static Configurable<bool> SaintAttunement = null!;
 
-    public static Configurable<bool> WatcherRipple = null!;
+    public static Configurable<bool> WatcherCamouflage = null!;
+
+    public static Configurable<bool> RippleSpace = null!;
 
     public static void Bind(Addon addon)
     {
@@ -51,6 +53,7 @@ internal static class Config
         ), tags: ["Artificer Parry"]));
         SaintTongue = addon.Bind("SaintTongue", false, new ConfigurableInfo("Will not be caught by the tongue of a Saint friend.", tags: ["Saint Tongue"]));
         SaintAttunement = addon.Bind("SaintAttunement", false, new ConfigurableInfo("Will not be instantly killed by the attunement of a Saint friend.", tags: ["Saint Attunement"]));
-        WatcherRipple = addon.Bind("WatcherRipple", false, new ConfigurableInfo("Shares camouflage and its gauge with Watcher friends. Forced camouflage changes remain personal until synchronization resumes. Tracked friends also stay in their player's ripple space and in view.", tags: ["Watcher Ripple"]));
+        WatcherCamouflage = addon.Bind("WatcherCamouflage", false, new ConfigurableInfo("Shares camouflage and its gauge with Watcher friends. Forced camouflage changes remain personal until synchronization resumes.", tags: ["Watcher Camouflage"]));
+        RippleSpace = addon.Bind("RippleSpace", false, new ConfigurableInfo("Tracked friends follow their player into ripple space and stay in view.", tags: ["Ripple Space"]));
     }
 }
