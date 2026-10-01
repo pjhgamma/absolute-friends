@@ -37,8 +37,8 @@ internal static class Config
             "Sets how much longer (in seconds) the player must go without control input for shelters, karma gates, and warp points to forcefully activate, ignoring non-player friends."
         )))
             .Require(GateForce);
-        TempleGuard = addon.Bind("TempleGuard", false, new ConfigurableInfo("Guardians do not target tracked friends or move them with telekinesis when the players meet the Karma requirement to pass.", tags: ["Guardian"]));
-        Ascension = addon.Bind("Ascension", false, new ConfigurableInfo(Options.Config.Watcher(
+        TempleGuard = addon.Bind("TempleGuard", true, new ConfigurableInfo("Guardians do not target tracked friends or move them with telekinesis when the players meet the Karma requirement to pass.", tags: ["Guardian"]));
+        Ascension = addon.Bind("Ascension", true, new ConfigurableInfo(Options.Config.Watcher(
             "Tracked friends follow the player through the Void Sea and return to the last shelter after ascension.",
             "Tracked friends follow the player through the Void Sea and the final warps, and return to the last shelter after ascension."
         ), tags: ["Ascension"]));

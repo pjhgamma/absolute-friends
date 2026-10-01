@@ -37,10 +37,10 @@ internal static class Config
     public static void Bind(Addon addon)
     {
         Collision = addon.Bind("Collision", true, new ConfigurableInfo("Will not collide with friends.", tags: ["Collisions"]));
-        Violence = addon.Bind("Violence", false, new ConfigurableInfo("Friends take no damage from one another when the blow can be traced back to one of them.", tags: ["Violence"]));
-        Explosion = addon.Bind("Explosion", false, new ConfigurableInfo("Will not be hit by most explosions caused by friends.", tags: ["Explosions"]));
-        Fear = addon.Bind("Fear", false, new ConfigurableInfo("Will not be frightened by friends, nor by the weapons and explosives they wield.", tags: ["Fear"]));
-        Stealing = addon.Bind("Stealing", false, new ConfigurableInfo(Options.Config.JollyCoop(
+        Violence = addon.Bind("Violence", true, new ConfigurableInfo("Friends take no damage from one another when the blow can be traced back to one of them.", tags: ["Violence"]));
+        Explosion = addon.Bind("Explosion", true, new ConfigurableInfo("Will not be hit by most explosions caused by friends.", tags: ["Explosions"]));
+        Fear = addon.Bind("Fear", true, new ConfigurableInfo("Will not be frightened by friends, nor by the weapons and explosives they wield.", tags: ["Fear"]));
+        Stealing = addon.Bind("Stealing", true, new ConfigurableInfo(Options.Config.JollyCoop(
             "Friends cannot take objects held by other friends. Players can still take from slugpups.",
             "Friends cannot take objects held by other friends. Players can still take from slugpups. Jolly Co-op's No Stealing option always prevents theft between players."
         ), tags: ["Stealing"]));

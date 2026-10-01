@@ -64,38 +64,38 @@ internal static class Config
         HellSpear = addon.Bind("HellSpear", true, new ConfigurableInfo("Will not be hit by a fire spear thrown by friends.", tags: ["Fire Spear"]));
         PoisonSpear = addon.Bind("PoisonSpear", true, new ConfigurableInfo("Will not be hit by a poison spear thrown by friends.", tags: ["Poison Spear"]));
         LilyPuck = addon.Bind("LilyPuck", true, new ConfigurableInfo("Will not be hit by a lilypuck thrown by friends.", tags: ["Lilypuck"]));
-        ScavengerBomb = addon.Bind("ScavengerBomb", false, new ConfigurableInfo(Options.Config.Downpour(
+        ScavengerBomb = addon.Bind("ScavengerBomb", true, new ConfigurableInfo(Options.Config.Downpour(
             "Will not be hit by a grenade thrown by friends. However, this does not apply to the explosion.",
             "Will not be hit by a grenade thrown by friends. However, this does not apply to the explosion. This also applies to joke rifle bullets."
         ), tags: ["Grenade"]));
-        SingularityBomb = addon.Bind("SingularityBomb", false, new ConfigurableInfo("Will not be sucked in or instantly killed by a singularity bomb thrown by friends. However, this does not apply to the explosion. This also applies to joke rifle bullets.", tags: ["Singularity Bomb"]));
-        FireEgg = addon.Bind("FireEgg", false, new ConfigurableInfo("Will not be attached by a fire egg thrown by friends. However, this does not apply to the explosion. This also applies to joke rifle bullets.", tags: ["Fire Egg"]));
-        SporePlant = addon.Bind("SporePlant", false, new ConfigurableInfo(Options.Config.Downpour(
+        SingularityBomb = addon.Bind("SingularityBomb", true, new ConfigurableInfo("Will not be sucked in or instantly killed by a singularity bomb thrown by friends. However, this does not apply to the explosion. This also applies to joke rifle bullets.", tags: ["Singularity Bomb"]));
+        FireEgg = addon.Bind("FireEgg", true, new ConfigurableInfo("Will not be attached by a fire egg thrown by friends. However, this does not apply to the explosion. This also applies to joke rifle bullets.", tags: ["Fire Egg"]));
+        SporePlant = addon.Bind("SporePlant", true, new ConfigurableInfo(Options.Config.Downpour(
             "Will not be caught by bees triggered by friends. However, this does not apply to those spawned by approaching a beehive.",
             "Will not be caught by bees triggered by friends. However, this does not apply to those spawned by approaching a beehive. This also applies to joke rifle bullets."
         ), tags: ["Beehive"]));
-        Boomerang = addon.Bind("Boomerang", false, new ConfigurableInfo("Will not be hit by a boomerang thrown by friends.", tags: ["Boomerang"]));
-        Mushroom = addon.Bind("Mushroom", false, new ConfigurableInfo("Will share the effects of mushrooms with slugcat friends.", tags: ["Mushroom"]))
+        Boomerang = addon.Bind("Boomerang", true, new ConfigurableInfo("Will not be hit by a boomerang thrown by friends.", tags: ["Boomerang"]));
+        Mushroom = addon.Bind("Mushroom", true, new ConfigurableInfo("Will share the effects of mushrooms with slugcat friends.", tags: ["Mushroom"]))
             .Require(Core.Config.FriendSlugcat);
-        FlareBomb = addon.Bind("FlareBomb", false, new ConfigurableInfo(Options.Config.Downpour(
+        FlareBomb = addon.Bind("FlareBomb", true, new ConfigurableInfo(Options.Config.Downpour(
             "Will not be hit by a flash bang thrown by friends.",
             "Will not be hit by a flash bang thrown by friends. This also applies to joke rifle bullets."
         ), tags: ["Flash Bang"]));
-        PuffBall = addon.Bind("PuffBall", false, new ConfigurableInfo(Options.Config.Downpour(
+        PuffBall = addon.Bind("PuffBall", true, new ConfigurableInfo(Options.Config.Downpour(
             "Will not be hit by a spore puff thrown by friends.",
             "Will not be hit by a spore puff thrown by friends. This also applies to joke rifle bullets."
         ), tags: ["Spore Puff"]));
-        WaterNut = addon.Bind("WaterNut", false, new ConfigurableInfo("Will not be hit by an unswollen bubble fruit thrown by friends.", tags: ["Bubble Fruit"]));
-        FirecrackerPlant = addon.Bind("FirecrackerPlant", false, new ConfigurableInfo(Options.Config.Downpour(
+        WaterNut = addon.Bind("WaterNut", true, new ConfigurableInfo("Will not be hit by an unswollen bubble fruit thrown by friends.", tags: ["Bubble Fruit"]));
+        FirecrackerPlant = addon.Bind("FirecrackerPlant", true, new ConfigurableInfo(Options.Config.Downpour(
             "Will not be stunned by a cherrybomb thrown by friends. However, this does not apply to the final explosion.",
             "Will not be stunned by a cherrybomb thrown by friends. However, this does not apply to the final explosion. This also applies to joke rifle bullets."
         ), tags: ["Cherrybomb"]));
-        GraffitiBomb = addon.Bind("GraffitiBomb", false, new ConfigurableInfo("Will not be hit by a graffiti bomb thrown by friends.", tags: ["Graffiti Bomb"]));
-        DangleFruit = addon.Bind("DangleFruit", false, new ConfigurableInfo("Will not be hit by a dangle fruit fired from a joke rifle by friends.", tags: ["DangleFruit"]));
-        JellyFish = addon.Bind("JellyFish", false, new ConfigurableInfo("Will not be caught or stunned by the tentacles of a jellyfish held by a friend, and will not be stunned by a jellyfish thrown by friends.", tags: ["Jellyfish"]));
-        Pomegranate = addon.Bind("Pomegranate", false, new ConfigurableInfo("Will not take damage from a pomegranate dropped by friends.", tags: ["Pomegranate"]));
-        Snail = addon.Bind("Snail", false, new ConfigurableInfo("Will not be stunned by the next pop from a snail thrown, hit, or killed by a friend.", tags: ["Snail"]));
-        TubeWorm = addon.Bind("TubeWorm", false, new ConfigurableInfo("Will not be caught by a grappling worm's tongue used by friends.", tags: ["Grappling Worm"]));
-        Frog = addon.Bind("Frog", false, new ConfigurableInfo("Will not be attached by a frog thrown by friends.", tags: ["Frog"]));
+        GraffitiBomb = addon.Bind("GraffitiBomb", true, new ConfigurableInfo("Will not be hit by a graffiti bomb thrown by friends.", tags: ["Graffiti Bomb"]));
+        DangleFruit = addon.Bind("DangleFruit", true, new ConfigurableInfo("Will not be hit by a dangle fruit fired from a joke rifle by friends.", tags: ["DangleFruit"]));
+        JellyFish = addon.Bind("JellyFish", true, new ConfigurableInfo("Will not be caught or stunned by the tentacles of a jellyfish held by a friend, and will not be stunned by a jellyfish thrown by friends.", tags: ["Jellyfish"]));
+        Pomegranate = addon.Bind("Pomegranate", true, new ConfigurableInfo("Will not take damage from a pomegranate dropped by friends.", tags: ["Pomegranate"]));
+        Snail = addon.Bind("Snail", true, new ConfigurableInfo("Will not be stunned by the next pop from a snail thrown, hit, or killed by a friend.", tags: ["Snail"]));
+        TubeWorm = addon.Bind("TubeWorm", true, new ConfigurableInfo("Will not be caught by a grappling worm's tongue used by friends.", tags: ["Grappling Worm"]));
+        Frog = addon.Bind("Frog", true, new ConfigurableInfo("Will not be attached by a frog thrown by friends.", tags: ["Frog"]));
     }
 }

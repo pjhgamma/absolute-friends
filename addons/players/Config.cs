@@ -36,24 +36,24 @@ internal static class Config
             .Require(GrabbingPlayer);
         Wiggle = addon.Bind("Wiggle", true, new ConfigurableInfo("Can wiggle free from the grasp of player friends.", tags: ["Wiggle"]))
             .Require(Core.Config.FriendSlugcat);
-        Carry = addon.Bind("Carry", false, new ConfigurableInfo("Can pick up and carry large tracked friends with both hands.", tags: ["Carry"]));
+        Carry = addon.Bind("Carry", true, new ConfigurableInfo("Can pick up and carry large tracked friends with both hands.", tags: ["Carry"]));
         CarryStun = addon.Bind("CarryStun", true, new ConfigurableInfo("Keeps a carried tracked friend stunned until released.", tags: ["Carry Stun"]))
             .Require(Carry);
-        Mauling = addon.Bind("Mauling", false, new ConfigurableInfo(Options.Config.Downpour(
+        Mauling = addon.Bind("Mauling", true, new ConfigurableInfo(Options.Config.Downpour(
             "Will not eat friends.",
             "Will not maul or eat friends."
         ), tags: ["Mauling"]));
-        GourmandSlam = addon.Bind("GourmandSlam", false, new ConfigurableInfo(Options.Config.JollyCoop(
+        GourmandSlam = addon.Bind("GourmandSlam", true, new ConfigurableInfo(Options.Config.JollyCoop(
             "Will not take damage from the roll, slide, or slam of a Gourmand friend.",
             "Will not take damage from the roll, slide, or slam of a Gourmand friend. If the Spears Miss option is enabled in Jolly Co-op, slugcats will never damage each other."
         ), tags: ["Gourmand Slam"]));
-        ArtificerParry = addon.Bind("ArtificerParry", false, new ConfigurableInfo(Options.Config.JollyCoop(
+        ArtificerParry = addon.Bind("ArtificerParry", true, new ConfigurableInfo(Options.Config.JollyCoop(
             "Will not be stunned by the parry of an Artificer friend.",
             "Will not be stunned by the parry of an Artificer friend. If the Spears Miss option is enabled in Jolly Co-op, slugcats will never stun each other."
         ), tags: ["Artificer Parry"]));
-        SaintTongue = addon.Bind("SaintTongue", false, new ConfigurableInfo("Will not be caught by the tongue of a Saint friend.", tags: ["Saint Tongue"]));
-        SaintAttunement = addon.Bind("SaintAttunement", false, new ConfigurableInfo("Will not be instantly killed by the attunement of a Saint friend.", tags: ["Saint Attunement"]));
-        WatcherCamouflage = addon.Bind("WatcherCamouflage", false, new ConfigurableInfo("Shares camouflage and its gauge with Watcher friends. Forced camouflage changes remain personal until synchronization resumes.", tags: ["Watcher Camouflage"]));
-        RippleSpace = addon.Bind("RippleSpace", false, new ConfigurableInfo("Tracked friends follow their player into ripple space and stay in view.", tags: ["Ripple Space"]));
+        SaintTongue = addon.Bind("SaintTongue", true, new ConfigurableInfo("Will not be caught by the tongue of a Saint friend.", tags: ["Saint Tongue"]));
+        SaintAttunement = addon.Bind("SaintAttunement", true, new ConfigurableInfo("Will not be instantly killed by the attunement of a Saint friend.", tags: ["Saint Attunement"]));
+        WatcherCamouflage = addon.Bind("WatcherCamouflage", true, new ConfigurableInfo("Shares camouflage and its gauge with Watcher friends. Forced camouflage changes remain personal until synchronization resumes.", tags: ["Watcher Camouflage"]));
+        RippleSpace = addon.Bind("RippleSpace", true, new ConfigurableInfo("Tracked friends follow their player into ripple space and stay in view.", tags: ["Ripple Space"]));
     }
 }
