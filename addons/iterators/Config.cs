@@ -12,6 +12,8 @@ internal static class Config
 
     public static Configurable<bool> Prince = null!;
 
+    public static Configurable<bool> Overseer = null!;
+
     public static void Bind(Addon addon)
     {
         Moon = addon.Bind("Moon", false, new ConfigurableInfo("Treats Moon as a friend and prevents players from lowering her opinion or making her refuse to speak.", tags: ["Moon"]));
@@ -19,5 +21,6 @@ internal static class Config
         Pebbles = addon.Bind("Pebbles", false, new ConfigurableInfo("Treats Pebbles as a friend and prevents him from killing friends.", tags: ["Pebbles"]));
         PebblesPearl = addon.Bind("PebblesPearl", false, new ConfigurableInfo("Treats Pebbles' pearl as friends and prevents players from stealing them.", tags: ["Pebbles Pearl"]));
         Prince = addon.Bind("Prince", false, new ConfigurableInfo("Treats the Prince as a friend of players.", tags: ["Prince"]));
+        Overseer = addon.Bind("Overseer", false, new ConfigurableInfo("Always treats overseers as friends of players.", tags: ["Overseers"]));
     }
 }

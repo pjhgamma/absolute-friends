@@ -24,6 +24,11 @@ internal static class RelationshipRules
 
     private static bool? IsFriendIterator(AbstractCreature abstractCreature, AbstractCreature abstractSlugcat)
     {
+        if (abstractCreature.creatureTemplate?.type == CreatureTemplate.Type.Overseer)
+        {
+            return Config.Overseer.IsActive ? true : null;
+        }
+
         if (abstractCreature is not AbstractOwner abstractOwner)
         {
             return null;
