@@ -327,6 +327,9 @@ Sets how much longer (in seconds) the player must go without control input for s
 Sets how much longer (in seconds) the player must go without control input for shelters, karma gates, and warp points to forcefully activate, ignoring non-player friends.|피난처, 카르마 게이트, 워프 포인트가 플레이어가 아닌 친구를 무시하고 강제로 작동하기까지 추가로 필요한 플레이어의 조작 미입력 시간(초)을 설정합니다.
 Guardian|가디언
 Guardians do not target tracked friends or move them with telekinesis when the players meet the Karma requirement to pass.|플레이어가 통과에 필요한 카르마 조건을 충족하면 가디언은 추적되는 친구를 노리거나 염력으로 움직이지 않습니다.
+Ascension|승천
+Tracked friends follow the player through the Void Sea and return to the last shelter after ascension.|추적되는 친구가 공허 바다에서 플레이어를 따라가며, 승천 후 마지막 피난처로 돌아옵니다.
+Tracked friends follow the player through the Void Sea and the final warps, and return to the last shelter after ascension.|추적되는 친구가 공허 바다와 마지막 워프에서 플레이어를 따라가며, 승천 후 마지막 피난처로 돌아옵니다.
 
 Absolute Friends: Visualizer|절대적 친구: 시각화
 Visually shows friends and owners.|친구와 소유자를 시각적으로 표시합니다.
