@@ -297,7 +297,7 @@ Absolute Friends: Iterators|절대적 친구: 반복자
 Controls interactions with iterators.|반복자와의 상호 작용을 설정합니다.
 
 Moon|달
-Treats Moon as a friend and prevents players from lowering her opinion or making her refuse to speak.|달을 친구로 취급하고, 플레이어가 호감도를 낮추거나 대화를 거부하게 만들지 않도록 합니다.
+Treats Moon as a friend and prevents players from lowering her opinion or making her refuse to speak. Her preserved opinion remains after disabling this option.|달을 친구로 취급하고, 플레이어가 호감도를 낮추거나 대화를 거부하게 만들지 않도록 합니다. 이 옵션을 꺼도 이미 지켜진 호감도는 그대로 유지됩니다.
 Moon Neuron|달 신경파리
 Treats Moon's neurons as friends and prevents players from stealing them.|달의 뉴런을 친구로 취급하고, 플레이어가 훔치지 않도록 합니다.
 Pebbles|조약돌
@@ -328,8 +328,8 @@ Sets how much longer (in seconds) the player must go without control input for s
 Guardian|가디언
 Guardians do not target tracked friends or move them with telekinesis when the players meet the Karma requirement to pass.|플레이어가 통과에 필요한 카르마 조건을 충족하면 가디언은 추적되는 친구를 노리거나 염력으로 움직이지 않습니다.
 Ascension|승천
-Tracked friends follow the player through the Void Sea and return to the last shelter after ascension.|추적되는 친구가 공허 바다에서 플레이어를 따라가며, 승천 후 마지막 피난처로 돌아옵니다.
-Tracked friends follow the player through the Void Sea and the final warps, and return to the last shelter after ascension.|추적되는 친구가 공허 바다와 마지막 워프에서 플레이어를 따라가며, 승천 후 마지막 피난처로 돌아옵니다.
+Tracked friends follow the player through the Void Sea and return to the last shelter after ascension. Returned friends stay in the shelter after disabling this option.|추적되는 친구가 공허 바다에서 플레이어를 따라가며, 승천 후 마지막 피난처로 돌아옵니다. 이 옵션을 꺼도 이미 돌아온 친구는 피난처에 그대로 남습니다.
+Tracked friends follow the player through the Void Sea and the final warps, and return to the last shelter after ascension. Returned friends stay in the shelter after disabling this option.|추적되는 친구가 공허 바다와 마지막 워프에서 플레이어를 따라가며, 승천 후 마지막 피난처로 돌아옵니다. 이 옵션을 꺼도 이미 돌아온 친구는 피난처에 그대로 남습니다.
 
 Absolute Friends: Visualizer|절대적 친구: 시각화
 Visually shows friends and owners.|친구와 소유자를 시각적으로 표시합니다.
@@ -362,9 +362,9 @@ Resonance occurs when a player presses jump, reaching friends in the room. With 
 Grab Resonance|잡기 공명
 Resonance occurs when a player holds a tracked friend and presses jump, mending or reviving that friend.|플레이어가 추적되는 친구를 잡고 점프 키를 누르면 공명이 일어나 그 친구를 회복하거나 되살립니다.
 Warp|순간이동
-Warps eligible tracked friends to the player's location upon resonance.|공명 시 추적되는 친구를 플레이어의 곁으로 불러옵니다.
+Warps eligible tracked friends to the player's location upon resonance. Warped friends stay where they arrived after disabling this option.|공명 시 추적되는 친구를 플레이어의 곁으로 불러옵니다. 이 옵션을 꺼도 이미 불러온 친구는 도착한 곳에 그대로 남습니다.
 Mend|회복
-Mends eligible tracked friends upon resonance, closing their wounds and drawing out poison and cold, and bringing back the ones that have died.|공명 시 추적되는 친구를 회복시키거나 되살립니다.
+Mends eligible tracked friends upon resonance, closing their wounds and drawing out poison and cold, and bringing back the ones that have died. Revived friends stay alive after disabling this option.|공명 시 추적되는 친구를 회복시키거나 되살립니다. 이 옵션을 꺼도 이미 되살아난 친구는 그대로 살아 있습니다.
 Cost|대가
 A resonance demands a cost, which grows with the distance each friend is called from and the time it has spent dead, and holds everyone who resonated still and out of breath.|공명은 대가를 요구하며, 그 대가는 친구를 불러오는 거리와 죽어 있던 시간에 따라 커지고, 공명한 모두를 붙잡고 숨이 차게 합니다.
 Sets how much of the resonance cost is demanded. A value of 1 demands it in full, and 0 makes a resonance instant and free.|공명의 대가를 얼마나 요구할지 설정합니다. 1은 대가를 온전히 요구하며, 0은 공명이 대가 없이 즉시 일어나게 합니다.

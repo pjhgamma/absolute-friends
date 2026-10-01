@@ -32,9 +32,9 @@ internal static class Config
         ), tags: ["Gate Resonance"]));
         ResonanceRoom = addon.Bind("ResonanceRoom", true, new ConfigurableInfo("Resonance occurs when a player presses jump, reaching friends in the room. With Gate Resonance enabled, resonance inside a gate also reaches tracked friends in other rooms.", tags: ["Room Resonance"]));
         ResonanceGrab = addon.Bind("ResonanceGrab", true, new ConfigurableInfo("Resonance occurs when a player holds a tracked friend and presses jump, mending or reviving that friend.", tags: ["Grab Resonance"]));
-        ResonanceWarp = addon.Bind("ResonanceWarp", true, new ConfigurableInfo("Warps eligible tracked friends to the player's location upon resonance.", tags: ["Warp"]))
+        ResonanceWarp = addon.Bind("ResonanceWarp", true, new ConfigurableInfo("Warps eligible tracked friends to the player's location upon resonance. Warped friends stay where they arrived after disabling this option.", tags: ["Warp"]))
             .RequireAny(ResonanceGate, ResonanceRoom);
-        ResonanceMend = addon.Bind("ResonanceMend", true, new ConfigurableInfo("Mends eligible tracked friends upon resonance, closing their wounds and drawing out poison and cold, and bringing back the ones that have died.", tags: ["Mend"]))
+        ResonanceMend = addon.Bind("ResonanceMend", true, new ConfigurableInfo("Mends eligible tracked friends upon resonance, closing their wounds and drawing out poison and cold, and bringing back the ones that have died. Revived friends stay alive after disabling this option.", tags: ["Mend"]))
             .RequireAny(ResonanceGate, ResonanceRoom, ResonanceGrab);
         ResonanceCost = addon.Bind("ResonanceCost", true, new ConfigurableInfo("A resonance demands a cost, which grows with the distance each friend is called from and the time it has spent dead, and holds everyone who resonated still and out of breath.", tags: ["Cost"]))
             .RequireAny(ResonanceWarp, ResonanceMend);
