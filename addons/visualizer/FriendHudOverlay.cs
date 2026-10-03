@@ -18,6 +18,8 @@ internal class FriendHudOverlay : HudOverlay
 
     private readonly OverlayPositions _positions = new();
 
+    private readonly Dictionary<AbstractCreature, bool> _deaths = [];
+
     private readonly UpdateTimer _timer = new();
 
     private readonly FriendMeter _meter;
@@ -29,7 +31,7 @@ internal class FriendHudOverlay : HudOverlay
         _overlays.Add(room, this);
     }
 
-    private static bool IsEnabled => Config.FriendMarkers.IsActive || Config.FriendMeter.IsActive;
+    private static bool IsEnabled => Config.FriendMarkers.IsActive || Config.FriendMeter.IsActive || Config.PulseEffects.IsActive;
 
     public static bool IsShowing(AbstractPhysicalObject source)
     {
@@ -72,6 +74,8 @@ internal class FriendHudOverlay : HudOverlay
             {
                 _meter.Clear();
             }
+
+            UpdateDeaths();
         }
         catch (Exception exception)
         {
@@ -187,6 +191,42 @@ internal class FriendHudOverlay : HudOverlay
         }
     }
 
+    private void UpdateDeaths()
+    {
+        foreach (var creature in _sources.Concat(room.game.Players))
+        {
+            bool isDead = creature.IsDead;
+
+            if (!_deaths.TryGetValue(creature, out bool wasDead))
+            {
+                _deaths[creature] = isDead;
+
+                continue;
+            }
+
+            if (isDead == wasDead)
+            {
+                continue;
+            }
+
+            _deaths[creature] = isDead;
+
+            if (!Config.PulseEffects.IsActive || creature.realizedCreature is not { } realized || realized.room != room)
+            {
+                continue;
+            }
+
+            if (!isDead)
+            {
+                room.AddObject(new RevivalOverlay(realized));
+            }
+            else if (!creature.IsPlayer)
+            {
+                room.AddObject(new DeathOverlay(realized));
+            }
+        }
+    }
+
     private void Clear()
     {
         foreach (var marker in _markers.Values)
@@ -196,6 +236,7 @@ internal class FriendHudOverlay : HudOverlay
 
         _markers.Clear();
         _sources.Clear();
+        _deaths.Clear();
         _meter.Clear();
         _timer.Reset();
     }
