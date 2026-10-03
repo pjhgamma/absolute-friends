@@ -433,6 +433,7 @@ Warps and mends tracked friends through resonance.|공명을 통해 추적되는
 Resonance|공명
 Resonance Anchor|공명 기준점
 Resonance Tracker|공명 추적기
+Resonance Revival|공명 부활
 Gate Resonance|게이트 공명
 Resonance occurs automatically when a shelter or karma gate closes, or a karma room activates, reaching tracked friends anywhere in the world.|피난처나 카르마 게이트가 닫히거나 카르마 방이 작동하면 자동으로 공명이 일어나 세계 어디에 있든 추적되는 친구에게 닿습니다.
 Resonance occurs automatically when a shelter or karma gate closes, or a karma room or warp point activates, reaching tracked friends anywhere in the world.|피난처나 카르마 게이트가 닫히거나 카르마 방이나 워프 포인트가 작동하면 자동으로 공명이 일어나 세계 어디에 있든 추적되는 친구에게 닿습니다.
