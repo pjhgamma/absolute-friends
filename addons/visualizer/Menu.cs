@@ -1,4 +1,6 @@
+using AbsoluteFriends.Core;
 using AbsoluteFriends.Options;
+using Menu.Remix.MixedUI;
 
 namespace AbsoluteFriends.Visualizer;
 
@@ -23,13 +25,21 @@ internal static class Menu
 
         menu.AddTitle("Shown Relationships");
         menu.SetColumns(4);
-        menu.AddTickLabels(
+        OpLabel[] friendships = menu.AddTickLabels(
             menu.AddIntSliderTick(Config.ShownFriendship, "Friendship", span: 4f, min: 0, max: 3),
             "Tracking",
             "Friendly",
             "Neutral",
             "Indirect"
         );
+
+        FriendshipType[] types = [FriendshipType.Tracked, FriendshipType.Friendly, FriendshipType.Neutral, FriendshipType.Indirect];
+
+        for (int index = 0; index < friendships.Length; ++index)
+        {
+            friendships[index].color = Relationships.ColorOf(types[index]);
+        }
+
         menu.AddCheckBox(Config.Owners);
 
         menu.AddTitle("Overlay Updates");

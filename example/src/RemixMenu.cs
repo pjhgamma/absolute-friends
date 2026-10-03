@@ -1,6 +1,5 @@
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Options;
-using AbsoluteFriends.Utils;
 using Menu.Remix.MixedUI;
 using MoreSlugcats;
 using RWCustom;
@@ -71,7 +70,7 @@ internal sealed class RemixMenu : MenuBuilder
 
     private static void SetButtonColor(OpSimpleButton button, string style)
     {
-        Color color = style == "Gold" ? Palette.Secondary : Palette.Primary;
+        Color color = style == "Gold" ? RainWorld.GoldRGB : RainWorld.RippleColor;
 
         button.colorEdge = color;
         button.colorFill = color;
@@ -81,8 +80,8 @@ internal sealed class RemixMenu : MenuBuilder
     {
         Color color = item.name switch
         {
-            "Ripple" or "lizard" => Palette.Primary,
-            "Gold" or "scavenger" => Palette.Secondary,
+            "Ripple" or "lizard" => RainWorld.RippleColor,
+            "Gold" or "scavenger" => RainWorld.GoldRGB,
             _ => Color.white
         };
 

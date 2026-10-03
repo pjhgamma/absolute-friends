@@ -46,14 +46,21 @@ internal static class Relationships
 
     public static bool IsShown(FriendshipType type) => type != FriendshipType.None && type >= WeakestShown;
 
-    public static Color ColorOf(bool isOwner) => isOwner ? Palette.Secondary : Palette.Primary;
+    public static Color ColorOf(FriendshipType type) => type switch
+    {
+        FriendshipType.Tracked => Palette.Tracked,
+        FriendshipType.Friendly => Palette.Friendly,
+        FriendshipType.Neutral => Palette.Neutral,
+        FriendshipType.Indirect => Palette.Indirect,
+        _ => Palette.Unfriendly,
+    };
 
     public static RelationshipAppearance AppearanceOf(AbstractPhysicalObject source, FriendshipType type, bool isOwner)
     {
         AbstractPhysicalObject subject = source is AbstractOwner owner ? owner.PhysicalObject.abstractPhysicalObject : source;
         string name = string.Empty;
         string symbol = string.Empty;
-        Color color = ColorOf(isOwner);
+        Color color = isOwner ? Palette.Owned : ColorOf(type);
 
         if (Config.Names.IsActive)
         {

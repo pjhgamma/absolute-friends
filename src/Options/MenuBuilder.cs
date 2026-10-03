@@ -108,15 +108,15 @@ public abstract partial class MenuBuilder : OptionInterface
                 checkBox.greyedOut = true;
                 checkBox.symbolSprite.isVisible = false;
 
-                if (checkBox.colorEdge != Palette.Primary)
+                if (checkBox.colorEdge != Palette.Error)
                 {
-                    Mark(entry, Palette.Primary, Translate("This feature ran into an error and disabled for this session. Restart the game to try it again."), failed: true);
+                    Mark(entry, Palette.Error, Translate("This feature ran into an error and disabled for this session. Restart the game to try it again."), failed: true);
                     Propagate(option);
                 }
             }
-            else if (HookManager.IsWarned(boolOption) && checkBox.colorEdge != Palette.Primary && checkBox.colorEdge != Palette.Secondary)
+            else if (HookManager.IsWarned(boolOption) && checkBox.colorEdge != Palette.Error && checkBox.colorEdge != Palette.Warning)
             {
-                Mark(entry, Palette.Secondary, Translate("This feature was applied, but not the way it expected, so it may not be working."));
+                Mark(entry, Palette.Warning, Translate("This feature was applied, but not the way it expected, so it may not be working."));
             }
         }
     }

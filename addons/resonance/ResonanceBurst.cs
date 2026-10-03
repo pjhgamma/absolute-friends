@@ -1,5 +1,3 @@
-using AbsoluteFriends.Utils;
-
 namespace AbsoluteFriends.Resonance;
 
 internal class ResonanceBurst : UpdatableAndDeletable
@@ -14,7 +12,7 @@ internal class ResonanceBurst : UpdatableAndDeletable
             }
 
             room.AddObject(new ShockWave(bodyChunk.pos, 300f, 0.2f, 15));
-            room.AddObject(new MeltLights.MeltLight(1f, bodyChunk.pos, room, Palette.Secondary));
+            room.AddObject(new MeltLights.MeltLight(1f, bodyChunk.pos, room, RainWorld.GoldRGB));
         }
 
         room.PlaySound(SoundID.SS_AI_Give_The_Mark_Boom, 0f, 1f, 1f);

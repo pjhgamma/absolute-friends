@@ -52,7 +52,7 @@ internal class ResonanceEffect : UpdatableAndDeletable
 
         for (int i = 0; i < 20; ++i)
         {
-            room.AddObject(new MeltLights.MeltLight(1f, room.RandomPos(), room, Palette.Primary));
+            room.AddObject(new MeltLights.MeltLight(1f, room.RandomPos(), room, RainWorld.AntiGold.rgb));
         }
 
         room.PlaySound(SoundID.SB_A14, 0f, 1f, 1f);

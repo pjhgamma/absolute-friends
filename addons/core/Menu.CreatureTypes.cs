@@ -236,9 +236,9 @@ internal static partial class Menu
 
         Color color = rule switch
         {
-            CreatureRule.Allow => Color.green,
-            CreatureRule.Deny => Color.red,
-            _ => Color.white
+            CreatureRule.Allow => Palette.Friendly,
+            CreatureRule.AllowNeutral => Palette.Neutral,
+            _ => Palette.Unfriendly
         };
 
         label.color = color * (selectedRow ? 0.7f : 1f);

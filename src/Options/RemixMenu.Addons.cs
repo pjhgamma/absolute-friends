@@ -79,12 +79,12 @@ internal sealed partial class RemixMenu
 
         if (!addon.IsApplied && AddLabel("Remix is not enabled.", alignment: FLabelAlignment.Left) is { } notApplied)
         {
-            notApplied.color = Palette.Secondary;
+            notApplied.color = Palette.Warning;
         }
 
         if (addon.IsMismatched && AddLabel("Built for Absolute Friends v<PLACEHOLDER>; it may not work correctly.", addon.AbsoluteFriendsVersion, alignment: FLabelAlignment.Left) is { } warning)
         {
-            warning.color = Palette.Secondary;
+            warning.color = Palette.Warning;
         }
 
         if (!addon.IsApplied)

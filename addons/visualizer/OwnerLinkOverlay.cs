@@ -13,7 +13,7 @@ internal class OwnerLinkOverlay(PhysicalObject target) : CosmeticSprite
 
     private readonly TriangleMesh _line = new("Futile_White", [new(0, 1, 2), new(1, 2, 3)], false, false)
     {
-        color = Palette.Secondary,
+        color = Palette.Owned,
         isVisible = true,
     };
 

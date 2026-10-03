@@ -82,7 +82,7 @@ internal class FriendLinkOverlay : CosmeticSprite
                     FSprite sprite = sLeaser.sprites[drawnCount++];
 
                     sprite.isVisible = true;
-                    sprite.color = Relationships.ColorOf(false);
+                    sprite.color = Relationships.ColorOf(type);
                     sprite.x = first.x - camPos.x;
                     sprite.y = first.y - camPos.y;
                     sprite.scaleY = Vector2.Distance(first, second);
