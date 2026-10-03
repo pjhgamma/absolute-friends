@@ -40,7 +40,7 @@ internal abstract class ObjectOverlayHooks<TOverlay> : BaseHooks
 
 internal class FriendHudHooks : RoomOverlayHooks<FriendHudOverlay>
 {
-    protected override Configurable<bool>[] Options => [Config.FriendMarkers];
+    protected override Configurable<bool>[] Options => [Config.FriendMarkers, Config.FriendMeter];
 
     protected override string? Subject => "Friend HUD";
 

@@ -9,6 +9,7 @@ internal static class Menu
         menu.AddTitle("Friend Markers");
         menu.SetColumns(3);
         menu.AddCheckBox(Config.FriendMarkers);
+        menu.AddCheckBox(Config.FriendMeter);
 
         menu.AddTitle("Relationship Overlay");
         menu.SetColumns(3);

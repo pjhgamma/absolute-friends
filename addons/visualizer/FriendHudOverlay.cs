@@ -20,13 +20,16 @@ internal class FriendHudOverlay : HudOverlay
 
     private readonly UpdateTimer _timer = new();
 
+    private readonly FriendMeter _meter;
+
     public FriendHudOverlay(Room room)
     {
+        _meter = new(Container);
         _overlays.Remove(room);
         _overlays.Add(room, this);
     }
 
-    private static bool IsEnabled => Config.FriendMarkers.IsActive;
+    private static bool IsEnabled => Config.FriendMarkers.IsActive || Config.FriendMeter.IsActive;
 
     public static bool IsShowing(AbstractPhysicalObject source)
     {
@@ -60,6 +63,15 @@ internal class FriendHudOverlay : HudOverlay
             }
 
             UpdateMarkers(camera);
+
+            if (Config.FriendMeter.IsActive)
+            {
+                _meter.Update(camera.hud, camera.sSize, _sources);
+            }
+            else
+            {
+                _meter.Clear();
+            }
         }
         catch (Exception exception)
         {
@@ -86,6 +98,8 @@ internal class FriendHudOverlay : HudOverlay
 
         try
         {
+            _meter.Draw(timeStacker);
+
             foreach (var entry in _markers)
             {
                 entry.Value.Draw(rCam, _positions.TryGet(entry.Key, rCam, camPos, timeStacker, out OverlayPosition place) ? place : null, timeStacker);
@@ -182,6 +196,7 @@ internal class FriendHudOverlay : HudOverlay
 
         _markers.Clear();
         _sources.Clear();
+        _meter.Clear();
         _timer.Reset();
     }
 }
