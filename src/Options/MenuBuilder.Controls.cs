@@ -71,6 +71,49 @@ public abstract partial class MenuBuilder
         });
     }
 
+    public OpLabel[] AddTickLabels(OpSliderTick? slider, params string[] labels)
+    {
+        if (_currentTab == null || slider == null || labels.Length == 0)
+        {
+            return [];
+        }
+
+        FinishRow();
+
+        float step = labels.Length > 1 ? slider._mul * (slider.max - slider.min) / (labels.Length - 1) : slider.size.x;
+        OpLabel[] tickLabels = new OpLabel[labels.Length];
+
+        for (int index = 0; index < labels.Length; ++index)
+        {
+            float left = Mathf.Clamp(slider.pos.x + step * index - step * 0.5f, _marginX.x, _marginX.y - step);
+            FLabelAlignment alignment = index == 0 && labels.Length > 1 ? FLabelAlignment.Left : index == labels.Length - 1 && labels.Length > 1 ? FLabelAlignment.Right : FLabelAlignment.Center;
+
+            if (alignment == FLabelAlignment.Left)
+            {
+                left = Mathf.Max(_marginX.x, slider.pos.x - Gap);
+            }
+            else if (alignment == FLabelAlignment.Right)
+            {
+                left = Mathf.Min(_marginX.y, slider.pos.x + slider.size.x + Gap) - step;
+            }
+
+            tickLabels[index] = new(
+                new Vector2(left, slider.pos.y - Spacing * 0.75f),
+                new Vector2(step, Spacing),
+                Translate(labels[index]),
+                alignment
+            )
+            {
+                description = slider.description
+            };
+        }
+
+        AddElements(tickLabels);
+        AddRow(0.75f);
+
+        return tickLabels;
+    }
+
     public OpFloatSlider? AddFloatSlider(Configurable<float> configurable, string? text = null, float span = 1f, float min = 0f, float max = 1f, byte decimals = 2, int increment = 1, bool enabled = true)
     {
         return AddControl(configurable, text, span, enabled, layout => new OpFloatSlider(
