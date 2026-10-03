@@ -126,6 +126,9 @@ internal sealed partial class FriendManagerDialog
         _trackingLabel.Show();
         _trackingCheckbox.Show();
 
+        _nameLabel.label.color = creature.ShortcutColor;
+        _nicknameBox.colorText = creature.ShortcutColor;
+
         if (creature.IsPlayer)
         {
             _nameLabel.label.text = creature.PlayerName;

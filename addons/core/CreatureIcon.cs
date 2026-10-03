@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+using AbsoluteFriends.Diagnostics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -5,6 +7,10 @@ namespace AbsoluteFriends.Core;
 
 public static class CreatureIcon
 {
+    private static readonly AddonLogger _logger = Reporter.GetLogger(Plugin.Name);
+
+    private static readonly ConditionalWeakTable<AbstractCreature, StrongBox<Color>> _shortcutColors = new();
+
     private static Color SlugpupColor(AbstractCreature creature)
     {
         if (creature.realizedCreature is Player player)
@@ -59,6 +65,30 @@ public static class CreatureIcon
                     : CreatureSymbol.ColorOfCreature(data);
 
                 return (CreatureSymbol.SpriteNameOfCreature(data), color);
+            }
+        }
+
+        public Color ShortcutColor
+        {
+            get
+            {
+                if (creature.realizedCreature is { } realized)
+                {
+                    try
+                    {
+                        Color color = realized.ShortCutColor();
+
+                        _shortcutColors.GetOrCreateValue(creature).Value = color;
+
+                        return color;
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.LogWarning("Could not read a shortcut color", exception);
+                    }
+                }
+
+                return _shortcutColors.TryGetValue(creature, out var known) ? known.Value : creature.Icon.Color;
             }
         }
     }

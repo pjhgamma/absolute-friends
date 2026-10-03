@@ -74,7 +74,10 @@ internal sealed partial class FriendManagerDialog
             AbstractCreature creature = creatures[index];
             float y = contentHeight - 50f - index * RowSpacing;
             (string symbol, Color color) = creature.Icon;
-            OpLabel name = new(new Vector2(44f, y + 7f), new Vector2(157f, 30f), creature.FriendName, FLabelAlignment.Left);
+            OpLabel name = new(new Vector2(44f, y + 7f), new Vector2(157f, 30f), creature.FriendName, FLabelAlignment.Left)
+            {
+                color = creature.ShortcutColor
+            };
             OpLabel status = new(new Vector2(205f, y + 7f), new Vector2(106f, 30f), RowStatus(creature), FLabelAlignment.Right);
             OpSimpleImageButton details = new(new Vector2(317f, y + 10f), new Vector2(24f, 24f), "Menu_InfoI")
             {
@@ -157,6 +160,7 @@ internal sealed partial class FriendManagerDialog
         foreach (FriendRow row in _rows)
         {
             row.Name.text = row.Creature.FriendName;
+            row.Name.color = row.Creature.ShortcutColor;
             row.Status.text = RowStatus(row.Creature);
 
             row.Icon?.color = row.Creature.Icon.Color;

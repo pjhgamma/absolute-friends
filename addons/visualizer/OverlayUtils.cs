@@ -19,8 +19,6 @@ internal static class OverlayUtils
 
     private static readonly HashSet<Type> _failures = [];
 
-    private static readonly ConditionalWeakTable<AbstractCreature, StrongBox<Color>> _shortcutColors = new();
-
     private static RainWorldGame? _game;
 
     public static float Row(int index) => Gap * (index + 1);
@@ -111,30 +109,6 @@ internal static class OverlayUtils
     extension(AbstractCreature creature)
     {
         public bool IsDead => creature.state?.dead == true || creature.realizedCreature?.dead == true;
-
-        public Color ShortcutColor
-        {
-            get
-            {
-                if (creature.realizedCreature is { } realized)
-                {
-                    try
-                    {
-                        Color color = realized.ShortCutColor();
-
-                        _shortcutColors.GetOrCreateValue(creature).Value = color;
-
-                        return color;
-                    }
-                    catch (Exception exception)
-                    {
-                        _logger.LogWarning("Could not read a shortcut color", exception);
-                    }
-                }
-
-                return _shortcutColors.TryGetValue(creature, out var known) ? known.Value : creature.Icon.Color;
-            }
-        }
     }
 
     extension(PhysicalObject? source)
