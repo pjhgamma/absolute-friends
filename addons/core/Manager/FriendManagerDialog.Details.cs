@@ -153,8 +153,7 @@ internal sealed partial class FriendManagerDialog
             return;
         }
 
-        CreatureCondition condition = CreatureCondition.Read(friend);
-        string life = condition.Dead is true ? Translation.Of("Dead") : condition.Dead is false ? Translation.Of("Alive") : Translation.Of("Unknown");
+        string life = Translation.Of(friend.state is not { } state ? "Unknown" : state.dead ? "Dead" : "Alive");
         bool tracked = friend.IsTracked;
 
         (string symbol, Color color) = friend.Icon;

@@ -183,20 +183,7 @@ internal static partial class ResonanceUtils
             }
         }
 
-        private ResonanceProfile Profile
-        {
-            get
-            {
-                CreatureCondition condition = CreatureCondition.Read(abstractCreature);
-
-                return new(
-                    condition.Damage ?? 0f,
-                    condition.PermanentDamage ?? 0f,
-                    condition.Poison ?? 0f,
-                    condition.Dead == true
-                );
-            }
-        }
+        private ResonanceProfile Profile => ResonanceProfile.Read(abstractCreature);
 
         private int GetWarpCost(Room room)
         {
