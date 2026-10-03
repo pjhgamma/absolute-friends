@@ -16,6 +16,8 @@ internal static class CreatureRules
 {
     private static readonly Dictionary<string, Configurable<string>> _options = new(StringComparer.Ordinal);
 
+    private static readonly Dictionary<string, string> _changes = new(StringComparer.Ordinal);
+
     private static Addon? _addon;
 
     internal static Action? HandleChanged;
@@ -66,7 +68,31 @@ internal static class CreatureRules
         if (_options.TryGetValue(type, out Configurable<string> option))
         {
             option.Value = Parse(rule).ToString();
+            _changes[type] = option.Value;
         }
+    }
+
+    internal static void Reset()
+    {
+        foreach (var option in _options.Values)
+        {
+            option.Value = CreatureRule.Inherit.ToString();
+        }
+
+        _changes.Clear();
+    }
+
+    internal static void KeepChanges(bool isReset)
+    {
+        if (isReset)
+        {
+            foreach (var pair in _changes)
+            {
+                _options[pair.Key].Value = pair.Value;
+            }
+        }
+
+        _changes.Clear();
     }
 
     internal static CreatureRule Get(string type) => _options.TryGetValue(type, out Configurable<string> option) ? Parse(option.Value) : CreatureRule.Inherit;

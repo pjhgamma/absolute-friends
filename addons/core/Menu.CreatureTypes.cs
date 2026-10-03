@@ -12,9 +12,11 @@ internal static partial class Menu
 
     private static readonly FieldInfo? _listTopField = typeof(OpComboBox).GetField("_listTop", BindingFlags.Instance | BindingFlags.NonPublic);
 
-    private static MenuBuilder? _resetMenu;
+    private static MenuBuilder? _rulesMenu;
 
     private static OnEventHandler? _resetHandler;
+
+    private static OnEventHandler? _saveHandler;
 
     private static void BuildCreatureTypes(MenuBuilder menu)
     {
@@ -89,7 +91,7 @@ internal static partial class Menu
             ShowType(type);
         }
 
-        void RefreshConfiguredRules(string? selection = null, bool reset = false)
+        void RefreshConfiguredRules(string? selection = null)
         {
             if (configuredRules == null)
             {
@@ -99,7 +101,7 @@ internal static partial class Menu
             selection ??= configuredRules.value;
 
             string[] previous = [.. configuredRules.GetItemList().Select(item => item.name)];
-            ListItem[] current = ConfiguredRuleItems(reset);
+            ListItem[] current = ConfiguredRuleItems();
 
             _listTopField?.SetValue(configuredRules, 0);
             configuredRules.AddItems(sort: false, [new ListItem("__refresh", " ")]);
@@ -113,19 +115,23 @@ internal static partial class Menu
 
         CreatureRules.HandleChanged = () => RefreshConfiguredRules();
 
-        if (_resetMenu != null && _resetHandler != null)
+        if (_rulesMenu != null)
         {
-            _resetMenu.OnConfigReset -= _resetHandler;
+            _rulesMenu.OnConfigReset -= _resetHandler;
+            _rulesMenu.OnConfigChanged -= _saveHandler;
         }
 
-        _resetMenu = menu;
+        _rulesMenu = menu;
         _resetHandler = () =>
         {
-            RefreshConfiguredRules(reset: true);
+            CreatureRules.Reset();
+            RefreshConfiguredRules();
 
             rulePicker?.value = nameof(CreatureRule.Allow);
         };
+        _saveHandler = () => CreatureRules.KeepChanges(menu.config.pendingReset);
         menu.OnConfigReset += _resetHandler;
+        menu.OnConfigChanged += _saveHandler;
 
         ListItem[] initialRules = ConfiguredRuleItems();
 
@@ -202,21 +208,18 @@ internal static partial class Menu
         _ => ""
     };
 
-    private static ListItem[] ConfiguredRuleItems(bool reset = false)
+    private static ListItem[] ConfiguredRuleItems()
     {
         List<ListItem> items = [];
 
-        if (!reset)
+        foreach (var pair in CreatureRules.ConfiguredRules)
         {
-            foreach (var pair in CreatureRules.ConfiguredRules)
-            {
-                items.Add(new(pair.Key));
-            }
+            items.Add(new(pair.Key, items.Count));
         }
 
         if (items.Count == 0)
         {
-            items.Add(new(Config.NoConfiguredRule, Translation.Of("No creature rules")));
+            items.Add(new(Config.NoConfiguredRule, Translation.Of("No creature rules"), 0));
         }
 
         for (int index = items.Count; index < VisibleRuleItems; index++)
