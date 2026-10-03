@@ -212,6 +212,7 @@ Visualizes relationships with icons, names, and links.|관계를 아이콘, 이�
 Absolute Friends: General|절대적 친구: 일반
 Controls the general harm and effects that pass between friends.|친구 사이의 일반적인 피해나 영향을 조정합니다.
 
+Senses|감각
 Collisions|충돌
 Will not collide with friends.|친구와 충돌하지 않습니다.
 Violence|폭력
@@ -430,6 +431,8 @@ Absolute Friends: Resonance|절대적 친구: 공명
 Warps and mends tracked friends through resonance.|공명을 통해 추적되는 친구들을 불러오고 치유합니다.
 
 Resonance|공명
+Resonance Anchor|공명 기준점
+Resonance Tracker|공명 추적기
 Gate Resonance|게이트 공명
 Resonance occurs automatically when a shelter or karma gate closes, or a karma room activates, reaching tracked friends anywhere in the world.|피난처나 카르마 게이트가 닫히거나 카르마 방이 작동하면 자동으로 공명이 일어나 세계 어디에 있든 추적되는 친구에게 닿습니다.
 Resonance occurs automatically when a shelter or karma gate closes, or a karma room or warp point activates, reaching tracked friends anywhere in the world.|피난처나 카르마 게이트가 닫히거나 카르마 방이나 워프 포인트가 작동하면 자동으로 공명이 일어나 세계 어디에 있든 추적되는 친구에게 닿습니다.

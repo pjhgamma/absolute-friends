@@ -9,6 +9,8 @@ internal class SenseHooks : BaseHooks
 {
     protected override Configurable<bool>[] Options => [Config.Deaf, Config.Blind, Config.Hypothermia];
 
+    protected override string? Subject => "Senses";
+
     [HookPatch(typeof(On.Creature), nameof(On.Creature.Update))]
     private static void On_Creature_Update(On.Creature.orig_Update orig, Creature self, bool eu)
     {

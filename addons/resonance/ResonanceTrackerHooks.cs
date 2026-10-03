@@ -6,6 +6,8 @@ internal class ResonanceTrackerHooks : BaseHooks
 {
     protected override Configurable<bool>[] Options => [Config.ResonanceGate, Config.ResonanceRoom, Config.ResonanceGrab];
 
+    protected override string? Subject => "Resonance Tracker";
+
     [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.ctor))]
     private static void On_RainWorldGame_ctor(On.RainWorldGame.orig_ctor orig, RainWorldGame self, ProcessManager manager)
     {

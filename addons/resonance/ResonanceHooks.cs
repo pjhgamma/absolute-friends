@@ -106,6 +106,8 @@ internal class ResonanceAnchorHooks : BaseHooks
 {
     protected override Configurable<bool>[] Options => [Config.ResonanceRoom, Config.ResonanceGrab];
 
+    protected override string? Subject => "Resonance Anchor";
+
     [HookPatch(typeof(On.Room), nameof(On.Room.Loaded))]
     private static void On_Room_Loaded(On.Room.orig_Loaded orig, Room self)
     {
