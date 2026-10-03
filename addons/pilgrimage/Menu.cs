@@ -13,6 +13,6 @@ internal static class Menu
         menu.AddCheckBox(Config.GateForce);
         menu.AddFloatSlider(Config.GateForceTime, span: 3f, max: 5f);
         menu.AddCheckBox(Config.TempleGuard);
-        menu.AddCheckBox(Config.Ascension);
+        menu.AddCheckBox(Config.VoidSea);
     }
 }

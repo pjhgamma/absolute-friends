@@ -11,7 +11,7 @@ internal class WormThreadOverlay(VoidSeaScene scene, VoidWorm worm, VoidWorm.Arm
     {
         base.Update(eu);
 
-        if (!Config.Ascension.IsActive || friend.room != room || !scene.worms.Contains(worm))
+        if (!Config.VoidSea.IsActive || friend.room != room || !scene.worms.Contains(worm))
         {
             Destroy();
         }

@@ -9,13 +9,13 @@ using Watcher;
 
 namespace AbsoluteFriends.Pilgrimage;
 
-internal class AscensionHooks : BaseHooks
+internal class VoidSeaHooks : BaseHooks
 {
     private static readonly ConditionalWeakTable<Creature, RestrictionState> _restrictions = new();
 
     private static readonly ConditionalWeakTable<Player, object> _forcedVoidFlags = new();
 
-    protected override Configurable<bool>[] Options => [Config.Ascension];
+    protected override Configurable<bool>[] Options => [Config.VoidSea];
 
     [HookPatch(typeof(On.Creature), nameof(On.Creature.Update))]
     private static void On_Creature_Update(On.Creature.orig_Update orig, Creature self, bool eu)
@@ -268,9 +268,9 @@ internal class AscensionHooks : BaseHooks
     }
 }
 
-internal class WatcherAscensionHooks : WatcherHooks
+internal class WatcherVoidSeaHooks : WatcherHooks
 {
-    protected override Configurable<bool>[] Options => [Config.Ascension];
+    protected override Configurable<bool>[] Options => [Config.VoidSea];
 
     [HookPatch(typeof(On.Player), nameof(On.Player.Update))]
     private static void On_Player_Update(On.Player.orig_Update orig, Player self, bool eu)
