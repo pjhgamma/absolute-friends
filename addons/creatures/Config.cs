@@ -31,5 +31,15 @@ internal static class Config
 
         ScavengerShelter = addon.Bind("ScavengerShelter", true, new ConfigurableInfo("Will not have shelter objects taken by friendly scavengers.", tags: ["Scavenger Shelter"]));
         ScavengerTemplar = addon.Bind("ScavengerTemplar", true, new ConfigurableInfo("Will not be struck by a friendly scavenger's karma shield shockwave.", tags: ["Scavenger Shield"]));
+
+        addon.Group("Lizards", "Will not be harmed by friendly lizards.", LizardBite, LizardTongue, LizardSpit, LizardBeam, LizardBlizzard, LizardPoison);
+        addon.Group(
+            "Scavengers",
+            Options.Config.Watcher(
+                "Friendly scavengers will not take objects from shelters.",
+                "Friendly scavengers will not take objects from shelters, and their karma shield shockwaves will not strike friends."
+            ),
+            ScavengerShelter, ScavengerTemplar
+        );
     }
 }

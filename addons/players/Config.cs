@@ -55,5 +55,14 @@ internal static class Config
         SaintAttunement = addon.Bind("SaintAttunement", true, new ConfigurableInfo("Will not be instantly killed by the attunement of a Saint friend.", tags: ["Saint Attunement"]));
         WatcherCamouflage = addon.Bind("WatcherCamouflage", true, new ConfigurableInfo("Shares camouflage and its gauge with Watcher friends. Forced camouflage changes remain personal until synchronization resumes.", tags: ["Watcher Camouflage"]));
         RippleSpace = addon.Bind("RippleSpace", true, new ConfigurableInfo("Tracked friends follow their player into ripple space and stay in view.", tags: ["Ripple Space"]));
+
+        addon.Group("Grabbing", "Will not be grabbed by player friends by accident, and can wiggle free from their grasp.", GrabbingPlayer, Wiggle);
+        addon.Group(
+            "Carrying and Mauling",
+            Options.Config.Downpour("Can carry large tracked friends, and will not eat friends.", "Can carry large tracked friends, and will not maul or eat friends."),
+            Carry, CarryStun, Mauling
+        );
+        addon.Group("Slugcat Abilities", "Will not be harmed by the abilities of Gourmand, Artificer, and Saint friends.", GourmandSlam, ArtificerParry, SaintTongue, SaintAttunement);
+        addon.Group("Watcher Abilities", "Shares camouflage with Watcher friends, and tracked friends follow their player into ripple space.", WatcherCamouflage, RippleSpace);
     }
 }

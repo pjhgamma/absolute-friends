@@ -46,5 +46,8 @@ internal static class Config
             .Require(ResonanceAftershock);
         ResonanceEffect = addon.Bind("ResonanceEffect", true, new ConfigurableInfo("Displays visual effects upon resonance. A gate resonance melts the room into the void, while a room or grab resonance answers with ripples.", tags: ["Visual Effects"]))
             .RequireAny(ResonanceWarp, ResonanceMend);
+
+        addon.Group("Resonance", "Resonance warps and mends tracked friends.", ResonanceGate, ResonanceRoom, ResonanceGrab, ResonanceWarp, ResonanceMend, ResonanceEffect);
+        addon.Group("Backlash", "Resonance demands a cost and leaves an aftershock.", ResonanceCost, ResonanceAftershock);
     }
 }

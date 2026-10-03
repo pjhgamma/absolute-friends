@@ -23,5 +23,11 @@ internal static class AddonConfig
             .Require(Friendship);
         HunterDaddyOwnership = addon.Bind("HunterDaddyOwnership", true, new ConfigurableInfo("Makes Hunter Long Legs own anything held by its tentacles.", tags: ["Tentacle Ownership"]));
         GreenNeuronOwnership = addon.Bind("GreenNeuronOwnership", true, new ConfigurableInfo("Makes every green Neuron self-owned.", tags: ["Green Neuron Ownership"]));
+
+        // Group puts one switch in the Simple view of the framework's Addons tab that turns all of its options on or off together.
+        // An addon may group only its own Boolean options, and each option may belong to only one group.
+        // Options left out of every group appear only in the Detailed view.
+        addon.Group("Hunter Long Legs", "Treats Hunter Long Legs as a friend and lets it own what it holds.", Friendship, AggressiveHunter, HunterDaddyOwnership);
+        addon.Group("Green Neuron Ownership", "Makes every green Neuron self-owned.", GreenNeuronOwnership);
     }
 }

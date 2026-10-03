@@ -42,5 +42,12 @@ internal static class Config
             "Tracked friends follow the player through the Void Sea and return to the last shelter after ascension. Returned friends stay in the shelter after disabling this option.",
             "Tracked friends follow the player through the Void Sea and the final warps, and return to the last shelter after ascension. Returned friends stay in the shelter after disabling this option."
         ), tags: ["Void Sea"]));
+
+        addon.Group(
+            "Gates",
+            Options.Config.Watcher("Shelters and karma gates wait for tracked friends.", "Shelters, karma gates, and warp points wait for tracked friends."),
+            Gate, GateForce
+        );
+        addon.Group("Ascension", "Guardians spare tracked friends, who follow the player through the Void Sea.", TempleGuard, VoidSea);
     }
 }

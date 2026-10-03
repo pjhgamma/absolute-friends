@@ -12,8 +12,8 @@ internal sealed partial class RemixMenu
         AddTitle("Addons");
         AddLabel("Select a profile, then enable addons and configure their options.");
 
-        SetColumns(2);
-        _profileSelector = AddComboBox(Config.ProfileSelection, ProfileChoices(), "Selected Profile", span: 2f);
+        SetColumns(6);
+        _profileSelector = AddComboBox(Config.ProfileSelection, ProfileChoices(), "Profile", span: 6f);
 
         if (_profileSelector != null)
         {
@@ -21,7 +21,18 @@ internal sealed partial class RemixMenu
             RefreshProfileSelector();
         }
 
-        SectionFilter? filter = AddListSearch("_searchAddons", "Shows only the addons whose name or options contain what is typed here.");
+        OpRadioButtonGroup? view = AddRadioButtonRow(
+            Config.AddonView,
+            "View",
+            ("Simple", "Shows switches that turn whole features on or off at once."),
+            ("Detailed", "Shows every option of each addon.")
+        );
+        SectionFilter? filter = AddSearchBox("_searchAddons", "Search", "Shows only the addons whose name or options contain what is typed here.", span: 6f);
+
+        PinHeader();
+
+        view?.OnValueUpdate += (_, _, _) => filter?.ScrollToTop();
+
         Addon[] addons = [.. AddonRegistry.Ordered.Where(addon => !addon.IsApplied || addon.HasMenu)];
 
         Watch(() => Search(filter, addons));
@@ -50,7 +61,7 @@ internal sealed partial class RemixMenu
     {
         OpRect? container = null;
 
-        BeginSection([.. addon.Keywords]);
+        BeginSection([.. addon.Keywords], addon.IsApplied ? () => IsDetailed : null);
         BeginBox();
 
         SetColumns(2);
@@ -69,11 +80,6 @@ internal sealed partial class RemixMenu
         if (!addon.IsApplied && AddLabel("Remix is not enabled.", alignment: FLabelAlignment.Left) is { } notApplied)
         {
             notApplied.color = Palette.Secondary;
-        }
-
-        if (addon.AddonDependencyIds.Count > 0)
-        {
-            AddLabel("Requires: <PLACEHOLDER>", string.Join(", ", addon.AddonDependencyIds.Select(AddonRegistry.NameOf)), alignment: FLabelAlignment.Left);
         }
 
         if (addon.IsMismatched && AddLabel("Built for Absolute Friends v<PLACEHOLDER>; it may not work correctly.", addon.AbsoluteFriendsVersion, alignment: FLabelAlignment.Left) is { } warning)
@@ -113,6 +119,8 @@ internal sealed partial class RemixMenu
         WithButtonRequirement(addon.Enabled, () => AddonRegistry.BuildMenu(addon, this));
 
         container = EndBox();
+
+        BuildSimpleAddon(addon);
     }
 
     private bool IsExpanded(Addon addon)

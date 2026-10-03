@@ -20,6 +20,16 @@ public abstract partial class MenuBuilder
         }
     }
 
+    private protected bool HasControl(ConfigurableBase configurableBase)
+    {
+        return _entries.ContainsKey(configurableBase);
+    }
+
+    private protected bool IsUsable(ConfigurableBase configurableBase)
+    {
+        return _entries.TryGetValue(configurableBase, out OptionEntry entry) && !entry.Focusable.greyedOut;
+    }
+
     private void Register(ConfigurableBase configurableBase, UIfocusable focusable, OpLabel? label = null)
     {
         if (_entries.ContainsKey(configurableBase))

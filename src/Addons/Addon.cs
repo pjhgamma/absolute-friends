@@ -1,4 +1,5 @@
 using System.Reflection;
+using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Options;
 
@@ -9,6 +10,8 @@ public sealed class Addon
     private static ModManager.Mod? _host;
 
     private readonly List<Configurable<bool>> _switches = [];
+
+    private readonly List<OptionGroup> _groups = [];
 
     private readonly List<string> _keywords = [];
 
@@ -81,6 +84,10 @@ public sealed class Addon
 
     public Configurable<bool>? Enabled { get; }
 
+    public IReadOnlyList<OptionGroup> Groups => _groups;
+
+    internal bool HasUngroupedOptions => _options.Count > _groups.Sum(group => group.Options.Count);
+
     internal IEnumerable<string> Keywords => [Name, .. AddonDependencyIds.Select(AddonRegistry.RawNameOf), .. _keywords];
 
     internal bool HasMenu { get; }
@@ -117,6 +124,44 @@ public sealed class Addon
         return option;
     }
 
+    public OptionGroup? Group(string label, string description, params Configurable<bool>[] options)
+    {
+        AddonLogger logger = Reporter.GetLogger(Name);
+        List<Configurable<bool>> members = [];
+
+        foreach (var option in options ?? [])
+        {
+            if (option == null || !_switches.Contains(option))
+            {
+                logger.LogWarning($"Group {label} skipped {option?.key ?? "a missing option"} because it is not an option of this addon");
+
+                continue;
+            }
+
+            if (members.Contains(option) || _groups.Any(group => group.Options.Contains(option)))
+            {
+                logger.LogWarning($"Group {label} skipped {option.key} because it already belongs to a group");
+
+                continue;
+            }
+
+            members.Add(option);
+        }
+
+        if (members.Count == 0)
+        {
+            logger.LogWarning($"Group {label} was not created because it has no options");
+
+            return null;
+        }
+
+        OptionGroup group = new(this, label, description, members);
+
+        _groups.Add(group);
+
+        return group;
+    }
+
     internal bool HasOption(string query)
     {
         return _keywords.Any(keyword => keyword.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0);
@@ -142,9 +187,7 @@ public sealed class Addon
 
     private static bool IsSelected(Configurable<bool> option)
     {
-        bool selected = option.BoundUIconfig is { } control && bool.TryParse(control.value, out bool value) ? value : option.Value;
-
-        return selected && option.Requirements.All(group => group.Any(IsSelected));
+        return option.IsChecked && option.Requirements.All(group => group.Any(IsSelected));
     }
 
     private void SetRunning(bool isRunning)

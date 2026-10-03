@@ -43,6 +43,8 @@ internal sealed partial class RemixMenu : MenuBuilder
 
     private Profile? CurrentProfile => _profileIndex >= 0 && _profileIndex < _profiles.Count ? _profiles[_profileIndex] : null;
 
+    private static bool IsDetailed => Config.AddonView.BoundUIconfig is { } control && int.TryParse(control.value, out int value) ? value == 1 : Config.AddonView.Value == 1;
+
     public override void Initialize()
     {
         base.Initialize();

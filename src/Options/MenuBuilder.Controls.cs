@@ -181,7 +181,27 @@ public abstract partial class MenuBuilder
         return colorPicker;
     }
 
-    private protected OpRadioButton? AddRadioButton(string text, out OpLabel? label, string? description = null, float span = 1f, bool enabled = true)
+    private protected OpRadioButtonGroup? AddRadioButtonRow(Configurable<int> configurable, string text, params (string Text, string Description)[] choices)
+    {
+        OpRadioButtonGroup? radioButtonGroup = AddRadioButtonGroup(configurable);
+
+        if (radioButtonGroup == null || !BeginElement(1f))
+        {
+            return radioButtonGroup;
+        }
+
+        AddControlLabel(radioButtonGroup.description, text, 1f, out _);
+        AddColumn(1f);
+
+        foreach (var (choice, description) in choices)
+        {
+            AddRadioButton(choice, out _, description, span: 2f, indent: Gap);
+        }
+
+        return radioButtonGroup;
+    }
+
+    private protected OpRadioButton? AddRadioButton(string text, out OpLabel? label, string? description = null, float span = 1f, bool enabled = true, float indent = 0f)
     {
         label = null;
 
@@ -191,14 +211,14 @@ public abstract partial class MenuBuilder
         }
 
         string note = Translate(description ?? "");
-        OpRadioButton radioButton = new(_pos.x, _pos.y - Spacing * 0.5f)
+        OpRadioButton radioButton = new(_pos.x + indent, _pos.y - Spacing * 0.5f)
         {
             description = note
         };
 
         label = new(
-            new Vector2(_pos.x + Spacing + Gap, _pos.y - Spacing * 0.5f),
-            new(ElementWidth * span - Spacing - Gap, Spacing),
+            new Vector2(_pos.x + indent + Spacing + Gap, _pos.y - Spacing * 0.5f),
+            new(ElementWidth * span - indent - Spacing - Gap, Spacing),
             Translate(text),
             FLabelAlignment.Left
         )

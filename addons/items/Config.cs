@@ -97,5 +97,14 @@ internal static class Config
         Snail = addon.Bind("Snail", true, new ConfigurableInfo("Will not be stunned by the next pop from a snail thrown, hit, or killed by a friend.", tags: ["Snail"]));
         TubeWorm = addon.Bind("TubeWorm", true, new ConfigurableInfo("Will not be caught by a grappling worm's tongue used by friends.", tags: ["Grappling Worm"]));
         Frog = addon.Bind("Frog", true, new ConfigurableInfo("Will not be attached by a frog thrown by friends.", tags: ["Frog"]));
+
+        addon.Group(
+            "Weapons",
+            "Will not be hurt by items friends throw or use.",
+            Rock, Spear, ExplosiveSpear, ElectricSpear, HellSpear, PoisonSpear, LilyPuck, ScavengerBomb, SingularityBomb, FireEgg, SporePlant, Boomerang,
+            FlareBomb, PuffBall, WaterNut, FirecrackerPlant, GraffitiBomb, DangleFruit, JellyFish, Pomegranate
+        );
+        addon.Group("Mushroom", "Will share the effects of mushrooms with slugcat friends.", Mushroom);
+        addon.Group("Small Creatures", "Will not be caught or stunned by creatures friends throw or use.", Snail, TubeWorm, Frog);
     }
 }

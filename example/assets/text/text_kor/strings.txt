@@ -99,3 +99,4 @@ Tentacle Ownership|촉수 소유
 Makes Hunter Long Legs own anything held by its tentacles.|헌터 롱 레그가 촉수로 붙잡은 대상을 소유하게 합니다.
 Green Neuron Ownership|녹색 신경파리 소유
 Makes every green Neuron self-owned.|모든 녹색 신경파리를 자기 소유로 취급합니다.
+Treats Hunter Long Legs as a friend and lets it own what it holds.|헌터 롱 레그를 친구로 취급하고 붙잡은 것을 소유하게 합니다.

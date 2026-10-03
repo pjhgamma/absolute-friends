@@ -64,5 +64,16 @@ public static class Config
         FriendSafari = addon.Bind("FriendSafari", false, new ConfigurableInfo("Enables friendship rules in Safari mode.", tags: ["Safari"]));
 
         FriendManagerKey = addon.Bind("FriendManagerKey", KeyCode.F7, new ConfigurableInfo("Opens the friend manager during gameplay or while paused.", tags: ["Friend Manager Shortcut"]));
+
+        addon.Group("Slugcats", Options.Config.Downpour("Treats players as friends with one another.", "Treats slugcats as friends with one another."), FriendSlugcat);
+        addon.Group("Friendly Creatures", "Treats friendly creatures as friends.", FriendCreature);
+        addon.Group("Neutral Creatures", "Also treats neutral creatures as friends.", FriendNeutralCreature);
+        addon.Group("Friend Network", "Shares friendship among slugcats and among a player's creature friends.", FriendSharing, FriendChaining);
+        addon.Group("Grabbed Objects", "Treats objects held by friends as friendly.", FriendGrabbed, FriendGrabbedForce);
+        addon.Group(
+            ModManager.Expedition ? "Story and Expedition" : "Story",
+            ModManager.Expedition ? "Enables friendship rules in Story and Expedition modes." : "Enables friendship rules in Story mode.",
+            FriendStory, FriendExpedition
+        );
     }
 }

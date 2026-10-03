@@ -161,7 +161,7 @@ internal sealed partial class RemixMenu
             _profileIndex = 0;
             _profileState = ProfileManager.State();
 
-            ShowProfileResult(created.Result, "Profile created.");
+            ShowProfileResult(created.Profile, "Profile created.");
             RefreshProfileViews();
             _profileFilter?.ScrollToTop();
         }
@@ -178,7 +178,8 @@ internal sealed partial class RemixMenu
             return;
         }
 
-        ShowProfileResult(ProfileManager.Apply(profile), "Profile loaded.");
+        ProfileManager.Apply(profile);
+        ShowProfileResult(profile, "Profile loaded.");
         _profileState = ProfileManager.State();
     }
 
@@ -307,15 +308,23 @@ internal sealed partial class RemixMenu
         Menu.Remix.ConfigConnector.ShowAlert(Translate(text));
     }
 
-    private void ShowProfileResult(ProfileResult result, string action)
+    private void ShowProfileResult(Profile profile, string action)
     {
-        SetProfileStatus(Translate("<PLACEHOLDER> <PLACEHOLDER> addons and <PLACEHOLDER> options; <PLACEHOLDER> addons and <PLACEHOLDER> options unavailable.").FillPlaceholders(
+        ProfileSummary summary = ProfileManager.Summarize(profile);
+        string status = Translate("<PLACEHOLDER> Enabled: <PLACEHOLDER> of <PLACEHOLDER> addons and <PLACEHOLDER> of <PLACEHOLDER> options.").FillPlaceholders(
             Translate(action),
-            result.Addons,
-            result.Options,
-            result.UnavailableAddons,
-            result.UnavailableOptions
-        ));
+            summary.EnabledAddons,
+            summary.Addons,
+            summary.EnabledOptions,
+            summary.Options
+        );
+
+        if (summary.UnavailableAddons > 0 || summary.UnavailableOptions > 0)
+        {
+            status += " " + Translate("Unavailable: <PLACEHOLDER> addons and <PLACEHOLDER> options").FillPlaceholders(summary.UnavailableAddons, summary.UnavailableOptions);
+        }
+
+        SetProfileStatus(status);
     }
 
     private Profile? ProfileAt(int slot) => slot >= 0 && slot < _profiles.Count ? _profiles[slot] : null;

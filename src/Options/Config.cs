@@ -6,6 +6,8 @@ public static class Config
 
     internal static Configurable<string> ProfileSelection = null!;
 
+    internal static Configurable<int> AddonView = null!;
+
     internal static Configurable<bool> Debug = null!;
 
     internal static Configurable<bool> HookBaselines = null!;
@@ -20,7 +22,8 @@ public static class Config
 
     internal static void Bind(OptionInterface oi)
     {
-        ProfileSelection = oi.config.Bind("ProfileSelection", NoProfile, new ConfigurableInfo("Selects a profile to load or modify.", tags: ["Selected Profile"]));
+        ProfileSelection = oi.config.Bind("ProfileSelection", NoProfile, new ConfigurableInfo("Selects a profile to load or modify.", tags: ["Profile"]));
+        AddonView = oi.config.Bind("AddonView", 0, new ConfigurableInfo("Chooses how the Addons tab shows options.", tags: ["View"]));
 
         Debug = oi.config.Bind("Debug", true, new ConfigurableInfo("Records patch locations and behavior in the diagnostics report.", tags: ["Debug"]));
         HookBaselines = oi.config.Bind("HookBaselines", false, new ConfigurableInfo("Records hook baselines as HookTest attributes in the diagnostics report.", tags: ["Record Hook Baselines"])).Require(Debug);
@@ -40,6 +43,20 @@ public static class Config
     extension(Configurable<bool>? option)
     {
         public bool IsActive => option is { Value: true } && option.IsAllowed;
+
+        internal bool IsChecked => option?.BoundUIconfig is { } control && bool.TryParse(control.value, out bool value) ? value : option?.Value == true;
+
+        internal void Check(bool value)
+        {
+            if (option?.BoundUIconfig is { } control)
+            {
+                control.value = value ? "true" : "false";
+            }
+            else
+            {
+                option?.Value = value;
+            }
+        }
     }
 
     extension<T>(T target) where T : ConfigurableBase

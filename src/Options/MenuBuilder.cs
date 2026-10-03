@@ -217,10 +217,14 @@ public abstract partial class MenuBuilder : OptionInterface
             return;
         }
 
-        FinishRow();
+        if (_currentColumn > 0)
+        {
+            AddRow(0.75f);
+        }
+
         _headerIndex = _elements.Count;
         _headerBottom = _pos.y;
-        _edge = _pos.y;
+        _edge = _pos.y + Spacing * 0.5f;
         _pos.y -= Spacing * 0.5f;
     }
 

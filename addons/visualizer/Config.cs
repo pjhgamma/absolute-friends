@@ -28,5 +28,8 @@ internal static class Config
         OwnerIcon = addon.Bind("OwnerIcon", false, new ConfigurableInfo("Draws the owner's icon above everything in view that has an owner.", tags: ["Owner Icon"]));
         UpdateInterval = addon.Bind("UpdateInterval", 10, new ConfigurableInfo("Sets how many frames pass between friend and owner checks.", new ConfigAcceptableRange<int>(1, 40), tags: ["Update Interval"]))
             .RequireAny(FriendLink, FriendName, FriendIcon, OwnerLink, OwnerName, OwnerIcon);
+
+        addon.Group("Friend Overlay", "Visualizes friendships.", FriendLink, FriendName, FriendIcon);
+        addon.Group("Owner Overlay", "Visualizes ownerships.", OwnerLink, OwnerName, OwnerIcon);
     }
 }

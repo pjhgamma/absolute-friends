@@ -59,5 +59,15 @@ internal static class Config
         Forgiveness = addon.Bind("Forgiveness", false, new ConfigurableInfo("Reputation loss between friends is reduced.", tags: ["Forgiveness"]));
         ForgivenessRatio = addon.Bind("ForgivenessRatio", 0.1f, new ConfigurableInfo("Sets how much reputation loss between friends is forgiven. A value of 1 lets the deed pass unnoticed, and 0 leaves the reputation loss untouched."))
             .Require(Forgiveness);
+
+        addon.Group("Collisions", "Will not collide with friends.", Collision);
+        addon.Group("Peace", "Friends do not hurt, frighten, or steal from one another.", Violence, Explosion, Fear, Stealing);
+        addon.Group("Shared Senses", "Deafness and blindness fade toward those of nearby friends.", Deaf, Blind);
+        addon.Group(
+            "Recovery",
+            ModManager.HypothermiaModule ? "Hypothermia and breath recover toward those of nearby friends." : "Breath recovers toward that of nearby friends.",
+            Hypothermia, Breath
+        );
+        addon.Group("Forgiveness", "Reputation loss between friends is reduced.", Forgiveness);
     }
 }
