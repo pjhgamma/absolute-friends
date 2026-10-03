@@ -5,6 +5,15 @@ using RWCustom;
 
 namespace AbsoluteFriends.Core;
 
+public enum FriendshipType
+{
+    None,
+    Indirect,
+    Neutral,
+    Friendly,
+    Tracked,
+}
+
 public static partial class FriendUtils
 {
     public const float FriendLikeThreshold = 0.5f;
@@ -173,23 +182,26 @@ public static partial class FriendUtils
             return unresolved ? null : ruled;
         }
 
-        private bool? GetCreatureFriendship(AbstractCreature abstractSlugcat, bool allowNeutral = true)
+        private bool? GetCreatureFriendship(AbstractCreature abstractSlugcat, bool allowNeutral = true) =>
+            source.GetCreatureFriendshipType(abstractSlugcat, allowNeutral) is { } type ? type != FriendshipType.None : null;
+
+        private FriendshipType? GetCreatureFriendshipType(AbstractCreature abstractSlugcat, bool allowNeutral = true)
         {
             if (source.GetFriendshipVerdict(abstractSlugcat) is { } ruled)
             {
-                return ruled;
+                return ruled ? FriendshipType.Friendly : FriendshipType.None;
             }
 
             if (!Config.FriendChaining.IsActive && !source.IsSlugcat && !source.IsFriendlyAllowed)
             {
-                return false;
+                return FriendshipType.None;
             }
 
-            bool? direct = source.GetDirectFriendship(abstractSlugcat, allowNeutral);
+            FriendshipType? direct = source.GetDirectFriendshipType(abstractSlugcat, allowNeutral);
 
-            if (direct == true)
+            if (direct is FriendshipType.Friendly or FriendshipType.Neutral)
             {
-                return true;
+                return direct;
             }
 
             if (!Config.FriendSharing.IsActive)
@@ -204,27 +216,30 @@ public static partial class FriendUtils
                     continue;
                 }
 
-                if ((source.GetFriendshipVerdict(sharedSlugcat) ?? source.GetDirectFriendship(sharedSlugcat, allowNeutral)) == true)
+                bool accepted = source.GetFriendshipVerdict(sharedSlugcat)
+                    ?? (source.GetDirectFriendshipType(sharedSlugcat, allowNeutral) is FriendshipType.Friendly or FriendshipType.Neutral);
+
+                if (accepted)
                 {
-                    return true;
+                    return FriendshipType.Indirect;
                 }
             }
 
             return direct;
         }
 
-        private bool? GetDirectFriendship(AbstractCreature abstractSlugcat, bool allowNeutral = true)
+        private FriendshipType? GetDirectFriendshipType(AbstractCreature abstractSlugcat, bool allowNeutral = true)
         {
             if (source.IsSlugcat)
             {
-                return true;
+                return FriendshipType.Friendly;
             }
 
             ArtificialIntelligence? aiSource = source?.abstractAI?.RealAI;
 
             if (aiSource?.friendTracker != null && source.IsFriendlyAllowed && (source.IsFriendlyLizard || source.Like(abstractSlugcat)))
             {
-                return true;
+                return FriendshipType.Friendly;
             }
 
             if (aiSource?.tracker == null)
@@ -236,13 +251,13 @@ public static partial class FriendUtils
 
             if (relationship.type == CreatureTemplate.Relationship.Type.Pack)
             {
-                return source.IsFriendlyAllowed ? true : null;
+                return source.IsFriendlyAllowed ? FriendshipType.Friendly : null;
             }
 
             return allowNeutral
                 && source.IsNeutralAllowed
                 && relationship.type == CreatureTemplate.Relationship.Type.Ignores
-                && source.GetReputation(abstractSlugcat) is not < FriendReputationThreshold ? true : null;
+                && source.GetReputation(abstractSlugcat) is not < FriendReputationThreshold ? FriendshipType.Neutral : null;
         }
 
         private bool IsFriendForChaining(AbstractCreature abstractSlugcat)
@@ -285,7 +300,7 @@ public static partial class FriendUtils
             return false;
         }
 
-        private bool IsFriend(AbstractCreature? target, bool chaining)
+        private FriendshipType GetFriendshipType(AbstractCreature? target, bool chaining)
         {
             if (
                 source == null
@@ -296,7 +311,7 @@ public static partial class FriendUtils
                 || target.IsDenied
             )
             {
-                return false;
+                return FriendshipType.None;
             }
 
             AbstractCreature? abstractSlugcat = null;
@@ -317,12 +332,12 @@ public static partial class FriendUtils
             {
                 if (!Config.FriendSlugcat.IsActive && abstractCreature.IsSlugcat)
                 {
-                    return false;
+                    return FriendshipType.None;
                 }
 
-                if (abstractCreature.GetCreatureFriendship(abstractSlugcat) is { } isCreatureFriend)
+                if (abstractCreature.GetCreatureFriendshipType(abstractSlugcat) is { } type)
                 {
-                    return isCreatureFriend;
+                    return type;
                 }
             }
 
@@ -331,7 +346,7 @@ public static partial class FriendUtils
                 && !source.IsPlayer
                 && !target.IsPlayer
                 && (Config.FriendSlugcat.IsActive || (!source.IsSlugcat && !target.IsSlugcat))
-                && source.IsChainedFriend(target);
+                && source.IsChainedFriend(target) ? FriendshipType.Indirect : FriendshipType.None;
         }
     }
 
@@ -355,29 +370,64 @@ public static partial class FriendUtils
             }
         }
 
+        public FriendshipType FriendshipOfPlayer
+        {
+            get
+            {
+                FriendshipType result = FriendshipType.None;
+
+                foreach (var abstractPlayer in source?.world?.game?.Players ?? [])
+                {
+                    FriendshipType type = source.FriendshipWith(abstractPlayer);
+
+                    if (type > result)
+                    {
+                        result = type;
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        public FriendshipType FriendshipWith(AbstractPhysicalObject? target, bool direct = false)
+        {
+            FriendshipType type = source.GetFriendshipType(target, direct, true);
+
+            return type != FriendshipType.None && (source.IsTrackedWith(target) || target.IsTrackedWith(source)) ? FriendshipType.Tracked : type;
+        }
+
         public bool IsFriend(AbstractPhysicalObject? target, bool direct = false) => source.IsFriend(target, direct, true);
 
         public bool IsFriend(PhysicalObject? target, bool direct = false) => source.IsFriend(target?.abstractPhysicalObject, direct);
 
-        private bool IsFriend(AbstractPhysicalObject? target, bool direct, bool chaining)
+        private bool IsFriend(AbstractPhysicalObject? target, bool direct, bool chaining) =>
+            source.GetFriendshipType(target, direct, chaining) != FriendshipType.None;
+
+        private bool IsTrackedWith(AbstractPhysicalObject? target) => target is AbstractCreature { IsPlayer: true } abstractPlayer && source is AbstractCreature { IsPlayer: false } abstractCreature && abstractCreature.IsTrackedFor(abstractPlayer);
+
+        private FriendshipType GetFriendshipType(AbstractPhysicalObject? target, bool direct, bool chaining)
         {
             AbstractCreature? sourceSelf = source as AbstractCreature;
             AbstractCreature? targetSelf = target as AbstractCreature;
+            FriendshipType type = sourceSelf.GetFriendshipType(targetSelf, chaining);
 
-            if (sourceSelf.IsFriend(targetSelf, chaining))
+            if (type != FriendshipType.None)
             {
-                return true;
+                return type;
             }
 
             if (direct || sourceSelf.IsDenied || targetSelf.IsDenied)
             {
-                return false;
+                return FriendshipType.None;
             }
 
             AbstractCreature? sourceOwner = source.Owner;
             AbstractCreature? targetOwner = target.Owner;
 
-            return sourceSelf.IsFriend(targetOwner, chaining) || sourceOwner.IsFriend(targetSelf, chaining) || sourceOwner.IsFriend(targetOwner, chaining);
+            return sourceSelf.GetFriendshipType(targetOwner, chaining) != FriendshipType.None
+                || sourceOwner.GetFriendshipType(targetSelf, chaining) != FriendshipType.None
+                || sourceOwner.GetFriendshipType(targetOwner, chaining) != FriendshipType.None ? FriendshipType.Indirect : FriendshipType.None;
         }
     }
 
