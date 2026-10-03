@@ -8,13 +8,13 @@ internal static class AddonRegistry
 {
     private static readonly string[] _builtIn = [
         "pjhgamma.absolutefriends.core",
+        "pjhgamma.absolutefriends.visualizer",
         "pjhgamma.absolutefriends.general",
         "pjhgamma.absolutefriends.items",
         "pjhgamma.absolutefriends.players",
         "pjhgamma.absolutefriends.creatures",
         "pjhgamma.absolutefriends.iterators",
         "pjhgamma.absolutefriends.pilgrimage",
-        "pjhgamma.absolutefriends.visualizer",
         "pjhgamma.absolutefriends.resonance",
     ];
 

@@ -166,6 +166,30 @@ Shares friendship among slugcats and among a player's creature friends.|슬러�
 Story and Expedition|스토리와 원정
 Enables friendship rules in Story and Expedition modes.|스토리와 원정 모드에서 친구 관계 규칙을 활성화합니다.
 
+Absolute Friends: Visualizer|절대적 친구: 시각화
+Visually shows friends and owners.|친구와 소유자를 시각적으로 표시합니다.
+
+Tag|표식
+Friend Link|친구 연결선
+Draws a line between two things as the mod treats them as friends.|두 대상이 친구로 판단되는 동안 그 사이에 선을 그립니다.
+Friend Name|친구 이름표
+Draws the name above every friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 이름을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 이름을 화면 가장자리에 유지합니다.
+Friend Icon|친구 아이콘
+Draws an icon above every friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 아이콘을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 아이콘을 화면 가장자리에 유지합니다.
+Owner Link|소유자 연결선
+Draws a line between each object and its owning creature, thickest at the owner's end.|각 물체와 해당 물체를 소유한 생물 사이에 선을 그립니다. 선은 소유자 쪽 끝이 가장 굵습니다.
+Owner Name|소유자 이름표
+Draws the owner's name above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 이름을 표시합니다.
+Owner Icon|소유자 아이콘
+Draws the owner's icon above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 아이콘을 표시합니다.
+Update Interval|갱신 간격
+Sets how many frames pass between friend and owner checks.|친구와 소유자를 확인하는 간격을 프레임 단위로 설정합니다.
+
+Friend Overlay|친구 표시
+Visualizes friendships.|친구 관계를 시각화합니다.
+Owner Overlay|소유자 표시
+Visualizes ownerships.|소유 관계를 시각화합니다.
+
 Absolute Friends: General|절대적 친구: 일반
 Controls the general harm and effects that pass between friends.|친구 사이의 일반적인 피해나 영향을 조정합니다.
 
@@ -382,30 +406,6 @@ Shelters and karma gates wait for tracked friends.|피난처와 카르마 게이
 Shelters, karma gates, and warp points wait for tracked friends.|피난처, 카르마 게이트, 워프 포인트가 추적되는 친구를 기다립니다.
 Ascension|승천
 Guardians spare tracked friends, who follow the player through the Void Sea.|가디언이 추적되는 친구를 공격하지 않으며, 친구는 공허 바다에서 플레이어를 따라갑니다.
-
-Absolute Friends: Visualizer|절대적 친구: 시각화
-Visually shows friends and owners.|친구와 소유자를 시각적으로 표시합니다.
-
-Tag|표식
-Friend Link|친구 연결선
-Draws a line between two things as the mod treats them as friends.|두 대상이 친구로 판단되는 동안 그 사이에 선을 그립니다.
-Friend Name|친구 이름표
-Draws the name above every friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 이름을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 이름을 화면 가장자리에 유지합니다.
-Friend Icon|친구 아이콘
-Draws an icon above every friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 아이콘을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 아이콘을 화면 가장자리에 유지합니다.
-Owner Link|소유자 연결선
-Draws a line between each object and its owning creature, thickest at the owner's end.|각 물체와 해당 물체를 소유한 생물 사이에 선을 그립니다. 선은 소유자 쪽 끝이 가장 굵습니다.
-Owner Name|소유자 이름표
-Draws the owner's name above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 이름을 표시합니다.
-Owner Icon|소유자 아이콘
-Draws the owner's icon above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 아이콘을 표시합니다.
-Update Interval|갱신 간격
-Sets how many frames pass between friend and owner checks.|친구와 소유자를 확인하는 간격을 프레임 단위로 설정합니다.
-
-Friend Overlay|친구 표시
-Visualizes friendships.|친구 관계를 시각화합니다.
-Owner Overlay|소유자 표시
-Visualizes ownerships.|소유 관계를 시각화합니다.
 
 Absolute Friends: Resonance|절대적 친구: 공명
 Warps and mends tracked friends through resonance.|공명을 통해 추적되는 친구들을 불러오고 치유합니다.
