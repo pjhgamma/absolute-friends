@@ -98,11 +98,12 @@ internal class TagOverlay : HudOverlay
 
     private static void Draw(SubjectTag tag, AbstractPhysicalObject source, Subject subject, Vector2 position, bool isDistant)
     {
-        int row = 0;
+        bool isMarked = FriendHudOverlay.IsShowing(source);
+        int row = !isDistant && isMarked ? 3 : 0;
 
         tag.Clear();
 
-        if (Relationships.IsShown(subject.Type))
+        if (Relationships.IsShown(subject.Type) && !isMarked)
         {
             DrawSide(tag.Friend, subject.Friend, position, isDistant, ref row);
         }

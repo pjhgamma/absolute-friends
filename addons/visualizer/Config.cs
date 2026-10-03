@@ -4,6 +4,8 @@ namespace AbsoluteFriends.Visualizer;
 
 internal static class Config
 {
+    public static Configurable<bool> FriendMarkers = null!;
+
     public static Configurable<bool> Icons = null!;
 
     public static Configurable<int> IconStyle = null!;
@@ -20,6 +22,8 @@ internal static class Config
 
     public static void Bind(Addon addon)
     {
+        FriendMarkers = addon.Bind("FriendMarkers", false, new ConfigurableInfo("Shows tracked friends' arrows and names in their colors, and their icons at the screen edge when in another room.", tags: ["Friend Markers"]));
+
         Icons = addon.Bind("Icons", false, new ConfigurableInfo("Draws icons above shown friends, and owners' icons above owned things. Dead creatures' icons are dimmed.", tags: ["Relationship Icons"]));
         IconStyle = addon.Bind("IconStyle", (int)RelationshipIconStyle.Creature, new ConfigurableInfo("Chooses creature artwork or friendship symbols for relationship icons.", new ConfigAcceptableRange<int>(0, 1), tags: ["Icon Style"]))
             .Require(Icons);
@@ -32,8 +36,9 @@ internal static class Config
             .RequireAny(Icons, Names, Links);
 
         UpdateInterval = addon.Bind("UpdateInterval", 10, new ConfigurableInfo("Sets how many frames pass between friend and owner checks.", new ConfigAcceptableRange<int>(1, 40), tags: ["Update Interval"]))
-            .RequireAny(Icons, Names, Links);
+            .RequireAny(FriendMarkers, Icons, Names, Links);
 
+        addon.Group("Friend Markers", "Marks tracked friends.", FriendMarkers);
         addon.Group("Relationship Overlay", "Visualizes relationships with icons, names, and links.", Icons, Names, Links);
     }
 }

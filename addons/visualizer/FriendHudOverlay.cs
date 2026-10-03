@@ -1,0 +1,187 @@
+using System.Runtime.CompilerServices;
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
+using UnityEngine;
+
+namespace AbsoluteFriends.Visualizer;
+
+internal class FriendHudOverlay : HudOverlay
+{
+    private static readonly ConditionalWeakTable<Room, FriendHudOverlay> _overlays = new();
+
+    private readonly Dictionary<AbstractCreature, FriendMarker> _markers = [];
+
+    private readonly HashSet<AbstractCreature> _sources = [];
+
+    private readonly List<AbstractCreature> _removed = [];
+
+    private readonly OverlayPositions _positions = new();
+
+    private readonly UpdateTimer _timer = new();
+
+    public FriendHudOverlay(Room room)
+    {
+        _overlays.Remove(room);
+        _overlays.Add(room, this);
+    }
+
+    private static bool IsEnabled => Config.FriendMarkers.IsActive;
+
+    public static bool IsShowing(AbstractPhysicalObject source)
+    {
+        return Config.FriendMarkers.IsActive
+            && source is AbstractCreature creature
+            && RainWorldUtils.MainCamera(source.world?.game)?.room is { } viewed
+            && _overlays.TryGetValue(viewed, out var overlay)
+            && !overlay.slatedForDeletetion
+            && overlay._markers.TryGetValue(creature, out var marker)
+            && marker.IsVisible;
+    }
+
+    public override void Update(bool eu)
+    {
+        base.Update(eu);
+
+        try
+        {
+            RoomCamera? camera = RainWorldUtils.MainCamera(room?.game);
+
+            if (!IsEnabled || camera == null || camera.room != room)
+            {
+                Clear();
+
+                return;
+            }
+
+            if (_timer.Elapse())
+            {
+                Refresh();
+            }
+
+            UpdateMarkers(camera);
+        }
+        catch (Exception exception)
+        {
+            Clear();
+            this.Destroy(exception);
+        }
+    }
+
+    public override void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
+    {
+        base.DrawSprites(sLeaser, rCam, timeStacker, camPos);
+
+        if (sLeaser.deleteMeNextFrame || !OverlayUtils.ShouldDraw(rCam, room))
+        {
+            return;
+        }
+
+        Container.isVisible = IsEnabled;
+
+        if (!Container.isVisible)
+        {
+            return;
+        }
+
+        try
+        {
+            foreach (var entry in _markers)
+            {
+                entry.Value.Draw(rCam, _positions.TryGet(entry.Key, rCam, camPos, timeStacker, out OverlayPosition place) ? place : null, timeStacker);
+            }
+        }
+        catch (Exception exception)
+        {
+            Clear();
+            this.Destroy(exception);
+        }
+    }
+
+    private static bool IsHidden(RoomCamera camera)
+    {
+        RoomCamera.CameraCutsceneType type = camera.cutsceneType;
+
+        return type == RoomCamera.CameraCutsceneType.HideHudAndFollowNoone
+            || (
+                camera.InCutscene
+                && (
+                    type == RoomCamera.CameraCutsceneType.VoidSea
+                    || type == RoomCamera.CameraCutsceneType.EndingOE
+                    || type == RoomCamera.CameraCutsceneType.HunterStart
+                    || type == RoomCamera.CameraCutsceneType.HideJollyHud
+                    || type == RoomCamera.CameraCutsceneType.HideJollyHudAndArrows
+                )
+            );
+    }
+
+    private void Refresh()
+    {
+        _sources.Clear();
+
+        foreach (var creature in FriendUtils.TrackedFriends)
+        {
+            if (creature.IsPlayer || creature.slatedForDeletion || creature.world != room.world || !_sources.Add(creature))
+            {
+                continue;
+            }
+
+            if (!Config.FriendMarkers.IsActive)
+            {
+                continue;
+            }
+
+            if (!_markers.TryGetValue(creature, out var marker))
+            {
+                marker = new(creature);
+
+                AddNodes(marker.Nodes);
+
+                _markers.Add(creature, marker);
+            }
+
+            marker.Refresh();
+        }
+    }
+
+    private void UpdateMarkers(RoomCamera camera)
+    {
+        bool isActive = Config.FriendMarkers.IsActive;
+        bool isShown = isActive && !IsHidden(camera);
+
+        _removed.Clear();
+
+        foreach (var entry in _markers)
+        {
+            AbstractCreature creature = entry.Key;
+            FriendMarker marker = entry.Value;
+            bool isSource = isActive && _sources.Contains(creature);
+            bool positioned = _positions.TryGet(creature, camera, camera.pos, 1f, out OverlayPosition place);
+
+            marker.Update(isShown && isSource && positioned ? place : null);
+
+            if (!isSource && !marker.IsVisible)
+            {
+                _removed.Add(creature);
+            }
+        }
+
+        foreach (var creature in _removed)
+        {
+            _markers[creature].Remove();
+            _markers.Remove(creature);
+        }
+    }
+
+    private void Clear()
+    {
+        foreach (var marker in _markers.Values)
+        {
+            marker.Remove();
+        }
+
+        _markers.Clear();
+        _sources.Clear();
+        _timer.Reset();
+    }
+}

@@ -169,6 +169,10 @@ Enables friendship rules in Story and Expedition modes.|스토리와 원정 모�
 Absolute Friends: Visualizer|절대적 친구: 시각화
 Visually shows friends and owners.|친구와 소유자를 시각적으로 표시합니다.
 
+Friend Markers|친구 표식
+Friend HUD|친구 HUD
+Shows tracked friends' arrows and names in their colors, and their icons at the screen edge when in another room.|추적되는 친구의 이름과 화살표를 친구의 색으로 표시하고, 다른 방에 있으면 화면 가장자리에 아이콘을 표시합니다.
+
 Relationship Overlay|관계 표시
 Relationship Tags|관계 태그
 Relationship Icons|관계 아이콘
@@ -198,6 +202,7 @@ Overlay Updates|표시 갱신
 Update Interval|갱신 간격
 Sets how many frames pass between friend and owner checks.|친구와 소유자를 확인하는 간격을 프레임 단위로 설정합니다.
 
+Marks tracked friends.|추적되는 친구를 표시합니다.
 Visualizes relationships with icons, names, and links.|관계를 아이콘, 이름, 연결선으로 시각화합니다.
 
 Absolute Friends: General|절대적 친구: 일반

@@ -6,6 +6,10 @@ internal static class Menu
 {
     public static void Build(MenuBuilder menu)
     {
+        menu.AddTitle("Friend Markers");
+        menu.SetColumns(3);
+        menu.AddCheckBox(Config.FriendMarkers);
+
         menu.AddTitle("Relationship Overlay");
         menu.SetColumns(3);
         menu.AddCheckBox(Config.Icons);
