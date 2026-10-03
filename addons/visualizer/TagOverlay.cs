@@ -7,33 +7,17 @@ namespace AbsoluteFriends.Visualizer;
 
 internal class TagOverlay : HudOverlay
 {
-    private const string TrackedSymbol = "FriendA";
-
-    private const string UntrackedSymbol = "MonkA";
-
-    private const string DeadSymbol = "SurvivorA";
-
-    private const int ExplosiveSpearData = 1;
-
-    private const int ElectricSpearData = 2;
-
-    private const int HellSpearData = 3;
-
     private readonly List<SubjectTag> _tags = [];
 
     private readonly OverlayPositions _positions = new();
 
-    private readonly List<AbstractPhysicalObject> _sources = [];
-
-    private readonly Dictionary<AbstractPhysicalObject, (bool IsTracked, bool IsFriend, AbstractCreature? Owner)> _subjects = [];
+    private readonly Dictionary<AbstractPhysicalObject, Subject> _subjects = [];
 
     private readonly UpdateTimer _timer = new();
 
     private bool _isViewed;
 
-    private static bool IsEnabled => Config.FriendName.IsActive || Config.FriendIcon.IsActive || Config.OwnerName.IsActive || Config.OwnerIcon.IsActive;
-
-    private IEnumerable<AbstractPhysicalObject> Sources => room.TaggedObjects;
+    private static bool IsEnabled => Config.Icons.IsActive || Config.Names.IsActive;
 
     public override void Update(bool eu)
     {
@@ -43,13 +27,8 @@ internal class TagOverlay : HudOverlay
         {
             if (RainWorldUtils.MainCamera(room?.game)?.room != room)
             {
-                if (_isViewed)
-                {
-                    _isViewed = false;
-                    _sources.Clear();
-
-                    Refresh();
-                }
+                _isViewed = false;
+                _subjects.Clear();
 
                 return;
             }
@@ -61,19 +40,10 @@ internal class TagOverlay : HudOverlay
                 _timer.Reset();
             }
 
-            if (!_timer.Elapse())
+            if (_timer.Elapse())
             {
-                return;
+                Refresh();
             }
-
-            _sources.Clear();
-
-            if (IsEnabled)
-            {
-                _sources.AddRange(Sources);
-            }
-
-            Refresh();
         }
         catch (Exception exception)
         {
@@ -85,22 +55,30 @@ internal class TagOverlay : HudOverlay
     {
         base.DrawSprites(sLeaser, rCam, timeStacker, camPos);
 
+        if (sLeaser.deleteMeNextFrame || !OverlayUtils.ShouldDraw(rCam, room))
+        {
+            return;
+        }
+
         try
         {
             int index = 0;
 
-            if (IsEnabled && OverlayUtils.ShouldDraw(rCam, room))
+            if (IsEnabled)
             {
-                foreach (var abstractPhysicalObject in _sources)
+                foreach (var entry in _subjects)
                 {
-                    if (!_positions.TryGet(abstractPhysicalObject, rCam, camPos, timeStacker, out Vector2 position, out bool isDistant) || !IsDrawn(abstractPhysicalObject, isDistant))
+                    if (!_positions.TryGet(entry.Key, rCam, camPos, timeStacker, out OverlayPosition place) || (place.IsDistant && entry.Value.Type != FriendshipType.Tracked))
                     {
                         continue;
                     }
 
+                    Vector2 position = place.Screen;
+                    bool isDistant = place.IsDistant;
+
                     SubjectTag tag = TagAt(index++);
 
-                    Draw(tag, abstractPhysicalObject, position, isDistant);
+                    Draw(tag, entry.Key, entry.Value, position, isDistant);
 
                     tag.IsDistant = isDistant;
                     tag.IsVisible = true;
@@ -118,130 +96,61 @@ internal class TagOverlay : HudOverlay
         }
     }
 
-    private static void DrawFriend(SideTag tag, AbstractPhysicalObject abstractPhysicalObject, bool isTracked, Vector2 position, bool isDistant, ref int row)
-    {
-        if (Config.FriendName.IsActive)
-        {
-            string name = abstractPhysicalObject is AbstractCreature creature
-                ? creature.FriendName
-                : abstractPhysicalObject.DefaultName;
-
-            tag.SetName(name, Palette.Primary, position, OverlayUtils.Row(row++));
-        }
-
-        if (!Config.FriendIcon.IsActive)
-        {
-            return;
-        }
-
-        float gap = isDistant ? 0f : OverlayUtils.Row(row++);
-
-        if (abstractPhysicalObject is not AbstractCreature abstractCreature)
-        {
-            tag.SetIcon(GetSymbol(abstractPhysicalObject), Palette.Primary, position, gap);
-        }
-        else if (!isTracked)
-        {
-            tag.SetIcon(UntrackedSymbol, Palette.Primary, position, gap);
-        }
-        else if (abstractCreature.state is { dead: true })
-        {
-            tag.SetIcon(DeadSymbol, Palette.Primary, position, gap);
-        }
-        else if (!isDistant)
-        {
-            tag.SetIcon(TrackedSymbol, Palette.Primary, position, gap);
-        }
-        else
-        {
-            (string symbol, Color color) = abstractCreature.Icon;
-
-            tag.SetIcon(symbol, color, position, gap);
-        }
-    }
-
-    private static void DrawOwner(SideTag tag, AbstractCreature owner, Vector2 position, ref int row)
-    {
-        if (Config.OwnerName.IsActive)
-        {
-            tag.SetName(owner.DefaultName, Palette.Secondary, position, OverlayUtils.Row(row++));
-        }
-
-        if (Config.OwnerIcon.IsActive)
-        {
-            tag.SetIcon(GetOwnerSymbol(owner), Palette.Secondary, position, OverlayUtils.Row(row++));
-        }
-    }
-
-    private static string GetOwnerSymbol(AbstractCreature owner)
-    {
-        AbstractPhysicalObject subject = owner is AbstractOwner abstractOwner ? abstractOwner.PhysicalObject.abstractPhysicalObject : owner;
-
-        return subject is AbstractCreature abstractCreature
-            ? CreatureSymbol.SpriteNameOfCreature(CreatureSymbol.SymbolDataFromCreature(abstractCreature))
-            : GetSymbol(subject);
-    }
-
-    private static string GetSymbol(AbstractPhysicalObject abstractPhysicalObject)
-    {
-        int intData = abstractPhysicalObject is AbstractSpear abstractSpear
-            ? GetSpearData(abstractSpear)
-            : ItemSymbol.SymbolDataFromItem(abstractPhysicalObject)?.intData ?? 0;
-
-        return ItemSymbol.SpriteNameForItem(abstractPhysicalObject.type, intData);
-    }
-
-    private static int GetSpearData(AbstractSpear abstractSpear)
-    {
-        if (ModManager.DLCShared && abstractSpear.hue != 0f)
-        {
-            return HellSpearData;
-        }
-
-        if (ModManager.DLCShared && abstractSpear.electric)
-        {
-            return ElectricSpearData;
-        }
-
-        return abstractSpear.explosive ? ExplosiveSpearData : 0;
-    }
-
-    private bool IsDrawn(AbstractPhysicalObject abstractPhysicalObject, bool isDistant)
-    {
-        return !isDistant || (_subjects.TryGetValue(abstractPhysicalObject, out var subject) && subject.IsTracked);
-    }
-
-    private void Draw(SubjectTag tag, AbstractPhysicalObject abstractPhysicalObject, Vector2 position, bool isDistant)
+    private static void Draw(SubjectTag tag, AbstractPhysicalObject source, Subject subject, Vector2 position, bool isDistant)
     {
         int row = 0;
 
         tag.Clear();
 
-        if (!_subjects.TryGetValue(abstractPhysicalObject, out var subject))
+        if (Relationships.IsShown(subject.Type))
         {
-            return;
+            DrawSide(tag.Friend, subject.Friend, position, isDistant, ref row);
         }
 
-        if (subject.IsFriend)
+        if (!isDistant && Config.Owners.IsActive && subject.Owner is { } owner)
         {
-            DrawFriend(tag.Friend, abstractPhysicalObject, subject.IsTracked, position, isDistant, ref row);
-        }
-
-        if (!isDistant && subject.Owner is { } owner)
-        {
-            DrawOwner(tag.Owner, owner, position, ref row);
+            DrawSide(tag.Owner, owner, position, false, ref row);
         }
     }
+
+    private static void DrawSide(SideTag tag, RelationshipAppearance appearance, Vector2 position, bool isDistant, ref int row)
+    {
+        if (Config.Names.IsActive)
+        {
+            tag.SetName(appearance.Name, appearance.Color, position, Offset(row++, isDistant));
+        }
+
+        if (Config.Icons.IsActive)
+        {
+            tag.SetIcon(appearance.Symbol, appearance.Color, position, Offset(row++, isDistant));
+        }
+    }
+
+    private static float Offset(int row, bool isDistant) => OverlayUtils.Gap * (isDistant ? row : row + 1);
 
     private void Refresh()
     {
         _subjects.Clear();
 
-        foreach (var abstractPhysicalObject in _sources)
+        if (!IsEnabled)
         {
-            bool isTracked = abstractPhysicalObject.IsTracked;
+            return;
+        }
 
-            _subjects[abstractPhysicalObject] = (isTracked, isTracked || abstractPhysicalObject.IsFriendOfPlayer, abstractPhysicalObject.ExternalOwner);
+        foreach (var source in room.TaggedObjects)
+        {
+            FriendshipType type = source.FriendshipOfPlayer;
+            AbstractCreature? owner = source.ExternalOwner;
+
+            if (type == FriendshipType.None && owner == null)
+            {
+                continue;
+            }
+
+            RelationshipAppearance friend = type == FriendshipType.None ? default : Relationships.AppearanceOf(source, type, false);
+            RelationshipAppearance? ownerAppearance = owner == null ? null : Relationships.AppearanceOf(owner, owner.FriendshipOfPlayer, true);
+
+            _subjects[source] = new(type, friend, ownerAppearance);
         }
     }
 
@@ -259,5 +168,14 @@ internal class TagOverlay : HudOverlay
         }
 
         return _tags[index];
+    }
+
+    private readonly struct Subject(FriendshipType type, RelationshipAppearance friend, RelationshipAppearance? owner)
+    {
+        public FriendshipType Type { get; } = type;
+
+        public RelationshipAppearance Friend { get; } = friend;
+
+        public RelationshipAppearance? Owner { get; } = owner;
     }
 }

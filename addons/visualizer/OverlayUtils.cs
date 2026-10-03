@@ -13,6 +13,8 @@ internal static class OverlayUtils
 
     public const float Gap = 20f;
 
+    private const float DeadDimming = 0.55f;
+
     private static readonly AddonLogger _logger = Reporter.GetLogger(Plugin.Name);
 
     private static readonly HashSet<Type> _failures = [];
@@ -95,13 +97,19 @@ internal static class OverlayUtils
 
                 foreach (var physicalObject in room.Objects)
                 {
-                    if (!physicalObject.IsTracked && (physicalObject.Owner != null || (physicalObject is Creature && physicalObject.IsFriendOfPlayer)))
+                    if (!physicalObject.IsTracked)
                     {
                         yield return physicalObject.abstractPhysicalObject;
                     }
                 }
             }
         }
+    }
+
+    extension(AbstractCreature creature)
+    {
+        public bool IsDead => creature.state?.dead == true || creature.realizedCreature?.dead == true;
+
     }
 
     extension(PhysicalObject? source)
@@ -118,6 +126,40 @@ internal static class OverlayUtils
             position = found ?? default;
 
             return found.HasValue;
+        }
+    }
+
+    extension(PhysicalObject physicalObject)
+    {
+        public ShortcutHandler.ShortCutVessel? ShortcutVessel(RainWorldGame? game)
+        {
+            if (physicalObject.room != null || game?.shortcuts?.transportVessels is not { } vessels)
+            {
+                return null;
+            }
+
+            foreach (var vessel in vessels)
+            {
+                if (vessel.creature == physicalObject || vessel.creature.Carries(physicalObject))
+                {
+                    return vessel;
+                }
+            }
+
+            return null;
+        }
+    }
+
+    extension(Creature creature)
+    {
+        private bool Carries(PhysicalObject physicalObject)
+        {
+            if (creature.grasps?.Any(grasp => grasp?.grabbed == physicalObject) == true)
+            {
+                return true;
+            }
+
+            return creature.abstractCreature.stuckObjects.Any(stuck => stuck.A == physicalObject.abstractPhysicalObject || stuck.B == physicalObject.abstractPhysicalObject);
         }
     }
 
@@ -148,6 +190,11 @@ internal static class OverlayUtils
                 Mathf.Clamp(position.y, Margin, size.y - Margin)
             );
         }
+    }
+
+    extension(Color color)
+    {
+        public Color Dimmed => Color.Lerp(color, Color.black, DeadDimming);
     }
 
     extension(WorldCoordinate coordinate)

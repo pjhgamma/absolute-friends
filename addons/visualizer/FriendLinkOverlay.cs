@@ -16,7 +16,7 @@ internal class FriendLinkOverlay : CosmeticSprite
 
     private const int QuietFrames = RainWorldUtils.Second;
 
-    private static readonly List<(PhysicalObject First, PhysicalObject Second)> _pairs = [];
+    private static readonly List<(PhysicalObject First, PhysicalObject Second, FriendshipType Type)> _pairs = [];
 
     private static readonly List<PhysicalObject> _objects = [];
 
@@ -63,14 +63,15 @@ internal class FriendLinkOverlay : CosmeticSprite
 
         try
         {
-            if (Config.FriendLink.IsActive && OverlayUtils.ShouldDraw(rCam, room))
+            if (Config.Links.IsActive && OverlayUtils.ShouldDraw(rCam, room))
             {
                 Fit(sLeaser, rCam, _pairs.Count);
 
-                foreach (var (firstObject, secondObject) in _pairs)
+                foreach (var (firstObject, secondObject, type) in _pairs)
                 {
                     if (
-                        firstObject.room != room
+                        !Relationships.IsShown(type)
+                        || firstObject.room != room
                         || secondObject.room != room
                         || !OverlayUtils.TryGetLine(rCam, firstObject, secondObject, timeStacker, out Vector2 first, out Vector2 second)
                     )
@@ -81,7 +82,7 @@ internal class FriendLinkOverlay : CosmeticSprite
                     FSprite sprite = sLeaser.sprites[drawnCount++];
 
                     sprite.isVisible = true;
-                    sprite.color = Palette.Primary;
+                    sprite.color = Relationships.ColorOf(false);
                     sprite.x = first.x - camPos.x;
                     sprite.y = first.y - camPos.y;
                     sprite.scaleY = Vector2.Distance(first, second);
@@ -161,7 +162,7 @@ internal class FriendLinkOverlay : CosmeticSprite
     {
         _pairs.Clear();
 
-        if (room == null)
+        if (room == null || !Config.Links.IsActive)
         {
             return;
         }
@@ -173,9 +174,19 @@ internal class FriendLinkOverlay : CosmeticSprite
         {
             for (int j = i + 1; j < _objects.Count; ++j)
             {
-                if (_objects[i].IsFriend(_objects[j]))
+                PhysicalObject first = _objects[i];
+                PhysicalObject second = _objects[j];
+
+                if (Config.Owners.IsActive && (first.ExternalOwner?.RealizedOwner == second || second.ExternalOwner?.RealizedOwner == first))
                 {
-                    _pairs.Add((_objects[i], _objects[j]));
+                    continue;
+                }
+
+                FriendshipType type = first.abstractPhysicalObject.FriendshipWith(second.abstractPhysicalObject);
+
+                if (type != FriendshipType.None)
+                {
+                    _pairs.Add((first, second, type));
                 }
             }
         }

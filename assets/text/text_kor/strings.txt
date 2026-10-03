@@ -169,26 +169,36 @@ Enables friendship rules in Story and Expedition modes.|스토리와 원정 모�
 Absolute Friends: Visualizer|절대적 친구: 시각화
 Visually shows friends and owners.|친구와 소유자를 시각적으로 표시합니다.
 
-Tag|표식
-Friend Link|친구 연결선
-Draws a line between two things as the mod treats them as friends.|두 대상이 친구로 판단되는 동안 그 사이에 선을 그립니다.
-Friend Name|친구 이름표
-Draws the name above every friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 이름을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 이름을 화면 가장자리에 유지합니다.
-Friend Icon|친구 아이콘
-Draws an icon above every friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.|화면에 보이는 모든 친구 위에 아이콘을 표시하고, 추적되는 친구가 화면 밖에 있을 때는 그 아이콘을 화면 가장자리에 유지합니다.
-Owner Link|소유자 연결선
-Draws a line between each object and its owning creature, thickest at the owner's end.|각 물체와 해당 물체를 소유한 생물 사이에 선을 그립니다. 선은 소유자 쪽 끝이 가장 굵습니다.
-Owner Name|소유자 이름표
-Draws the owner's name above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 이름을 표시합니다.
-Owner Icon|소유자 아이콘
-Draws the owner's icon above everything in view that has an owner.|화면에 보이는 대상 중 소유자가 있는 것들 위에 그 소유자의 아이콘을 표시합니다.
+Relationship Overlay|관계 표시
+Relationship Tags|관계 태그
+Relationship Icons|관계 아이콘
+Draws icons above shown friends, and owners' icons above owned things. Dead creatures' icons are dimmed.|표시 관계의 친구 위에 그 아이콘을, 소유된 대상 위에 소유자의 아이콘을 표시합니다. 죽은 생물의 아이콘은 흐리게 표시합니다.
+Icon Style|아이콘 종류
+Chooses creature artwork or friendship symbols for relationship icons.|관계 아이콘에 생물 그림이나 친구 관계 기호를 사용하도록 선택합니다.
+Creature Icon|생물 아이콘
+Uses creature artwork for relationship icons. Items keep their item icons.|관계 아이콘에 생물 그림을 사용합니다. 물체는 물체 아이콘을 유지합니다.
+Symbol Icon|기호 아이콘
+Uses friendship symbols for creatures. Items keep their item icons.|생물에 친구 관계 기호를 사용합니다. 물체는 물체 아이콘을 유지합니다.
+Relationship Names|관계 이름
+Draws names above shown friends, and owners' names above owned things. Dead creatures' names are dimmed.|표시 관계의 친구 위에 그 이름을, 소유된 대상 위에 소유자의 이름을 표시합니다. 죽은 생물의 이름은 흐리게 표시합니다.
+Relationship Links|관계 연결선
+Draws lines between shown friends and between owners and owned things. Ownership lines are thickest at the owner's end.|표시 관계의 친구끼리, 그리고 소유자와 소유된 대상을 연결선으로 잇습니다. 소유 연결선은 소유자 쪽 끝이 가장 굵습니다.
+
+Shown Relationships|표시 관계
+Shown Friendship|표시 친구 관계
+Sets the weakest friendship that relationship overlays show. Moving right shows more friends.|관계 표시에 포함할 가장 약한 친구 관계를 설정합니다. 오른쪽으로 갈수록 더 많은 친구를 표시합니다.
+Tracking|추적
+Friendly|우호
+Neutral|중립
+Indirect|간접
+Owner Relationships|소유 관계
+Includes ownership in relationship overlays.|소유 관계를 관계 표시에 포함합니다.
+
+Overlay Updates|표시 갱신
 Update Interval|갱신 간격
 Sets how many frames pass between friend and owner checks.|친구와 소유자를 확인하는 간격을 프레임 단위로 설정합니다.
 
-Friend Overlay|친구 표시
-Visualizes friendships.|친구 관계를 시각화합니다.
-Owner Overlay|소유자 표시
-Visualizes ownerships.|소유 관계를 시각화합니다.
+Visualizes relationships with icons, names, and links.|관계를 아이콘, 이름, 연결선으로 시각화합니다.
 
 Absolute Friends: General|절대적 친구: 일반
 Controls the general harm and effects that pass between friends.|친구 사이의 일반적인 피해나 영향을 조정합니다.

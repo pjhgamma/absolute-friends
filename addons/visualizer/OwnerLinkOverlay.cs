@@ -84,7 +84,8 @@ internal class OwnerLinkOverlay(PhysicalObject target) : CosmeticSprite
         try
         {
             if (
-                !Config.OwnerLink.IsActive
+                !Config.Links.IsActive
+                || !Config.Owners.IsActive
                 || !OverlayUtils.ShouldDraw(rCam, room)
                 || _owner?.RealizedOwner is not PhysicalObject { slatedForDeletetion: false } owner
                 || owner.room != room

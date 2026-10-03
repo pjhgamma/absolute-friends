@@ -40,16 +40,16 @@ internal abstract class ObjectOverlayHooks<TOverlay> : BaseHooks
 
 internal class TagHooks : RoomOverlayHooks<TagOverlay>
 {
-    protected override Configurable<bool>[] Options => [Config.FriendName, Config.FriendIcon, Config.OwnerName, Config.OwnerIcon];
+    protected override Configurable<bool>[] Options => [Config.Icons, Config.Names];
 
-    protected override string? Subject => "Tag";
+    protected override string? Subject => "Relationship Tags";
 
     protected override TagOverlay Create(Room room) => new();
 }
 
 internal class FriendLinkHooks : RoomOverlayHooks<FriendLinkOverlay>
 {
-    protected override Configurable<bool>[] Options => [Config.FriendLink];
+    protected override Configurable<bool>[] Options => [Config.Links];
 
     protected override FriendLinkOverlay Create(Room room) => new();
 
@@ -64,7 +64,7 @@ internal class FriendLinkHooks : RoomOverlayHooks<FriendLinkOverlay>
 
 internal class OwnerLinkHooks : ObjectOverlayHooks<OwnerLinkOverlay>
 {
-    protected override Configurable<bool>[] Options => [Config.OwnerLink];
+    protected override Configurable<bool>[] Options => [Config.Links];
 
     protected override OwnerLinkOverlay Create(PhysicalObject target) => new(target);
 }

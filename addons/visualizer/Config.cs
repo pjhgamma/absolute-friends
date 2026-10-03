@@ -4,32 +4,36 @@ namespace AbsoluteFriends.Visualizer;
 
 internal static class Config
 {
-    public static Configurable<bool> FriendLink = null!;
+    public static Configurable<bool> Icons = null!;
 
-    public static Configurable<bool> FriendName = null!;
+    public static Configurable<int> IconStyle = null!;
 
-    public static Configurable<bool> FriendIcon = null!;
+    public static Configurable<bool> Names = null!;
 
-    public static Configurable<bool> OwnerLink = null!;
+    public static Configurable<bool> Links = null!;
 
-    public static Configurable<bool> OwnerName = null!;
+    public static Configurable<int> ShownFriendship = null!;
 
-    public static Configurable<bool> OwnerIcon = null!;
+    public static Configurable<bool> Owners = null!;
 
     public static Configurable<int> UpdateInterval = null!;
 
     public static void Bind(Addon addon)
     {
-        FriendLink = addon.Bind("FriendLink", false, new ConfigurableInfo("Draws a line between two things as the mod treats them as friends.", tags: ["Friend Link"]));
-        FriendName = addon.Bind("FriendName", false, new ConfigurableInfo("Draws the name above every friend in view, and keeps a tracked friend's name at the edge of the screen while it is out of view.", tags: ["Friend Name"]));
-        FriendIcon = addon.Bind("FriendIcon", false, new ConfigurableInfo("Draws an icon above every friend in view, and keeps a tracked friend's icon at the edge of the screen while it is out of view.", tags: ["Friend Icon"]));
-        OwnerLink = addon.Bind("OwnerLink", false, new ConfigurableInfo("Draws a line between each object and its owning creature, thickest at the owner's end.", tags: ["Owner Link"]));
-        OwnerName = addon.Bind("OwnerName", false, new ConfigurableInfo("Draws the owner's name above everything in view that has an owner.", tags: ["Owner Name"]));
-        OwnerIcon = addon.Bind("OwnerIcon", false, new ConfigurableInfo("Draws the owner's icon above everything in view that has an owner.", tags: ["Owner Icon"]));
-        UpdateInterval = addon.Bind("UpdateInterval", 10, new ConfigurableInfo("Sets how many frames pass between friend and owner checks.", new ConfigAcceptableRange<int>(1, 40), tags: ["Update Interval"]))
-            .RequireAny(FriendLink, FriendName, FriendIcon, OwnerLink, OwnerName, OwnerIcon);
+        Icons = addon.Bind("Icons", false, new ConfigurableInfo("Draws icons above shown friends, and owners' icons above owned things. Dead creatures' icons are dimmed.", tags: ["Relationship Icons"]));
+        IconStyle = addon.Bind("IconStyle", (int)RelationshipIconStyle.Creature, new ConfigurableInfo("Chooses creature artwork or friendship symbols for relationship icons.", new ConfigAcceptableRange<int>(0, 1), tags: ["Icon Style"]))
+            .Require(Icons);
+        Names = addon.Bind("Names", false, new ConfigurableInfo("Draws names above shown friends, and owners' names above owned things. Dead creatures' names are dimmed.", tags: ["Relationship Names"]));
+        Links = addon.Bind("Links", false, new ConfigurableInfo("Draws lines between shown friends and between owners and owned things. Ownership lines are thickest at the owner's end.", tags: ["Relationship Links"]));
 
-        addon.Group("Friend Overlay", "Visualizes friendships.", FriendLink, FriendName, FriendIcon);
-        addon.Group("Owner Overlay", "Visualizes ownerships.", OwnerLink, OwnerName, OwnerIcon);
+        ShownFriendship = addon.Bind("ShownFriendship", (int)ShownFriendshipChoice.Indirect, new ConfigurableInfo("Sets the weakest friendship that relationship overlays show. Moving right shows more friends.", new ConfigAcceptableRange<int>(0, 3), tags: ["Shown Friendship"]))
+            .RequireAny(Icons, Names, Links);
+        Owners = addon.Bind("Owners", true, new ConfigurableInfo("Includes ownership in relationship overlays.", tags: ["Owner Relationships"]))
+            .RequireAny(Icons, Names, Links);
+
+        UpdateInterval = addon.Bind("UpdateInterval", 10, new ConfigurableInfo("Sets how many frames pass between friend and owner checks.", new ConfigAcceptableRange<int>(1, 40), tags: ["Update Interval"]))
+            .RequireAny(Icons, Names, Links);
+
+        addon.Group("Relationship Overlay", "Visualizes relationships with icons, names, and links.", Icons, Names, Links);
     }
 }
