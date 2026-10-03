@@ -4,7 +4,7 @@ using AbsoluteFriends.Hooks;
 namespace AbsoluteFriends.Visualizer;
 
 internal abstract class RoomOverlayHooks<TOverlay> : BaseHooks
-    where TOverlay : UpdatableAndDeletable, IOverlay
+    where TOverlay : UpdatableAndDeletable
 {
     private readonly ConditionalWeakTable<Room, TOverlay> _overlays = new();
 
@@ -20,7 +20,7 @@ internal abstract class RoomOverlayHooks<TOverlay> : BaseHooks
 }
 
 internal abstract class ObjectOverlayHooks<TOverlay> : BaseHooks
-    where TOverlay : UpdatableAndDeletable, IOverlay
+    where TOverlay : UpdatableAndDeletable
 {
     private readonly ConditionalWeakTable<PhysicalObject, TOverlay> _overlays = new();
 
@@ -36,4 +36,35 @@ internal abstract class ObjectOverlayHooks<TOverlay> : BaseHooks
             OverlayUtils.Attach(_overlays, physicalObject, self, Create);
         }
     }
+}
+
+internal class TagHooks : RoomOverlayHooks<TagOverlay>
+{
+    protected override Configurable<bool>[] Options => [Config.FriendName, Config.FriendIcon, Config.OwnerName, Config.OwnerIcon];
+
+    protected override string? Subject => "Tag";
+
+    protected override TagOverlay Create(Room room) => new();
+}
+
+internal class FriendLinkHooks : RoomOverlayHooks<FriendLinkOverlay>
+{
+    protected override Configurable<bool>[] Options => [Config.FriendLink];
+
+    protected override FriendLinkOverlay Create(Room room) => new();
+
+    [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.Update))]
+    private static void On_RainWorldGame_Update(On.RainWorldGame.orig_Update orig, RainWorldGame self)
+    {
+        FriendLinkOverlay.Refresh(self);
+
+        orig(self);
+    }
+}
+
+internal class OwnerLinkHooks : ObjectOverlayHooks<OwnerLinkOverlay>
+{
+    protected override Configurable<bool>[] Options => [Config.OwnerLink];
+
+    protected override OwnerLinkOverlay Create(PhysicalObject target) => new(target);
 }

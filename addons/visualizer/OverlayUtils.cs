@@ -7,17 +7,6 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Visualizer;
 
-internal interface IOverlay;
-
-internal interface ITag
-{
-    IEnumerable<FNode> Nodes { get; }
-
-    bool IsVisible { set; }
-
-    bool IsDistant { set; }
-}
-
 internal static class OverlayUtils
 {
     public const float Margin = 20f;
@@ -173,6 +162,19 @@ internal static class OverlayUtils
             };
 
             return tile is { } found ? new Vector2(found.x + 0.5f, found.y + 0.5f) * 20f : new Vector2(abstractRoom.size.x, abstractRoom.size.y) * 20f / 2f;
+        }
+    }
+
+    extension(FSprite sprite)
+    {
+        public void FitSymbol(string symbolName, float size)
+        {
+            if (sprite.element.name != symbolName)
+            {
+                sprite.SetElementByName(symbolName);
+            }
+
+            sprite.scale = Mathf.Min(1f, size / Mathf.Max(sprite.element.sourcePixelSize.x, sprite.element.sourcePixelSize.y));
         }
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Visualizer;
 
-internal class TagOverlay : TrackerOverlay<SubjectTag>
+internal class TagOverlay : HudOverlay
 {
     private const string TrackedSymbol = "FriendA";
 
@@ -19,50 +19,102 @@ internal class TagOverlay : TrackerOverlay<SubjectTag>
 
     private const int HellSpearData = 3;
 
+    private readonly List<SubjectTag> _tags = [];
+
+    private readonly OverlayPositions _positions = new();
+
+    private readonly List<AbstractPhysicalObject> _sources = [];
+
     private readonly Dictionary<AbstractPhysicalObject, (bool IsTracked, bool IsFriend, AbstractCreature? Owner)> _subjects = [];
 
-    protected override bool IsEnabled => Config.FriendName.IsActive || Config.FriendIcon.IsActive || Config.OwnerName.IsActive || Config.OwnerIcon.IsActive;
+    private readonly UpdateTimer _timer = new();
 
-    protected override IEnumerable<AbstractPhysicalObject> Sources => room.TaggedObjects;
+    private bool _isViewed;
 
-    protected override SubjectTag CreateTag() => new();
+    private static bool IsEnabled => Config.FriendName.IsActive || Config.FriendIcon.IsActive || Config.OwnerName.IsActive || Config.OwnerIcon.IsActive;
 
-    protected override bool IsDrawn(AbstractPhysicalObject abstractPhysicalObject, bool isDistant)
+    private IEnumerable<AbstractPhysicalObject> Sources => room.TaggedObjects;
+
+    public override void Update(bool eu)
     {
-        return !isDistant || (_subjects.TryGetValue(abstractPhysicalObject, out var subject) && subject.IsTracked);
+        base.Update(eu);
+
+        try
+        {
+            if (RainWorldUtils.MainCamera(room?.game)?.room != room)
+            {
+                if (_isViewed)
+                {
+                    _isViewed = false;
+                    _sources.Clear();
+
+                    Refresh();
+                }
+
+                return;
+            }
+
+            if (!_isViewed)
+            {
+                _isViewed = true;
+
+                _timer.Reset();
+            }
+
+            if (!_timer.Elapse())
+            {
+                return;
+            }
+
+            _sources.Clear();
+
+            if (IsEnabled)
+            {
+                _sources.AddRange(Sources);
+            }
+
+            Refresh();
+        }
+        catch (Exception exception)
+        {
+            this.Destroy(exception);
+        }
     }
 
-    protected override void Draw(SubjectTag tag, AbstractPhysicalObject abstractPhysicalObject, Vector2 position, bool isDistant)
+    public override void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
-        int row = 0;
+        base.DrawSprites(sLeaser, rCam, timeStacker, camPos);
 
-        tag.Clear();
-
-        if (!_subjects.TryGetValue(abstractPhysicalObject, out var subject))
+        try
         {
-            return;
+            int index = 0;
+
+            if (IsEnabled && OverlayUtils.ShouldDraw(rCam, room))
+            {
+                foreach (var abstractPhysicalObject in _sources)
+                {
+                    if (!_positions.TryGet(abstractPhysicalObject, rCam, camPos, timeStacker, out Vector2 position, out bool isDistant) || !IsDrawn(abstractPhysicalObject, isDistant))
+                    {
+                        continue;
+                    }
+
+                    SubjectTag tag = TagAt(index++);
+
+                    Draw(tag, abstractPhysicalObject, position, isDistant);
+
+                    tag.IsDistant = isDistant;
+                    tag.IsVisible = true;
+                }
+            }
+
+            for (int i = index; i < _tags.Count; ++i)
+            {
+                _tags[i].IsVisible = false;
+            }
         }
-
-        if (subject.IsFriend)
+        catch (Exception exception)
         {
-            DrawFriend(tag.Friend, abstractPhysicalObject, subject.IsTracked, position, isDistant, ref row);
-        }
-
-        if (!isDistant && subject.Owner is { } owner)
-        {
-            DrawOwner(tag.Owner, owner, position, ref row);
-        }
-    }
-
-    protected override void Refresh(IReadOnlyList<AbstractPhysicalObject> sources)
-    {
-        _subjects.Clear();
-
-        foreach (var abstractPhysicalObject in sources)
-        {
-            bool isTracked = abstractPhysicalObject.IsTracked;
-
-            _subjects[abstractPhysicalObject] = (isTracked, isTracked || abstractPhysicalObject.IsFriendOfPlayer, abstractPhysicalObject.ExternalOwner);
+            this.Destroy(exception);
         }
     }
 
@@ -74,7 +126,7 @@ internal class TagOverlay : TrackerOverlay<SubjectTag>
                 ? creature.FriendName
                 : abstractPhysicalObject.DefaultName;
 
-            tag.SetName(name, position, OverlayUtils.Row(row++));
+            tag.SetName(name, Palette.Primary, position, OverlayUtils.Row(row++));
         }
 
         if (!Config.FriendIcon.IsActive)
@@ -112,7 +164,7 @@ internal class TagOverlay : TrackerOverlay<SubjectTag>
     {
         if (Config.OwnerName.IsActive)
         {
-            tag.SetName(owner.DefaultName, position, OverlayUtils.Row(row++));
+            tag.SetName(owner.DefaultName, Palette.Secondary, position, OverlayUtils.Row(row++));
         }
 
         if (Config.OwnerIcon.IsActive)
@@ -152,5 +204,60 @@ internal class TagOverlay : TrackerOverlay<SubjectTag>
         }
 
         return abstractSpear.explosive ? ExplosiveSpearData : 0;
+    }
+
+    private bool IsDrawn(AbstractPhysicalObject abstractPhysicalObject, bool isDistant)
+    {
+        return !isDistant || (_subjects.TryGetValue(abstractPhysicalObject, out var subject) && subject.IsTracked);
+    }
+
+    private void Draw(SubjectTag tag, AbstractPhysicalObject abstractPhysicalObject, Vector2 position, bool isDistant)
+    {
+        int row = 0;
+
+        tag.Clear();
+
+        if (!_subjects.TryGetValue(abstractPhysicalObject, out var subject))
+        {
+            return;
+        }
+
+        if (subject.IsFriend)
+        {
+            DrawFriend(tag.Friend, abstractPhysicalObject, subject.IsTracked, position, isDistant, ref row);
+        }
+
+        if (!isDistant && subject.Owner is { } owner)
+        {
+            DrawOwner(tag.Owner, owner, position, ref row);
+        }
+    }
+
+    private void Refresh()
+    {
+        _subjects.Clear();
+
+        foreach (var abstractPhysicalObject in _sources)
+        {
+            bool isTracked = abstractPhysicalObject.IsTracked;
+
+            _subjects[abstractPhysicalObject] = (isTracked, isTracked || abstractPhysicalObject.IsFriendOfPlayer, abstractPhysicalObject.ExternalOwner);
+        }
+    }
+
+    private SubjectTag TagAt(int index)
+    {
+        while (_tags.Count <= index)
+        {
+            SubjectTag tag = new();
+
+            AddNodes(tag.Nodes);
+
+            tag.IsVisible = false;
+
+            _tags.Add(tag);
+        }
+
+        return _tags[index];
     }
 }

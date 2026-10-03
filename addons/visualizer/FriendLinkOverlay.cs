@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Visualizer;
 
-internal class FriendLinkOverlay : CosmeticSprite, IOverlay
+internal class FriendLinkOverlay : CosmeticSprite
 {
     private const int InitialLines = 16;
 
