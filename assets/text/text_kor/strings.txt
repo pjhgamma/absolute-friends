@@ -143,6 +143,7 @@ No trackable friends|추적할 수 있는 친구 없음
 Show this friend's details.|이 친구의 상세 정보를 표시합니다.
 Track this friend.|이 친구를 추적합니다.
 Stop tracking this friend.|이 친구의 추적을 끕니다.
+Players are always tracked.|플레이어는 항상 추적됩니다.
 Tracked|추적 중
 Not tracked|추적 안 함
 Edit this friend's name.|이 친구의 이름을 편집합니다.

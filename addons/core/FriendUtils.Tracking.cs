@@ -136,7 +136,7 @@ public static partial class FriendUtils
                 }
 
                 return source.IsTrackingAllowed
-                    && ChoicesFor(source)?.Exclusions.Contains(source.SaveDataKey) != true;
+                    && (source.IsPlayer || ChoicesFor(source)?.Exclusions.Contains(source.SaveDataKey) != true);
             }
         }
 
@@ -249,14 +249,14 @@ public static partial class FriendUtils
 
         internal void SetTracked(bool tracked)
         {
-            if (source is not { IsTrackingAllowed: true } creature || ChoicesFor(creature) is not { } choices)
+            if (source is not { IsTrackingAllowed: true, IsPlayer: false } creature || ChoicesFor(creature) is not { } choices)
             {
                 return;
             }
 
             string key = creature.SaveDataKey;
 
-            if (!tracked && !creature.IsPlayer && !_trackerCreatures.Contains(creature) && !choices.Exclusions.Contains(key))
+            if (!tracked && !_trackerCreatures.Contains(creature) && !choices.Exclusions.Contains(key))
             {
                 return;
             }
@@ -465,6 +465,8 @@ public static partial class FriendUtils
 
         private const string ExcludedSuffix = "=0";
 
+        private const string PlayerPrefix = "P";
+
         internal readonly HashSet<string> Exclusions = new(StringComparer.Ordinal);
 
         private readonly SaveState? _save;
@@ -475,7 +477,7 @@ public static partial class FriendUtils
 
             foreach (string entry in FriendSaveData.ReadEntries(save, SaveKey))
             {
-                if (entry.EndsWith(ExcludedSuffix, StringComparison.Ordinal))
+                if (entry.EndsWith(ExcludedSuffix, StringComparison.Ordinal) && !entry.StartsWith(PlayerPrefix, StringComparison.Ordinal))
                 {
                     Exclusions.Add(entry.Substring(0, entry.Length - ExcludedSuffix.Length));
                 }

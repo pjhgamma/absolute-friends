@@ -123,9 +123,6 @@ internal sealed partial class FriendManagerDialog
             return;
         }
 
-        _trackingLabel.Show();
-        _trackingCheckbox.Show();
-
         _nameLabel.label.color = creature.ShortcutColor;
         _nicknameBox.colorText = creature.ShortcutColor;
 
@@ -144,6 +141,10 @@ internal sealed partial class FriendManagerDialog
             _saveNickname.Show();
             _clearNickname.Show();
         }
+
+        _trackingLabel.Show();
+        _trackingCheckbox.Show();
+        _trackingCheckbox.greyedOut = creature.IsPlayer;
 
         SnapDetails();
         RefreshDetails();
@@ -177,7 +178,7 @@ internal sealed partial class FriendManagerDialog
         _statusLabel.label.text = $"{Translation.Of("Status")}: {life}";
         _trackingLabel.text = TrackingLabel(tracked);
         _trackingCheckbox.ForceValue(tracked ? "true" : "false");
-        _trackingCheckbox.description = Translation.Of(tracked ? "Stop tracking this friend." : "Track this friend.");
+        _trackingCheckbox.description = Translation.Of(friend.IsPlayer ? "Players are always tracked." : tracked ? "Stop tracking this friend." : "Track this friend.");
     }
 
     private void SnapDetails()
