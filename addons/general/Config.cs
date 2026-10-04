@@ -36,9 +36,9 @@ internal static class Config
 
     public static void Bind(Addon addon)
     {
-        Collision = addon.Bind("Collision", true, new ConfigurableInfo("Will not collide with friends.", tags: ["Collisions"]));
+        Collision = addon.Bind("Collision", true, new ConfigurableInfo("Will not collide with friends.", tags: ["Collision"]));
         Violence = addon.Bind("Violence", true, new ConfigurableInfo("Friends take no damage from one another when the blow can be traced back to one of them.", tags: ["Violence"]));
-        Explosion = addon.Bind("Explosion", true, new ConfigurableInfo("Will not be hit by most explosions caused by friends.", tags: ["Explosions"]));
+        Explosion = addon.Bind("Explosion", true, new ConfigurableInfo("Will not be hit by most explosions caused by friends.", tags: ["Explosion"]));
         Fear = addon.Bind("Fear", true, new ConfigurableInfo("Will not be frightened by friends, nor by the weapons and explosives they wield.", tags: ["Fear"]));
         Stealing = addon.Bind("Stealing", true, new ConfigurableInfo(Options.Config.JollyCoop(
             "Friends cannot take objects held by other friends. Players can still take from slugpups.",
@@ -60,7 +60,7 @@ internal static class Config
         ForgivenessRatio = addon.Bind("ForgivenessRatio", 0.1f, new ConfigurableInfo("Sets how much reputation loss between friends is forgiven. A value of 1 lets the deed pass unnoticed, and 0 leaves the reputation loss untouched."))
             .Require(Forgiveness);
 
-        addon.Group("Collisions", "Will not collide with friends.", Collision);
+        addon.Group("Collision", "Will not collide with friends.", Collision);
         addon.Group("Peace", "Friends do not hurt, frighten, or steal from one another.", Violence, Explosion, Fear, Stealing);
         addon.Group("Shared Senses", "Deafness and blindness fade toward those of nearby friends.", Deaf, Blind);
         addon.Group(

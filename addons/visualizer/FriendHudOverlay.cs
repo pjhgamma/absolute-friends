@@ -31,11 +31,11 @@ internal class FriendHudOverlay : HudOverlay
         _overlays.Add(room, this);
     }
 
-    private static bool IsEnabled => Config.FriendMarkers.IsActive || Config.FriendMeter.IsActive || Config.BumpEffects.IsActive;
+    private static bool IsEnabled => Config.FriendMarker.IsActive || Config.FriendMeter.IsActive || Config.BumpEffect.IsActive;
 
     public static bool IsShowing(AbstractPhysicalObject source)
     {
-        return Config.FriendMarkers.IsActive
+        return Config.FriendMarker.IsActive
             && source is AbstractCreature creature
             && RainWorldUtils.MainCamera(source.world?.game)?.room is { } viewed
             && _overlays.TryGetValue(viewed, out var overlay)
@@ -144,7 +144,7 @@ internal class FriendHudOverlay : HudOverlay
                 continue;
             }
 
-            if (!Config.FriendMarkers.IsActive)
+            if (!Config.FriendMarker.IsActive)
             {
                 continue;
             }
@@ -164,7 +164,7 @@ internal class FriendHudOverlay : HudOverlay
 
     private void UpdateMarkers(RoomCamera camera)
     {
-        bool isActive = Config.FriendMarkers.IsActive;
+        bool isActive = Config.FriendMarker.IsActive;
         bool isShown = isActive && !IsHidden(camera);
 
         _removed.Clear();
@@ -211,7 +211,7 @@ internal class FriendHudOverlay : HudOverlay
 
             _deaths[creature] = isDead;
 
-            if (!Config.BumpEffects.IsActive || creature.realizedCreature is not { } realized || realized.room != room)
+            if (!Config.BumpEffect.IsActive || creature.realizedCreature is not { } realized || realized.room != room)
             {
                 continue;
             }

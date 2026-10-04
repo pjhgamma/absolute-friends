@@ -62,12 +62,12 @@ internal static class Relationships
         string symbol = string.Empty;
         Color color = isOwner ? Palette.Owned : ColorOf(type);
 
-        if (Config.Names.IsActive)
+        if (Config.Name.IsActive)
         {
             name = source is AbstractCreature creature ? creature.FriendName : source.DefaultName;
         }
 
-        if (Config.Icons.IsActive)
+        if (Config.Icon.IsActive)
         {
             symbol = subject is AbstractCreature abstractCreature ? CreatureSymbolOf(abstractCreature, type) : ItemSymbolOf(subject);
         }

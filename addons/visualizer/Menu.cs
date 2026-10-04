@@ -10,18 +10,18 @@ internal static class Menu
     {
         menu.AddTitle("Friend Markers");
         menu.SetColumns(3);
-        menu.AddCheckBox(Config.FriendMarkers);
+        menu.AddCheckBox(Config.FriendMarker);
         menu.AddCheckBox(Config.FriendMeter);
-        menu.AddCheckBox(Config.BumpEffects);
+        menu.AddCheckBox(Config.BumpEffect);
 
         menu.AddTitle("Relationship Overlay");
         menu.SetColumns(3);
-        menu.AddCheckBox(Config.Icons);
+        menu.AddCheckBox(Config.Icon);
         menu.AddRadioButtonGroup(Config.IconStyle);
         menu.AddRadioButton("Creature Icon", "Uses creature artwork for relationship icons. Items keep their item icons.");
         menu.AddRadioButton("Symbol Icon", "Uses friendship symbols for creatures. Items keep their item icons.");
-        menu.AddCheckBox(Config.Names);
-        menu.AddCheckBox(Config.Links);
+        menu.AddCheckBox(Config.Name);
+        menu.AddCheckBox(Config.Link);
 
         menu.AddTitle("Shown Relationships");
         menu.SetColumns(4);
@@ -40,7 +40,7 @@ internal static class Menu
             friendships[index].color = Relationships.ColorOf(types[index]);
         }
 
-        menu.AddCheckBox(Config.Owners);
+        menu.AddCheckBox(Config.Owner);
 
         menu.AddTitle("Overlay Updates");
         menu.SetColumns(4);

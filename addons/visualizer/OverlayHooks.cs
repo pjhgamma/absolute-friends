@@ -40,7 +40,7 @@ internal abstract class ObjectOverlayHooks<TOverlay> : BaseHooks
 
 internal class FriendHudHooks : RoomOverlayHooks<FriendHudOverlay>
 {
-    protected override Configurable<bool>[] Options => [Config.FriendMarkers, Config.FriendMeter, Config.BumpEffects];
+    protected override Configurable<bool>[] Options => [Config.FriendMarker, Config.FriendMeter, Config.BumpEffect];
 
     protected override string? Subject => "Friend HUD";
 
@@ -49,7 +49,7 @@ internal class FriendHudHooks : RoomOverlayHooks<FriendHudOverlay>
 
 internal class TagHooks : RoomOverlayHooks<TagOverlay>
 {
-    protected override Configurable<bool>[] Options => [Config.Icons, Config.Names];
+    protected override Configurable<bool>[] Options => [Config.Icon, Config.Name];
 
     protected override string? Subject => "Relationship Tags";
 
@@ -58,7 +58,7 @@ internal class TagHooks : RoomOverlayHooks<TagOverlay>
 
 internal class FriendLinkHooks : RoomOverlayHooks<FriendLinkOverlay>
 {
-    protected override Configurable<bool>[] Options => [Config.Links];
+    protected override Configurable<bool>[] Options => [Config.Link];
 
     protected override FriendLinkOverlay Create(Room room) => new();
 
@@ -73,7 +73,7 @@ internal class FriendLinkHooks : RoomOverlayHooks<FriendLinkOverlay>
 
 internal class OwnerLinkHooks : ObjectOverlayHooks<OwnerLinkOverlay>
 {
-    protected override Configurable<bool>[] Options => [Config.Links];
+    protected override Configurable<bool>[] Options => [Config.Link];
 
     protected override OwnerLinkOverlay Create(PhysicalObject target) => new(target);
 }

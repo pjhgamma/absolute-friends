@@ -4,47 +4,47 @@ namespace AbsoluteFriends.Visualizer;
 
 internal static class Config
 {
-    public static Configurable<bool> FriendMarkers = null!;
+    public static Configurable<bool> FriendMarker = null!;
 
     public static Configurable<bool> FriendMeter = null!;
 
-    public static Configurable<bool> BumpEffects = null!;
+    public static Configurable<bool> BumpEffect = null!;
 
-    public static Configurable<bool> Icons = null!;
+    public static Configurable<bool> Icon = null!;
 
     public static Configurable<int> IconStyle = null!;
 
-    public static Configurable<bool> Names = null!;
+    public static Configurable<bool> Name = null!;
 
-    public static Configurable<bool> Links = null!;
+    public static Configurable<bool> Link = null!;
 
     public static Configurable<int> ShownFriendship = null!;
 
-    public static Configurable<bool> Owners = null!;
+    public static Configurable<bool> Owner = null!;
 
     public static Configurable<int> UpdateInterval = null!;
 
     public static void Bind(Addon addon)
     {
-        FriendMarkers = addon.Bind("FriendMarkers", false, new ConfigurableInfo("Shows tracked friends' arrows and names in their colors, and their icons at the screen edge when in another room.", tags: ["Friend Markers"]));
+        FriendMarker = addon.Bind("FriendMarker", false, new ConfigurableInfo("Shows tracked friends' arrows and names in their colors, and their icons at the screen edge when in another room.", tags: ["Friend Marker"]));
         FriendMeter = addon.Bind("FriendMeter", false, new ConfigurableInfo("Shows tracked friends' icons at the bottom right.", tags: ["Friend Meter"]));
-        BumpEffects = addon.Bind("BumpEffects", false, new ConfigurableInfo("Plays animations when tracked friends die and when friends or players revive.", tags: ["Bump Effects"]));
+        BumpEffect = addon.Bind("BumpEffect", false, new ConfigurableInfo("Plays animations when tracked friends die and when friends or players revive.", tags: ["Bump Effect"]));
 
-        Icons = addon.Bind("Icons", false, new ConfigurableInfo("Draws icons above shown friends, and owners' icons above owned things. Dead creatures' icons are dimmed.", tags: ["Relationship Icons"]));
+        Icon = addon.Bind("Icon", false, new ConfigurableInfo("Draws icons above shown friends, and owners' icons above owned things. Dead creatures' icons are dimmed.", tags: ["Relationship Icon"]));
         IconStyle = addon.Bind("IconStyle", (int)RelationshipIconStyle.Creature, new ConfigurableInfo("Chooses creature artwork or friendship symbols for relationship icons.", new ConfigAcceptableRange<int>(0, 1), tags: ["Icon Style"]))
-            .Require(Icons);
-        Names = addon.Bind("Names", false, new ConfigurableInfo("Draws names above shown friends, and owners' names above owned things. Dead creatures' names are dimmed.", tags: ["Relationship Names"]));
-        Links = addon.Bind("Links", false, new ConfigurableInfo("Draws lines between shown friends and between owners and owned things. Ownership lines are thickest at the owner's end.", tags: ["Relationship Links"]));
+            .Require(Icon);
+        Name = addon.Bind("Name", false, new ConfigurableInfo("Draws names above shown friends, and owners' names above owned things. Dead creatures' names are dimmed.", tags: ["Relationship Name"]));
+        Link = addon.Bind("Link", false, new ConfigurableInfo("Draws lines between shown friends and between owners and owned things. Ownership lines are thickest at the owner's end.", tags: ["Relationship Link"]));
 
         ShownFriendship = addon.Bind("ShownFriendship", (int)ShownFriendshipChoice.Indirect, new ConfigurableInfo("Sets the weakest friendship that relationship overlays show. Moving right shows more friends.", new ConfigAcceptableRange<int>(0, 3), tags: ["Shown Friendship"]))
-            .RequireAny(Icons, Names, Links);
-        Owners = addon.Bind("Owners", true, new ConfigurableInfo("Includes ownership in relationship overlays.", tags: ["Owner Relationships"]))
-            .RequireAny(Icons, Names, Links);
+            .RequireAny(Icon, Name, Link);
+        Owner = addon.Bind("Owner", true, new ConfigurableInfo("Includes ownership in relationship overlays.", tags: ["Owner Relationship"]))
+            .RequireAny(Icon, Name, Link);
 
         UpdateInterval = addon.Bind("UpdateInterval", 10, new ConfigurableInfo("Sets how many frames pass between friend and owner checks.", new ConfigAcceptableRange<int>(1, 40), tags: ["Update Interval"]))
-            .RequireAny(FriendMarkers, FriendMeter, Icons, Names, Links);
+            .RequireAny(FriendMarker, FriendMeter, Icon, Name, Link);
 
-        addon.Group("Friend Markers", "Marks tracked friends.", FriendMarkers, FriendMeter, BumpEffects);
-        addon.Group("Relationship Overlay", "Visualizes relationships with icons, names, and links.", Icons, Names, Links);
+        addon.Group("Friend Markers", "Marks tracked friends.", FriendMarker, FriendMeter, BumpEffect);
+        addon.Group("Relationship Overlay", "Visualizes relationships with icons, names, and links.", Icon, Name, Link);
     }
 }

@@ -33,7 +33,7 @@ internal class RevivalBump : CosmeticSprite
     {
         base.Update(eu);
 
-        if (!Config.BumpEffects.IsActive || _friend.dead || _friend.slatedForDeletetion || _friend.room != room || _counter >= Lifetime)
+        if (!Config.BumpEffect.IsActive || _friend.dead || _friend.slatedForDeletetion || _friend.room != room || _counter >= Lifetime)
         {
             Destroy();
 

@@ -44,7 +44,7 @@ internal class DeathBump : CosmeticSprite
 
         RoomCamera? camera = RainWorldUtils.MainCamera(room?.game);
 
-        if (!Config.BumpEffects.IsActive || camera == null || camera.room != room || _counter > Lifetime)
+        if (!Config.BumpEffect.IsActive || camera == null || camera.room != room || _counter > Lifetime)
         {
             Destroy();
 

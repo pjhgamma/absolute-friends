@@ -17,7 +17,7 @@ internal class TagOverlay : HudOverlay
 
     private bool _isViewed;
 
-    private static bool IsEnabled => Config.Icons.IsActive || Config.Names.IsActive;
+    private static bool IsEnabled => Config.Icon.IsActive || Config.Name.IsActive;
 
     public override void Update(bool eu)
     {
@@ -108,7 +108,7 @@ internal class TagOverlay : HudOverlay
             DrawSide(tag.Friend, subject.Friend, source.PulseColor(subject.Friend.Color, timeStacker), position, isDistant, ref row);
         }
 
-        if (!isDistant && Config.Owners.IsActive && subject.Owner is { } owner)
+        if (!isDistant && Config.Owner.IsActive && subject.Owner is { } owner)
         {
             DrawSide(tag.Owner, owner, owner.Color, position, false, ref row);
         }
@@ -116,12 +116,12 @@ internal class TagOverlay : HudOverlay
 
     private static void DrawSide(SideTag tag, RelationshipAppearance appearance, Color color, Vector2 position, bool isDistant, ref int row)
     {
-        if (Config.Names.IsActive)
+        if (Config.Name.IsActive)
         {
             tag.SetName(appearance.Name, color, position, Offset(row++, isDistant));
         }
 
-        if (Config.Icons.IsActive)
+        if (Config.Icon.IsActive)
         {
             tag.SetIcon(appearance.Symbol, color, position, Offset(row++, isDistant));
         }

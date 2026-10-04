@@ -63,7 +63,7 @@ internal class FriendLinkOverlay : CosmeticSprite
 
         try
         {
-            if (Config.Links.IsActive && OverlayUtils.ShouldDraw(rCam, room))
+            if (Config.Link.IsActive && OverlayUtils.ShouldDraw(rCam, room))
             {
                 Fit(sLeaser, rCam, _pairs.Count);
 
@@ -162,7 +162,7 @@ internal class FriendLinkOverlay : CosmeticSprite
     {
         _pairs.Clear();
 
-        if (room == null || !Config.Links.IsActive)
+        if (room == null || !Config.Link.IsActive)
         {
             return;
         }
@@ -177,7 +177,7 @@ internal class FriendLinkOverlay : CosmeticSprite
                 PhysicalObject first = _objects[i];
                 PhysicalObject second = _objects[j];
 
-                if (Config.Owners.IsActive && (first.ExternalOwner?.RealizedOwner == second || second.ExternalOwner?.RealizedOwner == first))
+                if (Config.Owner.IsActive && (first.ExternalOwner?.RealizedOwner == second || second.ExternalOwner?.RealizedOwner == first))
                 {
                     continue;
                 }
