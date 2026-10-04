@@ -2,7 +2,7 @@ using Menu.Remix;
 using Menu.Remix.MixedUI;
 using UnityEngine;
 
-namespace AbsoluteFriends.Core.Manager;
+namespace AbsoluteFriends.Manager;
 
 internal sealed partial class FriendManagerDialog
 {

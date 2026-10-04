@@ -1,6 +1,6 @@
 using AbsoluteFriends.Utils;
 
-namespace AbsoluteFriends.Core;
+namespace AbsoluteFriends.Manager;
 
 internal static class FriendSaveData
 {

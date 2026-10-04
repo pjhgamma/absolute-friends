@@ -1,9 +1,10 @@
+using AbsoluteFriends.Core;
 using AbsoluteFriends.Utils;
 using Menu.Remix;
 using Menu.Remix.MixedUI;
 using UnityEngine;
 
-namespace AbsoluteFriends.Core.Manager;
+namespace AbsoluteFriends.Manager;
 
 internal sealed partial class FriendManagerDialog
 {
@@ -24,7 +25,7 @@ internal sealed partial class FriendManagerDialog
         internal UIelementWrapper[] Wrappers { get; } = wrappers;
     }
 
-    private static List<AbstractCreature> CollectCreatures() => [.. FriendUtils.ManageableFriends
+    private static List<AbstractCreature> CollectCreatures() => [.. FriendUtils.TrackingCandidates
         .OrderBy(creature => creature.IsPlayer ? 0 : creature.IsSlugpup ? 1 : 2)
         .ThenBy(creature => creature.creatureTemplate?.name, StringComparer.Ordinal)
         .ThenBy(creature => creature.ID.number)];

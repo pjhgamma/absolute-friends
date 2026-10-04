@@ -16,7 +16,7 @@ public sealed class Plugin : AddonPlugin
 
     public const string Version = "0.1.0";
 
-    public override string AddonDescription => "Adds friendship and ownership rules for Hunter Long Legs and the green Neuron.";
+    public override string AddonDescription => "Adds friendship, ownership, tracking, and name rules for Hunter Long Legs and the green Neuron.";
 
     // Declare the Absolute Friends version this addon was built against for compatibility checks.
     public override string AbsoluteFriendsVersion => AbsoluteFriends.Plugin.Version;
@@ -38,6 +38,7 @@ public sealed class Plugin : AddonPlugin
     {
         // Register external rules here when they need matching cleanup in Disable.
         RelationshipRules.Register();
+        TrackingRules.Register();
 
         Logger.LogInfo($"Hunter Long Legs example enabled with {AddonContext.OptionCount} options");
     }
@@ -46,6 +47,7 @@ public sealed class Plugin : AddonPlugin
     protected override void Disable()
     {
         RelationshipRules.Unregister();
+        TrackingRules.Unregister();
 
         Logger.LogInfo("Hunter Long Legs example disabled");
     }

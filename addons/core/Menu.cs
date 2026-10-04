@@ -29,11 +29,5 @@ internal static partial class Menu
         menu.AddCheckBox(Config.FriendExpedition, enabled: ModManager.Expedition);
         menu.AddCheckBox(Config.FriendArena);
         menu.AddCheckBox(Config.FriendSafari, enabled: ModManager.MSC);
-
-        menu.AddTitle("Friend Manager");
-        menu.AddRow(0.5f);
-        menu.SetColumns(2);
-        menu.AddKeyBinder(Config.FriendManagerKey, "Friend Manager Shortcut");
-        menu.AddCheckBox(Config.TrackNewFriends);
     }
 }

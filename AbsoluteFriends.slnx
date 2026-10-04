@@ -2,6 +2,7 @@
 
   <Folder Name="/addons/">
     <Project Path="addons/core/AbsoluteCore.csproj" />
+    <Project Path="addons/manager/AbsoluteManager.csproj" />
     <Project Path="addons/general/AbsoluteGeneral.csproj" />
     <Project Path="addons/items/AbsoluteItems.csproj" />
     <Project Path="addons/players/AbsolutePlayers.csproj" />

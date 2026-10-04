@@ -43,12 +43,19 @@ internal sealed class FriendshipHooks : DownpourHooks
                 return;
             }
 
+            // Core registers only creatures with a vanilla FriendTracker (lizards, squidcadas, slugpups) on its own.
+            // Hunter Long Legs has none, so this addon registers it while it is a player's friend and removes it otherwise.
+            // Track() only registers: IsTracked also requires friendship eligibility and every tracking rule to agree.
+            // Core clears registrations when the world changes and drops creatures deleted while alive, so call Track() repeatedly, as this update does.
+            // Registered creatures are TrackingCandidates, so the Manager lists them and can untrack or nickname them.
+            // The Manager hides Forget for creatures without a vanilla FriendTracker, because this hook would register them again at once.
             if (AddonConfig.Friendship.IsActive && self.creature.IsFriendOfPlayer)
             {
                 self.creature.Track();
             }
             else
             {
+                // Untrack() also removes a creature that Core or another addon registered.
                 self.creature.Untrack();
             }
         });

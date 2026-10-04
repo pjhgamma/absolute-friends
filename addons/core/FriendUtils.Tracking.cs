@@ -14,9 +14,7 @@ public static partial class FriendUtils
 
     private static readonly HashSet<AbstractCreature> _trackedCreatures = [];
 
-    private static readonly HashSet<AbstractCreature> _trackerCreatures = [];
-
-    private static ConditionalWeakTable<RainWorldGame, TrackingChoices> _trackingChoices = new();
+    private static readonly List<Func<AbstractCreature, bool>> _trackingRules = [];
 
     private static readonly ConditionalWeakTable<FriendTracker, SocialMemory.Relationship> _adoptedRelationships = new();
 
@@ -86,8 +84,8 @@ public static partial class FriendUtils
 
     internal static bool HasMultipleKnownSlugcats => (RainWorldUtils.CurrentGame?.Players.Count ?? 0) + _trackedSlugpups.Count > 1;
 
-    internal static IEnumerable<AbstractCreature> ManageableFriends => Players
-        .Concat(_trackerCreatures)
+    public static IEnumerable<AbstractCreature> TrackingCandidates => Players
+        .Concat(_trackedCreatures)
         .Distinct()
         .Where(creature => (!creature.slatedForDeletion || creature.state?.dead == true) && creature.IsTrackingAllowed);
 
@@ -97,7 +95,6 @@ public static partial class FriendUtils
     {
         _trackedSlugpups.Clear();
         _trackedCreatures.Clear();
-        _trackerCreatures.Clear();
         _chainingFriendships.Clear();
         _chainingGame = null;
         _chainingClock = -1;
@@ -115,14 +112,17 @@ public static partial class FriendUtils
 
         _trackedCreatures.RemoveWhere(IsStale);
         _trackedSlugpups.RemoveWhere(abstractCreature => !_trackedCreatures.Contains(abstractCreature));
-        _trackerCreatures.RemoveWhere(IsStale);
     }
 
-    internal static void ResetTrackingChoices() => _trackingChoices = new();
+    public static void RegisterTrackingRule(Func<AbstractCreature, bool> rule)
+    {
+        if (rule != null && !_trackingRules.Contains(rule))
+        {
+            _trackingRules.Add(rule);
+        }
+    }
 
-    private static TrackingChoices? ChoicesFor(AbstractCreature creature) => creature.Game is { } game
-        ? _trackingChoices.GetValue(game, game => new(game.StorySaveState))
-        : null;
+    public static void UnregisterTrackingRule(Func<AbstractCreature, bool> rule) => _trackingRules.Remove(rule);
 
     extension(AbstractCreature? source)
     {
@@ -136,7 +136,7 @@ public static partial class FriendUtils
                 }
 
                 return source.IsTrackingAllowed
-                    && (source.IsPlayer || ChoicesFor(source)?.Exclusions.Contains(source.SaveDataKey) != true);
+                    && (source.IsPlayer || _trackingRules.All(rule => rule(source)));
             }
         }
 
@@ -170,15 +170,12 @@ public static partial class FriendUtils
             }
         }
 
-        public void Track() => source.Track(fromTracker: false);
-
         public void Untrack()
         {
             if (source is { } abstractCreature)
             {
                 _trackedSlugpups.Remove(abstractCreature);
                 _trackedCreatures.Remove(abstractCreature);
-                _trackerCreatures.Remove(abstractCreature);
                 _trackedPlayerIds.Remove(abstractCreature);
             }
         }
@@ -199,7 +196,7 @@ public static partial class FriendUtils
                 && source.RememberedFriendshipWith(abstractPlayer) == true;
         }
 
-        internal void Track(bool fromTracker)
+        public void Track()
         {
             if (source is not { } abstractCreature || abstractCreature is AbstractOwner)
             {
@@ -212,12 +209,6 @@ public static partial class FriendUtils
             }
 
             _trackedCreatures.Add(abstractCreature);
-
-            if (fromTracker && _trackerCreatures.Add(abstractCreature))
-            {
-                abstractCreature.ApplyDefaultTracking();
-                abstractCreature.RecordMeeting();
-            }
 
             if (!abstractCreature.IsSlugcat && abstractCreature.abstractAI?.RealAI == null)
             {
@@ -245,69 +236,7 @@ public static partial class FriendUtils
             }
 
             _slugpupFriendIds.GetOrCreateValue(abstractSlugpup).Add(abstractPlayer.ID);
-            abstractSlugpup.Track(fromTracker: true);
-        }
-
-        internal void SetTracked(bool tracked)
-        {
-            if (source is not { IsTrackingAllowed: true, IsPlayer: false } creature || ChoicesFor(creature) is not { } choices)
-            {
-                return;
-            }
-
-            string key = creature.SaveDataKey;
-
-            if (!tracked && !_trackerCreatures.Contains(creature) && !choices.Exclusions.Contains(key))
-            {
-                return;
-            }
-
-            if (choices.Choose(key, tracked))
-            {
-                choices.Write();
-            }
-        }
-
-        internal void Forget()
-        {
-            if (source is not { IsPlayer: false } abstractCreature)
-            {
-                return;
-            }
-
-            abstractCreature.state?.socialMemory?.relationShips?.RemoveAll(relationship => relationship.subjectID.IsKnownSlugcat);
-
-            if (abstractCreature.abstractAI?.RealAI?.friendTracker is { } tracker && tracker.friend?.abstractCreature is { IsSlugcat: true })
-            {
-                tracker.friend = null;
-                tracker.friendRel = null;
-            }
-
-            string key = abstractCreature.SaveDataKey;
-
-            if (ChoicesFor(abstractCreature) is { } choices && (choices.Exclusions.Remove(key) | choices.Inclusions.Remove(key)))
-            {
-                choices.Write();
-            }
-
-            abstractCreature.SetNickname(null);
-            abstractCreature.ForgetMeeting();
-            abstractCreature.Untrack();
-        }
-
-        private void ApplyDefaultTracking()
-        {
-            if (source is not { IsTrackingAllowed: true, IsPlayer: false } creature || ChoicesFor(creature) is not { } choices)
-            {
-                return;
-            }
-
-            string key = creature.SaveDataKey;
-
-            if (!choices.Exclusions.Contains(key) && !choices.Inclusions.Contains(key) && choices.Choose(key, Config.TrackNewFriends.Value))
-            {
-                choices.Write();
-            }
+            abstractSlugpup.Track();
         }
 
         private bool? RememberedFriendshipWith(AbstractCreature target)
@@ -498,54 +427,6 @@ public static partial class FriendUtils
                 return false;
             }
         }
-    }
-
-    private sealed class TrackingChoices
-    {
-        private const string SaveKey = "ABSOLUTEFRIENDS_TRACKING<svB>";
-
-        private const string ExcludedSuffix = "=0";
-
-        private const string IncludedSuffix = "=1";
-
-        private const string PlayerPrefix = "P";
-
-        internal readonly HashSet<string> Exclusions = new(StringComparer.Ordinal);
-
-        internal readonly HashSet<string> Inclusions = new(StringComparer.Ordinal);
-
-        private readonly SaveState? _save;
-
-        internal TrackingChoices(SaveState? save)
-        {
-            _save = save;
-
-            foreach (string entry in FriendSaveData.ReadEntries(save, SaveKey))
-            {
-                if (entry.StartsWith(PlayerPrefix, StringComparison.Ordinal))
-                {
-                    continue;
-                }
-
-                if (entry.EndsWith(ExcludedSuffix, StringComparison.Ordinal))
-                {
-                    Exclusions.Add(entry.Substring(0, entry.Length - ExcludedSuffix.Length));
-                }
-                else if (entry.EndsWith(IncludedSuffix, StringComparison.Ordinal))
-                {
-                    Inclusions.Add(entry.Substring(0, entry.Length - IncludedSuffix.Length));
-                }
-            }
-        }
-
-        internal bool Choose(string key, bool tracked) => tracked
-            ? Inclusions.Add(key) | Exclusions.Remove(key)
-            : Exclusions.Add(key) | Inclusions.Remove(key);
-
-        internal void Write() => FriendSaveData.WriteEntries(_save, SaveKey, Exclusions
-            .Select(key => key + ExcludedSuffix)
-            .Concat(Inclusions.Select(key => key + IncludedSuffix))
-            .OrderBy(entry => entry, StringComparer.Ordinal));
     }
 
     private sealed class AdoptionOrigin(AbstractCreature creature, SocialMemory.Relationship? relationship)

@@ -2,7 +2,7 @@ using AbsoluteFriends.Hooks;
 using Menu;
 using UnityEngine;
 
-namespace AbsoluteFriends.Core.Manager;
+namespace AbsoluteFriends.Manager;
 
 internal class FriendManagerHooks : BaseHooks
 {
@@ -76,8 +76,8 @@ internal class FriendManagerHooks : BaseHooks
     {
         orig(self, saveString, game);
 
-        FriendUtils.ResetTrackingChoices();
-        FriendDisplayNames.ResetNicknames();
+        FriendTracking.ResetTracking();
+        FriendNicknames.ResetNicknames();
         FriendHistory.ResetHistory();
     }
 
@@ -97,8 +97,8 @@ internal class FriendManagerHooks : BaseHooks
     {
         orig(self, manager);
 
-        FriendUtils.ResetTrackingChoices();
-        FriendDisplayNames.ResetNicknames();
+        FriendTracking.ResetTracking();
+        FriendNicknames.ResetNicknames();
         FriendHistory.ResetHistory();
     }
 
@@ -121,5 +121,7 @@ internal class FriendManagerHooks : BaseHooks
         TryOpen(self.manager, self);
 
         orig(self);
+
+        FriendTracking.MeetNewFriends(self);
     }
 }

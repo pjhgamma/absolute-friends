@@ -62,7 +62,7 @@ internal class FriendTrackerHooks : BaseHooks
             || abstractCreature.IsCloseFriendOfPlayer
         )
         {
-            abstractCreature.Track(fromTracker: true);
+            abstractCreature.Track();
         }
         else
         {

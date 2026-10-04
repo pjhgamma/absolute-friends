@@ -1,3 +1,4 @@
+using AbsoluteFriends.Core;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using Menu;
@@ -5,7 +6,7 @@ using Menu.Remix;
 using Menu.Remix.MixedUI;
 using UnityEngine;
 
-namespace AbsoluteFriends.Core.Manager;
+namespace AbsoluteFriends.Manager;
 
 internal sealed partial class FriendManagerDialog
 {
@@ -40,7 +41,7 @@ internal sealed partial class FriendManagerDialog
         _nicknameBox = new NicknameTextBox(nickname, new Vector2(textX + 40f, nameY), 225f)
         {
             allowSpace = true,
-            maxLength = FriendDisplayNames.MaxNicknameLength,
+            maxLength = FriendNicknames.MaxNicknameLength,
             description = Translation.Of("Edit this friend's name.")
         };
         _saveNickname = new(new Vector2(textX + 271f, nameY), new Vector2(24f, 24f), "Menu_Symbol_CheckBox")
@@ -181,12 +182,19 @@ internal sealed partial class FriendManagerDialog
             _nicknameBox.Show();
             _saveNickname.Show();
             _clearNickname.Show();
-            _forgetButton.Show();
+
+            if (creature.HasFriendTracker)
+            {
+                _forgetButton.Show();
+            }
+            else
+            {
+                _forgetButton.Hide();
+            }
         }
 
         _trackingLabel.Show();
         _trackingCheckbox.Show();
-        _trackingCheckbox.greyedOut = creature.IsPlayer;
 
         SnapDetails();
         RefreshDetails();
@@ -201,6 +209,7 @@ internal sealed partial class FriendManagerDialog
 
         string life = Translation.Of(friend.state is not { } state ? "Unknown" : state.dead ? "Dead" : "Alive");
         bool tracked = friend.IsTracked;
+        bool blocked = !friend.IsPlayer && !tracked && !friend.IsExcluded;
 
         (string symbol, Color color) = friend.Icon;
 
@@ -228,11 +237,16 @@ internal sealed partial class FriendManagerDialog
             : string.Empty;
         _trackingLabel.text = TrackingLabel(tracked);
         _trackingCheckbox.ForceValue(tracked ? "true" : "false");
-        _trackingCheckbox.description = Translation.Of(friend.IsPlayer ? "Players are always tracked." : tracked ? "Stop tracking this friend." : "Track this friend.");
+        _trackingCheckbox.greyedOut = friend.IsPlayer || blocked;
+        _trackingCheckbox.description = Translation.Of(friend.IsPlayer
+            ? "Players are always tracked."
+            : blocked
+                ? "Another addon keeps this friend untracked."
+                : tracked ? "Stop tracking this friend." : "Track this friend.");
 
         foreach (PlayerLine line in _playerLines)
         {
-            line.Label.label.text = friend.IsPlayer || Config.FriendSharing.IsActive ? string.Empty : PlayerRelationship(friend, line.Player);
+            line.Label.label.text = friend.IsPlayer || Core.Config.FriendSharing.IsActive ? string.Empty : PlayerRelationship(friend, line.Player);
             line.Label.label.color = line.Player.ShortcutColor;
         }
     }

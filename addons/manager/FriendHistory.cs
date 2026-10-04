@@ -1,8 +1,9 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using AbsoluteFriends.Core;
 using AbsoluteFriends.Utils;
 
-namespace AbsoluteFriends.Core;
+namespace AbsoluteFriends.Manager;
 
 internal static class FriendHistory
 {
@@ -23,7 +24,7 @@ internal static class FriendHistory
 
         bool changed = false;
 
-        foreach (var abstractCreature in FriendUtils.ManageableFriends)
+        foreach (var abstractCreature in FriendUtils.TrackingCandidates)
         {
             if (abstractCreature.IsPlayer || abstractCreature.state?.dead != false || !state.Records.TryGetValue(abstractCreature.SaveDataKey, out FriendRecord record))
             {

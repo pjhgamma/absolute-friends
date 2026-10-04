@@ -1,5 +1,4 @@
 using AbsoluteFriends.Options;
-using UnityEngine;
 
 namespace AbsoluteFriends.Core;
 
@@ -35,10 +34,6 @@ public static class Config
 
     public static Configurable<bool> FriendSafari = null!;
 
-    public static Configurable<KeyCode> FriendManagerKey = null!;
-
-    public static Configurable<bool> TrackNewFriends = null!;
-
     internal static void Bind(Addon addon)
     {
         FriendSlugcat = addon.Bind("FriendSlugcat", true, new ConfigurableInfo(Options.Config.Downpour(
@@ -64,9 +59,6 @@ public static class Config
         FriendExpedition = addon.Bind("FriendExpedition", true, new ConfigurableInfo("Enables friendship rules in Expedition mode.", tags: ["Expedition"]));
         FriendArena = addon.Bind("FriendArena", false, new ConfigurableInfo("Enables friendship rules in Arena mode.", tags: ["Arena"]));
         FriendSafari = addon.Bind("FriendSafari", false, new ConfigurableInfo("Enables friendship rules in Safari mode.", tags: ["Safari"]));
-
-        FriendManagerKey = addon.Bind("FriendManagerKey", KeyCode.F7, new ConfigurableInfo("Opens the friend manager during gameplay or while paused.", tags: ["Friend Manager Shortcut"]));
-        TrackNewFriends = addon.Bind("TrackNewFriends", true, new ConfigurableInfo("Tracks newly tamed friends. When off, new friends start untracked.", tags: ["Track New Friends"]));
 
         addon.Group("Slugcats", Options.Config.Downpour("Treats players as friends with one another.", "Treats slugcats as friends with one another."), FriendSlugcat);
         addon.Group("Friendly Creatures", "Treats friendly creatures as friends.", FriendCreature);

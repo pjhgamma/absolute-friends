@@ -2,7 +2,7 @@
 pjhgamma.absolutefriends.example-description|리믹스 플러그인과 절대적 친구 애드온을 한 모드에 담은 예제입니다.
 
 Absolute Friends: Example|절대적 친구: 예제
-Adds friendship and ownership rules for Hunter Long Legs and the green Neuron.|헌터 롱 레그와 녹색 신경파리에 친구 및 소유 규칙을 추가합니다.
+Adds friendship, ownership, tracking, and name rules for Hunter Long Legs and the green Neuron.|헌터 롱 레그와 녹색 신경파리에 친구, 소유, 추적, 이름 규칙을 추가합니다.
 
 Ripple Purple|잔물결 보라색
 Karamic Gold|카르마 금색
@@ -97,6 +97,10 @@ Aggressive Hunter|사냥꾼 적대
 Preserves Hunter's hostile relationship with Hunter Long Legs.|사냥꾼과 헌터 롱 레그의 적대 관계를 유지합니다.
 Tentacle Ownership|촉수 소유
 Makes Hunter Long Legs own anything held by its tentacles.|헌터 롱 레그가 촉수로 붙잡은 대상을 소유하게 합니다.
+Untracked Long Legs|롱 레그 추적 제외
+Keeps Hunter Long Legs untracked, so other addons do not treat it as a companion.|헌터 롱 레그를 추적하지 않아 다른 애드온이 동료로 취급하지 않게 합니다.
+Long Legs Name|롱 레그 이름
+Gives each Hunter Long Legs a name.|헌터 롱 레그마다 이름을 붙입니다.
 Green Neuron Ownership|녹색 신경파리 소유
 Makes every green Neuron self-owned.|모든 녹색 신경파리를 자기 소유로 취급합니다.
 Treats Hunter Long Legs as a friend and lets it own what it holds.|헌터 롱 레그를 친구로 취급하고 붙잡은 것을 소유하게 합니다.

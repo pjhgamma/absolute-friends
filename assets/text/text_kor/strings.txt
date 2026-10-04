@@ -133,6 +133,17 @@ Enables friendship rules in Arena mode.|아레나 모드에서 친구 관계 규
 Safari|사파리
 Enables friendship rules in Safari mode.|사파리 모드에서 친구 관계 규칙을 활성화합니다.
 
+Treats slugcats as friends with one another.|슬러그캣끼리 친구로 취급합니다.
+Treats friendly creatures as friends.|우호적인 생물을 친구로 취급합니다.
+Also treats neutral creatures as friends.|중립적인 생물도 친구로 취급합니다.
+Friend Network|친구망
+Shares friendship among slugcats and among a player's creature friends.|슬러그캣끼리, 그리고 플레이어의 생물 친구끼리 친구 관계를 공유합니다.
+Story and Expedition|스토리와 원정
+Enables friendship rules in Story and Expedition modes.|스토리와 원정 모드에서 친구 관계 규칙을 활성화합니다.
+
+Absolute Friends: Manager|절대적 친구: 관리자
+Lists friends during gameplay and manages their tracking and nicknames.|게임 도중 친구 목록을 보여주고 추적과 별명을 관리합니다.
+
 Friend Manager|친구 관리자
 Friend Manager Shortcut|친구 관리자 단축키
 Opens the friend manager during gameplay or while paused.|게임 도중이나 일시정지한 동안 친구 관리자를 엽니다.
@@ -146,6 +157,7 @@ Show this friend's details.|이 친구의 상세 정보를 표시합니다.
 Track this friend.|이 친구를 추적합니다.
 Stop tracking this friend.|이 친구의 추적을 끕니다.
 Players are always tracked.|플레이어는 항상 추적됩니다.
+Another addon keeps this friend untracked.|다른 애드온이 이 친구를 추적하지 않게 합니다.
 Tracked|추적 중
 Not tracked|추적 안 함
 Edit this friend's name.|이 친구의 이름을 편집합니다.
@@ -179,14 +191,6 @@ Dominant|지배적
 Submissive|순종적
 Balanced|무난함
 Met in <PLACEHOLDER> on cycle <PLACEHOLDER>, <PLACEHOLDER> cycles together|<PLACEHOLDER>에서 <PLACEHOLDER>주기에 만남, <PLACEHOLDER>주기 함께함
-
-Treats slugcats as friends with one another.|슬러그캣끼리 친구로 취급합니다.
-Treats friendly creatures as friends.|우호적인 생물을 친구로 취급합니다.
-Also treats neutral creatures as friends.|중립적인 생물도 친구로 취급합니다.
-Friend Network|친구망
-Shares friendship among slugcats and among a player's creature friends.|슬러그캣끼리, 그리고 플레이어의 생물 친구끼리 친구 관계를 공유합니다.
-Story and Expedition|스토리와 원정
-Enables friendship rules in Story and Expedition modes.|스토리와 원정 모드에서 친구 관계 규칙을 활성화합니다.
 
 Absolute Friends: Visualizer|절대적 친구: 시각화
 Visually shows friends and owners.|친구와 소유자를 시각적으로 표시합니다.
