@@ -78,7 +78,7 @@ internal class TagOverlay : HudOverlay
 
                     SubjectTag tag = TagAt(index++);
 
-                    Draw(tag, entry.Key, entry.Value, position, isDistant);
+                    Draw(tag, entry.Key, entry.Value, position, isDistant, timeStacker);
 
                     tag.IsDistant = isDistant;
                     tag.IsVisible = true;
@@ -96,7 +96,7 @@ internal class TagOverlay : HudOverlay
         }
     }
 
-    private static void Draw(SubjectTag tag, AbstractPhysicalObject source, Subject subject, Vector2 position, bool isDistant)
+    private static void Draw(SubjectTag tag, AbstractPhysicalObject source, Subject subject, Vector2 position, bool isDistant, float timeStacker)
     {
         bool isMarked = FriendHudOverlay.IsShowing(source);
         int row = !isDistant && isMarked ? 3 : 0;
@@ -105,25 +105,25 @@ internal class TagOverlay : HudOverlay
 
         if (Relationships.IsShown(subject.Type) && !isMarked)
         {
-            DrawSide(tag.Friend, subject.Friend, position, isDistant, ref row);
+            DrawSide(tag.Friend, subject.Friend, source.PulseColor(subject.Friend.Color, timeStacker), position, isDistant, ref row);
         }
 
         if (!isDistant && Config.Owners.IsActive && subject.Owner is { } owner)
         {
-            DrawSide(tag.Owner, owner, position, false, ref row);
+            DrawSide(tag.Owner, owner, owner.Color, position, false, ref row);
         }
     }
 
-    private static void DrawSide(SideTag tag, RelationshipAppearance appearance, Vector2 position, bool isDistant, ref int row)
+    private static void DrawSide(SideTag tag, RelationshipAppearance appearance, Color color, Vector2 position, bool isDistant, ref int row)
     {
         if (Config.Names.IsActive)
         {
-            tag.SetName(appearance.Name, appearance.Color, position, Offset(row++, isDistant));
+            tag.SetName(appearance.Name, color, position, Offset(row++, isDistant));
         }
 
         if (Config.Icons.IsActive)
         {
-            tag.SetIcon(appearance.Symbol, appearance.Color, position, Offset(row++, isDistant));
+            tag.SetIcon(appearance.Symbol, color, position, Offset(row++, isDistant));
         }
     }
 

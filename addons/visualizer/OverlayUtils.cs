@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Utils;
+using JollyCoop;
 using RWCustom;
 using UnityEngine;
 
@@ -14,6 +15,16 @@ internal static class OverlayUtils
     public const float Gap = 20f;
 
     private const float DeadDimming = 0.55f;
+
+    private const float PulsePeriod = 20f;
+
+    private const float OutsideSmallest = 0.85f;
+
+    private const float OutsideLargest = 1.15f;
+
+    private const float OutsideFaintest = 0.15f;
+
+    private const float OutsideStrongest = 0.6f;
 
     private static readonly AddonLogger _logger = Reporter.GetLogger(Plugin.Name);
 
@@ -75,6 +86,8 @@ internal static class OverlayUtils
         return false;
     }
 
+    private static float Wave(RainWorldGame? game, float timeStacker) => game == null ? 0f : 0.5f - 0.5f * Mathf.Cos((game.clock + timeStacker) / PulsePeriod * 2f * Mathf.PI);
+
     private static Vector2 Interpolate(Vector2 last, Vector2 now, float timeStacker) => Vector2.Lerp(last, now, timeStacker);
 
     private static Vector2 Interpolate(BodyChunk chunk, float timeStacker) => Interpolate(chunk.lastPos, chunk.pos, timeStacker);
@@ -103,6 +116,26 @@ internal static class OverlayUtils
                     }
                 }
             }
+        }
+    }
+
+    extension(AbstractPhysicalObject source)
+    {
+        public bool IsUnconscious => source.realizedObject is Creature { dead: false, Consious: false } creature
+            && !creature.grabbedBy.Any(grasp => grasp?.grabber is Player);
+
+        public float PulseScale(float timeStacker) => source.IsOutsideGate
+            ? Mathf.Lerp(OutsideSmallest, OutsideLargest, Wave(source.world?.game, timeStacker))
+            : 1f;
+
+        public Color PulseColor(Color color, float timeStacker)
+        {
+            if (source.IsOutsideGate)
+            {
+                return Color.Lerp(color, JollyCustom.GenerateClippedInverseColor(color), Mathf.Lerp(OutsideFaintest, OutsideStrongest, Wave(source.world?.game, timeStacker)));
+            }
+
+            return source.IsUnconscious ? Color.Lerp(color, color.Dimmed, Wave(source.world?.game, timeStacker)) : color;
         }
     }
 

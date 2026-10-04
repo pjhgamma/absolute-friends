@@ -87,7 +87,6 @@ internal sealed class FriendMarker
 
         _icon.FitSymbol(Futile.atlasManager.DoesContainElementWithName(symbol) ? symbol : FallbackSymbol, IconSize);
         _iconScale = _icon.scale;
-        _icon.color = _color;
         _iconGlow.color = _color;
         _arrowGlow.color = JollyCustom.GenerateClippedInverseColor(_color);
     }
@@ -119,7 +118,7 @@ internal sealed class FriendMarker
 
         float nearAlpha = Mathf.Pow(Mathf.Max(0f, Mathf.Lerp(_lastNearAlpha, _nearAlpha, timeStacker)), 0.7f);
         float farAlpha = Mathf.SmoothStep(_lastFarAlpha, _farAlpha, timeStacker);
-        Color color = _color;
+        Color color = _creature.PulseColor(_color, timeStacker);
 
         if (_shortcutWait > 0 && nearAlpha > 0f)
         {
@@ -132,7 +131,7 @@ internal sealed class FriendMarker
         }
 
         DrawArrow(camera, nearAlpha, color);
-        DrawIcon(camera, farAlpha);
+        DrawIcon(camera, farAlpha, color);
     }
 
     public void Remove()
@@ -167,7 +166,7 @@ internal sealed class FriendMarker
         SetAlpha(_arrowGlow, ArrowGlowAlpha * alpha * alpha);
     }
 
-    private void DrawIcon(RoomCamera camera, float alpha)
+    private void DrawIcon(RoomCamera camera, float alpha, Color color)
     {
         if (alpha <= 0f || Random.value > Mathf.InverseLerp(0.5f, 0.75f, alpha))
         {
@@ -184,6 +183,7 @@ internal sealed class FriendMarker
 
         _icon.SetPosition(position);
         _icon.scale = _iconScale * scale;
+        _icon.color = color;
         _iconGlow.SetPosition(position);
 
         SetAlpha(_icon, alpha);

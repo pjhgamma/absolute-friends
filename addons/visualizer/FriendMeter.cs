@@ -16,6 +16,8 @@ internal sealed class FriendMeter(FContainer container)
 
     private const float CustomFadeStep = 0.05f;
 
+    private const float OutsideFade = 1f;
+
     private readonly Dictionary<AbstractCreature, MeterIcon> _icons = [];
 
     private readonly List<AbstractCreature> _order = [];
@@ -70,6 +72,11 @@ internal sealed class FriendMeter(FContainer container)
             if (icon.Update(_fade))
             {
                 _customFade = 5f;
+            }
+
+            if (_order[index].IsOutsideGate)
+            {
+                _customFade = Mathf.Max(_customFade, OutsideFade);
             }
         }
     }
@@ -162,9 +169,6 @@ internal sealed class FriendMeter(FContainer container)
                 Restyle();
             }
 
-            _icon.scale = _baseScale * _rad;
-            _glow.scale = GlowScale * _rad;
-
             return changed;
         }
 
@@ -178,7 +182,8 @@ internal sealed class FriendMeter(FContainer container)
         public void Draw(float fade, int counter, float timeStacker)
         {
             Vector2 position = Vector2.Lerp(_lastPosition, _position, timeStacker);
-            Color color = _color;
+            float scale = _rad * _creature.PulseScale(timeStacker);
+            Color color = _creature.PulseColor(_color, timeStacker);
 
             if (counter % 6 < 2 && _lastBlink > 0f)
             {
@@ -188,9 +193,11 @@ internal sealed class FriendMeter(FContainer container)
             }
 
             _icon.SetPosition(position);
+            _icon.scale = _baseScale * scale;
             _icon.color = color;
             _icon.alpha = fade;
             _glow.SetPosition(position);
+            _glow.scale = GlowScale * scale;
             _glow.alpha = Mathf.SmoothStep(0f, 1f, fade) * GlowAlpha;
         }
 
