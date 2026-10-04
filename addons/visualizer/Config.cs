@@ -27,7 +27,7 @@ internal static class Config
     public static void Bind(Addon addon)
     {
         FriendMarkers = addon.Bind("FriendMarkers", false, new ConfigurableInfo("Shows tracked friends' arrows and names in their colors, and their icons at the screen edge when in another room.", tags: ["Friend Markers"]));
-        FriendMeter = addon.Bind("FriendMeter", false, new ConfigurableInfo("Shows tracked friends' icons and deaths beside the food meter.", tags: ["Friend Meter"]));
+        FriendMeter = addon.Bind("FriendMeter", false, new ConfigurableInfo("Shows tracked friends' icons at the bottom right.", tags: ["Friend Meter"]));
         BumpEffects = addon.Bind("BumpEffects", false, new ConfigurableInfo("Plays animations when tracked friends die and when friends or players revive.", tags: ["Bump Effects"]));
 
         Icons = addon.Bind("Icons", false, new ConfigurableInfo("Draws icons above shown friends, and owners' icons above owned things. Dead creatures' icons are dimmed.", tags: ["Relationship Icons"]));
