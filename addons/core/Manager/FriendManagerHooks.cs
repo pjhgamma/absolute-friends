@@ -102,31 +102,6 @@ internal class FriendManagerHooks : BaseHooks
         TryOpen(self.manager, self.game);
     }
 
-    [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.RawUpdate))]
-    private static void On_RainWorldGame_RawUpdate(On.RainWorldGame.orig_RawUpdate orig, RainWorldGame self, float dt)
-    {
-        if (self.manager.dialog is not FriendManagerDialog)
-        {
-            orig(self, dt);
-
-            return;
-        }
-
-        bool devToolsActive = self.devToolsActive;
-
-        try
-        {
-            self.devToolsActive = false;
-            self.oDown = true;
-
-            orig(self, dt);
-        }
-        finally
-        {
-            self.devToolsActive = devToolsActive;
-        }
-    }
-
     [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.Update))]
     private static void On_RainWorldGame_Update(On.RainWorldGame.orig_Update orig, RainWorldGame self)
     {
