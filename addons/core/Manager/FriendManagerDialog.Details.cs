@@ -107,6 +107,8 @@ internal sealed partial class FriendManagerDialog
     {
         _selectedFriend = creature;
 
+        HighlightSelection(false);
+
         if (creature == null)
         {
             _nameLabel.label.text = string.Empty;

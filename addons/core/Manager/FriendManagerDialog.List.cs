@@ -7,9 +7,13 @@ namespace AbsoluteFriends.Core.Manager;
 
 internal sealed partial class FriendManagerDialog
 {
-    private sealed class FriendRow(AbstractCreature creature, OpLabel name, OpLabel status, OpImage? icon, UIelementWrapper[] wrappers)
+    private sealed class FriendRow(AbstractCreature creature, RowButton button, RowWrapper focus, OpLabel name, OpLabel status, OpImage? icon, UIelementWrapper[] wrappers)
     {
         internal AbstractCreature Creature { get; } = creature;
+
+        internal RowButton Button { get; } = button;
+
+        internal RowWrapper Focus { get; } = focus;
 
         internal OpLabel Name { get; } = name;
 
@@ -57,39 +61,40 @@ internal sealed partial class FriendManagerDialog
 
     private void BuildList(List<AbstractCreature> creatures, float scroll)
     {
+        bool focusedInList = selectedObject is RowWrapper;
+
         ClearList();
 
-        float contentHeight = ContentHeight(creatures.Count);
-        bool hasSlideBar = contentHeight > ViewHeight;
+        _contentHeight = ContentHeight(creatures.Count);
 
-        _scrollBox = new(new Vector2(_listX, _screenY - 568f), new Vector2(ListWidth, ViewHeight), contentHeight, false, false, hasSlideBar)
+        bool hasSlideBar = _contentHeight > ViewHeight;
+
+        _scrollBox = new(new Vector2(_listX, _screenY - 568f), new Vector2(ListWidth, ViewHeight), _contentHeight, false, false, hasSlideBar)
         {
             doesBackBump = false
         };
         _scrollWrapper = new(_wrapper, _scrollBox);
         _scrollWrapper.glow?.Hide();
+        _scrollWrapper.page.selectables.Remove(_scrollWrapper);
+        _selectionBox = AddSelectionBox();
 
         for (int index = 0; index < creatures.Count; index++)
         {
             AbstractCreature creature = creatures[index];
-            float y = contentHeight - 50f - index * RowSpacing;
+            float y = RowY(index);
             (string symbol, Color color) = creature.Icon;
             OpLabel name = new(new Vector2(44f, y + 7f), new Vector2(157f, 30f), creature.FriendName, FLabelAlignment.Left)
             {
                 color = creature.ShortcutColor
             };
-            OpLabel status = new(new Vector2(205f, y + 7f), new Vector2(106f, 30f), RowStatus(creature), FLabelAlignment.Right);
-            OpSimpleImageButton details = new(new Vector2(317f, y + 10f), new Vector2(24f, 24f), "Menu_InfoI")
+            OpLabel status = new(new Vector2(205f, y + 7f), new Vector2(136f, 30f), RowStatus(creature), FLabelAlignment.Right);
+            RowButton button = new(new Vector2(8f, y + 4f), new Vector2(344f, 36f))
             {
                 description = Translation.Of("Show this friend's details.")
             };
+            List<UIelement> elements = [name, status];
 
-            details.OnClick += delegate
-            {
-                SelectFriend(creature);
-            };
-
-            List<UIelement> elements = [name, details, status];
+            button.Clicked += () => ClickRow(creature);
             OpImage? icon = null;
 
             if (Futile.atlasManager.DoesContainElementWithName(symbol))
@@ -103,16 +108,26 @@ internal sealed partial class FriendManagerDialog
                 elements.Add(icon);
             }
 
-            _scrollBox.AddItems([.. elements]);
+            _scrollBox.AddItems([button, .. elements]);
 
-            UIelementWrapper[] wrappers = [.. elements.Select(element => new UIelementWrapper(_wrapper, element))];
+            RowWrapper focus = new(_wrapper, button, _scrollBox);
+            UIelementWrapper[] wrappers = [focus, .. elements.Select(element => new UIelementWrapper(_wrapper, element))];
 
             if (icon != null)
             {
                 FitIcon(icon);
             }
 
-            _rows.Add(new(creature, name, status, icon, wrappers));
+            _rows.Add(new(creature, button, focus, name, status, icon, wrappers));
+        }
+
+        LinkRows();
+
+        HighlightSelection(true);
+
+        if (focusedInList)
+        {
+            selectedObject = SelectedRow()?.Focus;
         }
 
         _scrollBox.targetScrollOffset = Mathf.Clamp(scroll, _scrollBox.MaxScroll, 0f);
@@ -130,6 +145,13 @@ internal sealed partial class FriendManagerDialog
         }
 
         _rows.Clear();
+
+        if (_selectionBox != null && _wrapper.wrappers.TryGetValue(_selectionBox, out UIelementWrapper selectionWrapper))
+        {
+            RemoveElement(selectionWrapper);
+        }
+
+        _selectionBox = null;
 
         if (_scrollWrapper != null)
         {
@@ -151,8 +173,119 @@ internal sealed partial class FriendManagerDialog
         _wrapper._tab.RemoveItems([element]);
         _wrapper.wrappers.Remove(element);
         _wrapper.RemoveSubObject(wrapper);
+        wrapper.page.selectables.Remove(wrapper);
         wrapper.glow?.sprite.RemoveFromContainer();
+
+        if (selectedObject == wrapper)
+        {
+            selectedObject = null;
+        }
+
         element.Unload();
+    }
+
+    private float RowY(int index) => _contentHeight - 50f - index * RowSpacing;
+
+    private OpRect AddSelectionBox()
+    {
+        OpRect box = new(new Vector2(8f, 0f), new Vector2(344f, 36f), HighlightAlpha);
+
+        _scrollBox!.AddItems(box);
+        _ = new UIelementWrapper(_wrapper, box);
+        box.Hide();
+
+        return box;
+    }
+
+    private void LinkRows()
+    {
+        _wrapper.wrappers.TryGetValue(_trackingCheckbox, out UIelementWrapper? details);
+
+        for (int index = 0; index < _rows.Count; index++)
+        {
+            RowWrapper focus = _rows[index].Focus;
+
+            focus.nextSelectable[0] = focus;
+            focus.nextSelectable[1] = _rows[(index + _rows.Count - 1) % _rows.Count].Focus;
+            focus.nextSelectable[2] = details;
+            focus.nextSelectable[3] = _rows[(index + 1) % _rows.Count].Focus;
+        }
+    }
+
+    private FriendRow? SelectedRow() => _rows.Find(row => row.Creature == _selectedFriend);
+
+    private void HighlightSelection(bool snap)
+    {
+        int index = _rows.FindIndex(row => row.Creature == _selectedFriend);
+
+        if (_selectionBox == null)
+        {
+            return;
+        }
+
+        if (index < 0)
+        {
+            _selectionBox.Hide();
+
+            return;
+        }
+
+        _selectionTarget = RowY(index) + 4f;
+
+        if (snap || _selectionBox.Hidden)
+        {
+            _selectionY = _lastSelectionY = _selectionTarget;
+        }
+
+        _selectionBox.Show();
+    }
+
+    private void UpdateList()
+    {
+        _lastSelectionY = _selectionY;
+        _selectionY = Mathf.Lerp(_selectionY, _selectionTarget, SelectionEase);
+
+        _lastFocusedRow = manager.menuesMouseMode ? -1 : FollowFocus(_rows.FindIndex(row => row.Button.Focused));
+    }
+
+    private int FollowFocus(int focused)
+    {
+        if (focused < 0)
+        {
+            return -1;
+        }
+
+        FriendRow row = _rows[focused];
+
+        if (_lastFocusedRow < 0 && SelectedRow() is { } current && current != row)
+        {
+            selectedObject = current.Focus;
+            row = current;
+        }
+        else if (row.Creature != _selectedFriend)
+        {
+            SelectFriend(row.Creature);
+        }
+
+        OpScrollBox.ScrollToChild(row.Button, true);
+
+        return _rows.IndexOf(row);
+    }
+
+    private void ClickRow(AbstractCreature creature)
+    {
+        if (creature == _selectedFriend)
+        {
+            return;
+        }
+
+        PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
+        SelectFriend(creature);
+    }
+
+    private void PlaceSelection(float timeStacker)
+    {
+        _selectionBox?.SetPos(new Vector2(8f, Mathf.Lerp(_lastSelectionY, _selectionY, timeStacker)));
     }
 
     private void RefreshRows()

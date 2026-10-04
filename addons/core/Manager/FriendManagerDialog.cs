@@ -26,6 +26,10 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     private const float IconSize = 24f;
 
+    private const float HighlightAlpha = 0.15f;
+
+    private const float SelectionEase = 0.35f;
+
     private readonly RainWorldGame _game;
 
     private readonly MenuTabWrapper _wrapper;
@@ -43,6 +47,8 @@ internal sealed partial class FriendManagerDialog : Dialog
     private OpScrollBox? _scrollBox;
 
     private UIelementWrapper? _scrollWrapper;
+
+    private OpRect? _selectionBox;
 
     private MenuLabel _nameLabel = null!;
 
@@ -79,6 +85,16 @@ internal sealed partial class FriendManagerDialog : Dialog
     private float _lastOpenProgress;
 
     private float _openProgress;
+
+    private float _contentHeight;
+
+    private float _selectionY;
+
+    private float _lastSelectionY;
+
+    private float _selectionTarget;
+
+    private int _lastFocusedRow = -1;
 
     internal FriendManagerDialog(ProcessManager manager, RainWorldGame game) : base(manager)
     {
@@ -139,6 +155,8 @@ internal sealed partial class FriendManagerDialog : Dialog
 
         base.Update();
 
+        UpdateList();
+
         bool togglePressed = FriendManagerHooks.ConsumeShortcut() || RWInput.CheckPauseButton(0);
 
         if (togglePressed)
@@ -192,6 +210,8 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     public override void GrafUpdate(float timeStacker)
     {
+        PlaceSelection(timeStacker);
+
         base.GrafUpdate(timeStacker);
 
         float progress = Mathf.Lerp(_lastOpenProgress, _openProgress, timeStacker);
