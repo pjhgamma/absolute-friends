@@ -78,6 +78,18 @@ internal class FriendManagerHooks : BaseHooks
 
         FriendUtils.ResetTrackingChoices();
         FriendDisplayNames.ResetNicknames();
+        FriendHistory.ResetHistory();
+    }
+
+    [HookPatch(typeof(On.SaveState), nameof(On.SaveState.SessionEnded))]
+    private static void On_SaveState_SessionEnded(On.SaveState.orig_SessionEnded orig, SaveState self, RainWorldGame game, bool survived, bool newMalnourished)
+    {
+        if (survived)
+        {
+            FriendHistory.CountSurvivedCycle(game);
+        }
+
+        orig(self, game, survived, newMalnourished);
     }
 
     [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.ctor))]
@@ -87,6 +99,7 @@ internal class FriendManagerHooks : BaseHooks
 
         FriendUtils.ResetTrackingChoices();
         FriendDisplayNames.ResetNicknames();
+        FriendHistory.ResetHistory();
     }
 
     [HookPatch(typeof(On.Menu.PauseMenu), nameof(On.Menu.PauseMenu.Update))]

@@ -30,6 +30,8 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     private const float SelectionEase = 0.35f;
 
+    private const float PersonalityThreshold = 0.2f;
+
     private readonly RainWorldGame _game;
 
     private readonly MenuTabWrapper _wrapper;
@@ -37,6 +39,8 @@ internal sealed partial class FriendManagerDialog : Dialog
     private readonly FContainer _pageContainer;
 
     private readonly List<FriendRow> _rows = [];
+
+    private readonly List<PlayerLine> _playerLines = [];
 
     private readonly MenuLabel _emptyLabel;
 
@@ -58,6 +62,10 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     private MenuLabel _statusLabel = null!;
 
+    private MenuLabel _personalityLabel = null!;
+
+    private MenuLabel _metLabel = null!;
+
     private NicknameTextBox _nicknameBox = null!;
 
     private OpSimpleImageButton _saveNickname = null!;
@@ -67,6 +75,8 @@ internal sealed partial class FriendManagerDialog : Dialog
     private OpLabel _trackingLabel = null!;
 
     private OpCheckBox _trackingCheckbox = null!;
+
+    private HoldButton _forgetButton = null!;
 
     private AbstractCreature? _selectedFriend;
 

@@ -31,7 +31,7 @@ internal sealed partial class FriendManagerDialog
 
     private static float ContentHeight(int count) => Mathf.Max(ViewHeight, count * RowSpacing + 20f);
 
-    private static string RowStatus(AbstractCreature creature) => TrackingLabel(creature.IsTracked);
+    private static string RowStatus(AbstractCreature creature) => creature.IsPlayer ? string.Empty : TrackingLabel(creature.IsTracked);
 
     private static AbstractRoom? CreatureRoom(AbstractCreature creature) => creature.realizedCreature?.room?.abstractRoom ?? creature.Room;
 

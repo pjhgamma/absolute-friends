@@ -151,6 +151,8 @@ Not tracked|추적 안 함
 Edit this friend's name.|이 친구의 이름을 편집합니다.
 Save this nickname.|이 별명을 저장합니다.
 Clear this nickname.|이 별명을 지웁니다.
+Forget Friend|친구 잊기
+Hold to forget this friend and clear its like toward every slugcat.|길게 눌러 이 친구를 잊고 모든 슬러그캣에 대한 호감을 지웁니다.
 Location|위치
 Current room|현재 방
 Room|방
@@ -160,6 +162,23 @@ Status|상태
 Alive|생존
 Dead|사망
 Unknown|알 수 없음
+Not friends|친구 아님
+Like|호감도
+Personality|성격
+Kind|다정함
+Cold|냉담함
+Energetic|활발함
+Lazy|느긋함
+Brave|용감함
+Timid|겁 많음
+Nervous|예민함
+Calm|침착함
+Aggressive|공격적
+Gentle|온순함
+Dominant|지배적
+Submissive|순종적
+Balanced|무난함
+Met in <PLACEHOLDER> on cycle <PLACEHOLDER>, <PLACEHOLDER> cycles together|<PLACEHOLDER>에서 <PLACEHOLDER>주기에 만남, <PLACEHOLDER>주기 함께함
 
 Treats slugcats as friends with one another.|슬러그캣끼리 친구로 취급합니다.
 Treats friendly creatures as friends.|우호적인 생물을 친구로 취급합니다.

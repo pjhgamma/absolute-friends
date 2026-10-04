@@ -216,6 +216,7 @@ public static partial class FriendUtils
             if (fromTracker && _trackerCreatures.Add(abstractCreature))
             {
                 abstractCreature.ApplyDefaultTracking();
+                abstractCreature.RecordMeeting();
             }
 
             if (!abstractCreature.IsSlugcat && abstractCreature.abstractAI?.RealAI == null)
@@ -265,6 +266,33 @@ public static partial class FriendUtils
             {
                 choices.Write();
             }
+        }
+
+        internal void Forget()
+        {
+            if (source is not { IsPlayer: false } abstractCreature)
+            {
+                return;
+            }
+
+            abstractCreature.state?.socialMemory?.relationShips?.RemoveAll(relationship => relationship.subjectID.IsKnownSlugcat);
+
+            if (abstractCreature.abstractAI?.RealAI?.friendTracker is { } tracker && tracker.friend?.abstractCreature is { IsSlugcat: true })
+            {
+                tracker.friend = null;
+                tracker.friendRel = null;
+            }
+
+            string key = abstractCreature.SaveDataKey;
+
+            if (ChoicesFor(abstractCreature) is { } choices && (choices.Exclusions.Remove(key) | choices.Inclusions.Remove(key)))
+            {
+                choices.Write();
+            }
+
+            abstractCreature.SetNickname(null);
+            abstractCreature.ForgetMeeting();
+            abstractCreature.Untrack();
         }
 
         private void ApplyDefaultTracking()
