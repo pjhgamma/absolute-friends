@@ -99,15 +99,11 @@ internal sealed class FriendMeter(FContainer container)
     {
         private const string FallbackSymbol = "Kill_Slugcat";
 
-        private const string DeathSymbol = "Multiplayer_Death";
-
         private const float IconSize = 20f;
 
         private const float GlowScale = 3.75f;
 
         private const float GlowAlpha = 0.45f;
-
-        private const float DeadRaise = 7f;
 
         private static readonly Color _deathGlow = Color.Lerp(Color.red, Color.black, 0.5f);
 
@@ -150,8 +146,6 @@ internal sealed class FriendMeter(FContainer container)
             Restyle();
         }
 
-        private bool IsDeadSlugpup => _isDead && _creature.IsSlugpup;
-
         public bool Update(float fade)
         {
             bool changed = _isDead != _creature.IsDead;
@@ -183,7 +177,7 @@ internal sealed class FriendMeter(FContainer container)
 
         public void Draw(float fade, int counter, float timeStacker)
         {
-            Vector2 position = Vector2.Lerp(_lastPosition, _position, timeStacker) + new Vector2(0f, IsDeadSlugpup ? DeadRaise : 0f);
+            Vector2 position = Vector2.Lerp(_lastPosition, _position, timeStacker);
             Color color = _color;
 
             if (counter % 6 < 2 && _lastBlink > 0f)
@@ -212,15 +206,6 @@ internal sealed class FriendMeter(FContainer container)
             Color color = _creature.ShortcutColor;
 
             _glow.color = _isDead ? _deathGlow : JollyCustom.ColorClamp(color, -1f, 360f, 60f, 360f, -1f, 360f);
-
-            if (IsDeadSlugpup)
-            {
-                _color = Color.gray;
-                _icon.FitSymbol(DeathSymbol, IconSize);
-                _baseScale = _icon.scale * 0.8f;
-
-                return;
-            }
 
             _color = _isDead ? color.Dimmed : color;
             _icon.FitSymbol(Futile.atlasManager.DoesContainElementWithName(symbol) ? symbol : FallbackSymbol, IconSize);

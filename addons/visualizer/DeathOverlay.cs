@@ -9,8 +9,6 @@ namespace AbsoluteFriends.Visualizer;
 
 internal class DeathOverlay : CosmeticSprite
 {
-    private const string DeathSymbol = "Multiplayer_Death";
-
     private const int FirstPing = 5;
 
     private const int SecondPing = 40;
@@ -112,7 +110,7 @@ internal class DeathOverlay : CosmeticSprite
         sLeaser.sprites =
         [
             new FSprite("Futile_White") { shader = RainWorldUtils.Shader("FlatLight") ?? FShader.defaultShader, color = Color.black, alpha = 0f },
-            new FSprite(_friend.abstractCreature.IsSlugpup ? DeathSymbol : _friend.abstractCreature.Icon.Symbol) { alpha = 0f },
+            new FSprite(_friend.abstractCreature.Icon.Symbol) { alpha = 0f },
         ];
 
         AddToContainer(sLeaser, rCam, rCam.HudContainer);
