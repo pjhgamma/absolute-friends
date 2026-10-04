@@ -136,6 +136,8 @@ Enables friendship rules in Safari mode.|사파리 모드에서 친구 관계 �
 Friend Manager|친구 관리자
 Friend Manager Shortcut|친구 관리자 단축키
 Opens the friend manager during gameplay or while paused.|게임 도중이나 일시정지한 동안 친구 관리자를 엽니다.
+Track New Friends|새 친구 추적
+Tracks newly tamed friends. When off, new friends start untracked.|새로 길들인 친구를 추적합니다. 끄면 새 친구는 추적하지 않는 상태로 시작합니다.
 
 Tracked Friends|추적 중인 친구
 Friendship is maintained when tracking is disabled.|추적을 꺼도 친구 관계는 유지됩니다.

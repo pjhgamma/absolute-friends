@@ -213,9 +213,9 @@ public static partial class FriendUtils
 
             _trackedCreatures.Add(abstractCreature);
 
-            if (fromTracker)
+            if (fromTracker && _trackerCreatures.Add(abstractCreature))
             {
-                _trackerCreatures.Add(abstractCreature);
+                abstractCreature.ApplyDefaultTracking();
             }
 
             if (!abstractCreature.IsSlugcat && abstractCreature.abstractAI?.RealAI == null)
@@ -261,9 +261,22 @@ public static partial class FriendUtils
                 return;
             }
 
-            bool changed = tracked ? choices.Exclusions.Remove(key) : choices.Exclusions.Add(key);
+            if (choices.Choose(key, tracked))
+            {
+                choices.Write();
+            }
+        }
 
-            if (changed)
+        private void ApplyDefaultTracking()
+        {
+            if (source is not { IsTrackingAllowed: true, IsPlayer: false } creature || ChoicesFor(creature) is not { } choices)
+            {
+                return;
+            }
+
+            string key = creature.SaveDataKey;
+
+            if (!choices.Exclusions.Contains(key) && !choices.Inclusions.Contains(key) && choices.Choose(key, Config.TrackNewFriends.Value))
             {
                 choices.Write();
             }
@@ -465,9 +478,13 @@ public static partial class FriendUtils
 
         private const string ExcludedSuffix = "=0";
 
+        private const string IncludedSuffix = "=1";
+
         private const string PlayerPrefix = "P";
 
         internal readonly HashSet<string> Exclusions = new(StringComparer.Ordinal);
+
+        internal readonly HashSet<string> Inclusions = new(StringComparer.Ordinal);
 
         private readonly SaveState? _save;
 
@@ -477,16 +494,30 @@ public static partial class FriendUtils
 
             foreach (string entry in FriendSaveData.ReadEntries(save, SaveKey))
             {
-                if (entry.EndsWith(ExcludedSuffix, StringComparison.Ordinal) && !entry.StartsWith(PlayerPrefix, StringComparison.Ordinal))
+                if (entry.StartsWith(PlayerPrefix, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                if (entry.EndsWith(ExcludedSuffix, StringComparison.Ordinal))
                 {
                     Exclusions.Add(entry.Substring(0, entry.Length - ExcludedSuffix.Length));
+                }
+                else if (entry.EndsWith(IncludedSuffix, StringComparison.Ordinal))
+                {
+                    Inclusions.Add(entry.Substring(0, entry.Length - IncludedSuffix.Length));
                 }
             }
         }
 
+        internal bool Choose(string key, bool tracked) => tracked
+            ? Inclusions.Add(key) | Exclusions.Remove(key)
+            : Exclusions.Add(key) | Inclusions.Remove(key);
+
         internal void Write() => FriendSaveData.WriteEntries(_save, SaveKey, Exclusions
-            .OrderBy(key => key, StringComparer.Ordinal)
-            .Select(key => key + ExcludedSuffix));
+            .Select(key => key + ExcludedSuffix)
+            .Concat(Inclusions.Select(key => key + IncludedSuffix))
+            .OrderBy(entry => entry, StringComparer.Ordinal));
     }
 
     private sealed class AdoptionOrigin(AbstractCreature creature, SocialMemory.Relationship? relationship)
