@@ -12,7 +12,7 @@ internal static class Menu
         menu.SetColumns(3);
         menu.AddCheckBox(Config.FriendMarkers);
         menu.AddCheckBox(Config.FriendMeter);
-        menu.AddCheckBox(Config.PulseEffects);
+        menu.AddCheckBox(Config.BumpEffects);
 
         menu.AddTitle("Relationship Overlay");
         menu.SetColumns(3);

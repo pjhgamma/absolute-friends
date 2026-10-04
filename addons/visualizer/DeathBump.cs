@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Visualizer;
 
-internal class DeathOverlay : CosmeticSprite
+internal class DeathBump : CosmeticSprite
 {
     private const int FirstPing = 5;
 
@@ -29,7 +29,7 @@ internal class DeathOverlay : CosmeticSprite
 
     private bool _isHurried;
 
-    public DeathOverlay(Creature friend)
+    public DeathBump(Creature friend)
     {
         _friend = friend;
         pos = Ping;
@@ -44,7 +44,7 @@ internal class DeathOverlay : CosmeticSprite
 
         RoomCamera? camera = RainWorldUtils.MainCamera(room?.game);
 
-        if (!Config.PulseEffects.IsActive || camera == null || camera.room != room || _counter > Lifetime)
+        if (!Config.BumpEffects.IsActive || camera == null || camera.room != room || _counter > Lifetime)
         {
             Destroy();
 

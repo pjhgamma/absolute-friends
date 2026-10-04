@@ -8,7 +8,7 @@ internal static class Config
 
     public static Configurable<bool> FriendMeter = null!;
 
-    public static Configurable<bool> PulseEffects = null!;
+    public static Configurable<bool> BumpEffects = null!;
 
     public static Configurable<bool> Icons = null!;
 
@@ -28,7 +28,7 @@ internal static class Config
     {
         FriendMarkers = addon.Bind("FriendMarkers", false, new ConfigurableInfo("Shows tracked friends' arrows and names in their colors, and their icons at the screen edge when in another room.", tags: ["Friend Markers"]));
         FriendMeter = addon.Bind("FriendMeter", false, new ConfigurableInfo("Shows tracked friends' icons and deaths beside the food meter.", tags: ["Friend Meter"]));
-        PulseEffects = addon.Bind("PulseEffects", false, new ConfigurableInfo("Plays animations when tracked friends die and when friends or players revive.", tags: ["Pulse Effects"]));
+        BumpEffects = addon.Bind("BumpEffects", false, new ConfigurableInfo("Plays animations when tracked friends die and when friends or players revive.", tags: ["Bump Effects"]));
 
         Icons = addon.Bind("Icons", false, new ConfigurableInfo("Draws icons above shown friends, and owners' icons above owned things. Dead creatures' icons are dimmed.", tags: ["Relationship Icons"]));
         IconStyle = addon.Bind("IconStyle", (int)RelationshipIconStyle.Creature, new ConfigurableInfo("Chooses creature artwork or friendship symbols for relationship icons.", new ConfigAcceptableRange<int>(0, 1), tags: ["Icon Style"]))
@@ -44,7 +44,7 @@ internal static class Config
         UpdateInterval = addon.Bind("UpdateInterval", 10, new ConfigurableInfo("Sets how many frames pass between friend and owner checks.", new ConfigAcceptableRange<int>(1, 40), tags: ["Update Interval"]))
             .RequireAny(FriendMarkers, FriendMeter, Icons, Names, Links);
 
-        addon.Group("Friend Markers", "Marks tracked friends.", FriendMarkers, FriendMeter, PulseEffects);
+        addon.Group("Friend Markers", "Marks tracked friends.", FriendMarkers, FriendMeter, BumpEffects);
         addon.Group("Relationship Overlay", "Visualizes relationships with icons, names, and links.", Icons, Names, Links);
     }
 }

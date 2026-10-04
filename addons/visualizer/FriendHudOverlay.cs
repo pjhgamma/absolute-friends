@@ -31,7 +31,7 @@ internal class FriendHudOverlay : HudOverlay
         _overlays.Add(room, this);
     }
 
-    private static bool IsEnabled => Config.FriendMarkers.IsActive || Config.FriendMeter.IsActive || Config.PulseEffects.IsActive;
+    private static bool IsEnabled => Config.FriendMarkers.IsActive || Config.FriendMeter.IsActive || Config.BumpEffects.IsActive;
 
     public static bool IsShowing(AbstractPhysicalObject source)
     {
@@ -211,18 +211,18 @@ internal class FriendHudOverlay : HudOverlay
 
             _deaths[creature] = isDead;
 
-            if (!Config.PulseEffects.IsActive || creature.realizedCreature is not { } realized || realized.room != room)
+            if (!Config.BumpEffects.IsActive || creature.realizedCreature is not { } realized || realized.room != room)
             {
                 continue;
             }
 
             if (!isDead)
             {
-                room.AddObject(new RevivalOverlay(realized));
+                room.AddObject(new RevivalBump(realized));
             }
             else if (!creature.IsPlayer)
             {
-                room.AddObject(new DeathOverlay(realized));
+                room.AddObject(new DeathBump(realized));
             }
         }
     }

@@ -174,7 +174,7 @@ Friend HUD|친구 HUD
 Shows tracked friends' arrows and names in their colors, and their icons at the screen edge when in another room.|추적되는 친구의 이름과 화살표를 친구의 색으로 표시하고, 다른 방에 있으면 화면 가장자리에 아이콘을 표시합니다.
 Friend Meter|친구 상태 표시
 Shows tracked friends' icons and deaths beside the food meter.|음식 표시 옆에 추적되는 친구의 아이콘과 죽음을 표시합니다.
-Pulse Effects|펄스 효과
+Bump Effects|범프 효과
 Plays animations when tracked friends die and when friends or players revive.|추적되는 친구가 죽거나, 친구나 플레이어가 되살아날 때 애니메이션을 보여줍니다.
 
 Relationship Overlay|관계 표시

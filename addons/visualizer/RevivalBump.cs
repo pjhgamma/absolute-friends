@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Visualizer;
 
-internal class RevivalOverlay : CosmeticSprite
+internal class RevivalBump : CosmeticSprite
 {
     private const int RingDuration = 60;
 
@@ -22,7 +22,7 @@ internal class RevivalOverlay : CosmeticSprite
 
     private float _radiusSpeed = -200.2f;
 
-    public RevivalOverlay(Creature friend)
+    public RevivalBump(Creature friend)
     {
         _friend = friend;
         pos = friend.mainBodyChunk.pos;
@@ -33,7 +33,7 @@ internal class RevivalOverlay : CosmeticSprite
     {
         base.Update(eu);
 
-        if (!Config.PulseEffects.IsActive || _friend.dead || _friend.slatedForDeletetion || _friend.room != room || _counter >= Lifetime)
+        if (!Config.BumpEffects.IsActive || _friend.dead || _friend.slatedForDeletetion || _friend.room != room || _counter >= Lifetime)
         {
             Destroy();
 
