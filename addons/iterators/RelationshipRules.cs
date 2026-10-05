@@ -20,7 +20,7 @@ internal static class RelationshipRules
         OwnerUtils.UnregisterSelfOwnershipRule(IsSelfOwnedIterator);
     }
 
-    private static bool IsSelfOwnedIterator(PhysicalObject physicalObject) => physicalObject is Oracle or SLOracleSwarmer or Prince;
+    private static bool IsSelfOwnedIterator(PhysicalObject physicalObject) => physicalObject is Oracle or SLOracleSwarmer or HalcyonPearl or Prince;
 
     private static bool? IsFriendIterator(AbstractCreature abstractCreature, AbstractCreature abstractSlugcat)
     {
