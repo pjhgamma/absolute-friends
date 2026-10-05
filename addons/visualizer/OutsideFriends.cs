@@ -1,11 +1,14 @@
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Utils;
+using UnityEngine;
 
 namespace AbsoluteFriends.Visualizer;
 
 internal static class OutsideFriends
 {
     private static readonly HashSet<AbstractCreature> _outside = [];
+
+    private static readonly Dictionary<AbstractCreature, float> _intensities = [];
 
     private static RainWorldGame? _game;
 
@@ -18,25 +21,42 @@ internal static class OutsideFriends
             return;
         }
 
+        if (!ReferenceEquals(game, _game))
+        {
+            _intensities.Clear();
+        }
+
         _game = game;
         _clock = game.clock;
         _outside.Clear();
 
-        if (WaitingRoom(game) is not { } room)
+        if (WaitingRoom(game) is { } room)
         {
-            return;
+            foreach (var abstractCreature in FriendUtils.TrackedFriends)
+            {
+                if (abstractCreature.IsPlayer || abstractCreature.slatedForDeletion || abstractCreature.IsDead)
+                {
+                    continue;
+                }
+
+                if (abstractCreature.realizedCreature is not { } creature || !room.IsInGate(creature))
+                {
+                    _outside.Add(abstractCreature);
+                }
+            }
         }
 
-        foreach (var abstractCreature in FriendUtils.TrackedFriends)
+        foreach (var abstractCreature in _intensities.Keys.Union(_outside).ToList())
         {
-            if (abstractCreature.IsPlayer || abstractCreature.slatedForDeletion || abstractCreature.IsDead)
-            {
-                continue;
-            }
+            float intensity = Mathf.MoveTowards(_intensities.TryGetValue(abstractCreature, out float value) ? value : 0f, _outside.Contains(abstractCreature) ? 1f : 0f, OverlayUtils.GatePulseStep);
 
-            if (abstractCreature.realizedCreature is not { } creature || !room.IsInGate(creature))
+            if (intensity > 0f)
             {
-                _outside.Add(abstractCreature);
+                _intensities[abstractCreature] = intensity;
+            }
+            else
+            {
+                _intensities.Remove(abstractCreature);
             }
         }
     }
@@ -72,6 +92,16 @@ internal static class OutsideFriends
                 Refresh(source.world?.game);
 
                 return source is AbstractCreature abstractCreature && _outside.Contains(abstractCreature);
+            }
+        }
+
+        public float GatePulseIntensity
+        {
+            get
+            {
+                Refresh(source.world?.game);
+
+                return source is AbstractCreature abstractCreature && _intensities.TryGetValue(abstractCreature, out float intensity) ? intensity : 0f;
             }
         }
     }

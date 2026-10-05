@@ -27,7 +27,7 @@ internal static class Config
     public static void Bind(Addon addon)
     {
         FriendMarker = addon.Bind("FriendMarker", false, new ConfigurableInfo("Shows tracked friends' arrows and names in their colors, and their icons at the screen edge when in another room.", tags: ["Friend Marker"]));
-        FriendMeter = addon.Bind("FriendMeter", false, new ConfigurableInfo("Shows tracked friends' icons at the bottom right.", tags: ["Friend Meter"]));
+        FriendMeter = addon.Bind("FriendMeter", false, new ConfigurableInfo("Shows tracked friends' icons at the bottom right, pulsing when left behind or unconscious.", tags: ["Friend Meter"]));
         BumpEffect = addon.Bind("BumpEffect", false, new ConfigurableInfo("Plays animations when tracked friends die and when friends or players revive.", tags: ["Bump Effect"]));
 
         Icon = addon.Bind("Icon", false, new ConfigurableInfo("Draws icons above shown friends, and owners' icons above owned things. Dead creatures' icons are dimmed.", tags: ["Relationship Icon"]));
@@ -44,7 +44,7 @@ internal static class Config
         UpdateInterval = addon.Bind("UpdateInterval", 10, new ConfigurableInfo("Sets how many frames pass between friend and owner checks.", new ConfigAcceptableRange<int>(1, 40), tags: ["Update Interval"]))
             .RequireAny(FriendMarker, FriendMeter, Icon, Name, Link);
 
-        addon.Group("Friend Markers", "Marks tracked friends.", FriendMarker, FriendMeter, BumpEffect);
+        addon.Group("Friend Display", "Marks tracked friends.", FriendMarker, FriendMeter, BumpEffect);
         addon.Group("Relationship Overlay", "Visualizes relationships with icons, names, and links.", Icon, Name, Link);
     }
 }

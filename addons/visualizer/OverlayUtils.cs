@@ -14,6 +14,8 @@ internal static class OverlayUtils
 
     public const float Gap = 20f;
 
+    public const float GatePulseStep = 0.05f;
+
     private const float DeadDimming = 0.55f;
 
     private const float PulsePeriod = 20f;
@@ -86,6 +88,12 @@ internal static class OverlayUtils
         return false;
     }
 
+    public static float GatePulseScale(RainWorldGame? game, float timeStacker, float intensity) =>
+        Mathf.Lerp(1f, Mathf.Lerp(OutsideSmallest, OutsideLargest, Wave(game, timeStacker)), intensity);
+
+    public static Color GatePulseColor(Color color, RainWorldGame? game, float timeStacker, float intensity) =>
+        Color.Lerp(color, JollyCustom.GenerateClippedInverseColor(color), intensity * Mathf.Lerp(OutsideFaintest, OutsideStrongest, Wave(game, timeStacker)));
+
     private static float Wave(RainWorldGame? game, float timeStacker) => game == null ? 0f : 0.5f - 0.5f * Mathf.Cos((game.clock + timeStacker) / PulsePeriod * 2f * Mathf.PI);
 
     private static Vector2 Interpolate(Vector2 last, Vector2 now, float timeStacker) => Vector2.Lerp(last, now, timeStacker);
@@ -124,18 +132,14 @@ internal static class OverlayUtils
         public bool IsUnconscious => source.realizedObject is Creature { dead: false, Consious: false } creature
             && !creature.grabbedBy.Any(grasp => grasp?.grabber is Player);
 
-        public float PulseScale(float timeStacker) => source.IsOutsideGate
-            ? Mathf.Lerp(OutsideSmallest, OutsideLargest, Wave(source.world?.game, timeStacker))
-            : 1f;
+        public float PulseScale(float timeStacker) => GatePulseScale(source.world?.game, timeStacker, source.GatePulseIntensity);
 
         public Color PulseColor(Color color, float timeStacker)
         {
-            if (source.IsOutsideGate)
-            {
-                return Color.Lerp(color, JollyCustom.GenerateClippedInverseColor(color), Mathf.Lerp(OutsideFaintest, OutsideStrongest, Wave(source.world?.game, timeStacker)));
-            }
+            RainWorldGame? game = source.world?.game;
+            Color baseColor = source.IsUnconscious ? Color.Lerp(color, color.Dimmed, Wave(game, timeStacker)) : color;
 
-            return source.IsUnconscious ? Color.Lerp(color, color.Dimmed, Wave(source.world?.game, timeStacker)) : color;
+            return Color.Lerp(baseColor, GatePulseColor(color, game, timeStacker, 1f), source.GatePulseIntensity);
         }
     }
 

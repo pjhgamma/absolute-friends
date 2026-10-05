@@ -8,7 +8,7 @@ internal static class Menu
 {
     public static void Build(MenuBuilder menu)
     {
-        menu.AddTitle("Friend Markers");
+        menu.AddTitle("Friend Display");
         menu.SetColumns(3);
         menu.AddCheckBox(Config.FriendMarker);
         menu.AddCheckBox(Config.FriendMeter);

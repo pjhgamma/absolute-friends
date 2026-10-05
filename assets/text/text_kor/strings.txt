@@ -174,12 +174,12 @@ No other friends|다른 친구 없음
 Absolute Friends: Visualizer|절대적 친구: 시각화
 Visually shows friends and owners.|친구와 소유자를 시각적으로 표시합니다.
 
-Friend Markers|친구 표식
+Friend Display|친구 표시
 Friend HUD|친구 HUD
 Friend Marker|친구 표식
 Shows tracked friends' arrows and names in their colors, and their icons at the screen edge when in another room.|추적되는 친구의 이름과 화살표를 친구의 색으로 표시하고, 다른 방에 있으면 화면 가장자리에 아이콘을 표시합니다.
-Friend Meter|친구 아이콘 줄
-Shows tracked friends' icons at the bottom right.|오른쪽 아래에 추적되는 친구의 아이콘을 표시합니다.
+Friend Meter|친구 상태
+Shows tracked friends' icons at the bottom right, pulsing when left behind or unconscious.|오른쪽 아래에 추적되는 친구의 아이콘을 표시하고, 뒤처지거나 기절하면 깜박입니다.
 Bump Effect|범프 효과
 Plays animations when tracked friends die and when friends or players revive.|추적되는 친구가 죽거나, 친구나 플레이어가 되살아날 때 애니메이션을 보여줍니다.
 
