@@ -41,10 +41,10 @@ internal static class FriendSaveData
             return;
         }
 
+        string content = string.Concat(entries.Select(entry => entry + EntrySeparator));
+
         sections.RemoveAll(section => section.StartsWith(sectionKey, StringComparison.Ordinal));
         save.unrecognizedSaveStrings?.RemoveAll(section => section.StartsWith(sectionKey, StringComparison.Ordinal));
-
-        string content = string.Concat(entries.Select(entry => entry + EntrySeparator));
 
         if (content.Length > 0)
         {

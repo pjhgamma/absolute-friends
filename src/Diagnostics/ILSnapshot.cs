@@ -119,15 +119,15 @@ internal sealed class ILSnapshot
         return space < 0 ? name : name + part.Substring(space);
     }
 
-    private static string Describe(Instruction instruction, out bool named)
+    private static string Describe(OpCode opCode, object? operand, out bool named)
     {
         try
         {
-            var (description, isNamed) = instruction.Operand switch
+            var (description, isNamed) = operand switch
             {
-                TypeReference type => ($"{instruction.OpCode.Name} {type.Name}", true),
-                MemberReference member => ($"{instruction.OpCode.Name} {member.DeclaringType?.Name}::{member.Name}", true),
-                _ => (instruction.OpCode.Name, false),
+                TypeReference type => ($"{opCode.Name} {type.Name}", true),
+                MemberReference member => ($"{opCode.Name} {member.DeclaringType?.Name}::{member.Name}", true),
+                _ => (opCode.Name, false),
             };
 
             named = isNamed;
@@ -153,14 +153,14 @@ internal sealed class ILSnapshot
     {
         StringBuilder builder = new();
 
-        foreach (var instruction in _instructions.Skip(index).Take(AnchorWindow))
+        foreach (var (opCode, operand) in _originals.Skip(index).Take(AnchorWindow))
         {
             if (builder.Length > 0)
             {
                 builder.Append("; ");
             }
 
-            builder.Append(Describe(instruction, out bool named));
+            builder.Append(Describe(opCode, operand, out bool named));
 
             if (named)
             {

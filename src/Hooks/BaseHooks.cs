@@ -147,9 +147,11 @@ public abstract class BaseHooks
         }
         catch (Exception exception)
         {
+            MarkFailed();
             Disable();
 
             Reporter.LogError($"{Name}: Hooks failed", exception);
+            HookNotifier.Queue(Title);
         }
     }
 
@@ -163,14 +165,14 @@ public abstract class BaseHooks
         try
         {
             EventInfo eventInfo = patch.TargetType?.GetEvent(patch.EventName, BindingFlags.Static | BindingFlags.Public)
-                ?? throw new Exception($"Failed to bind event {patch.EventName} on {patch.TargetType?.Name}");
+                ?? throw new InvalidOperationException($"Failed to bind event {patch.EventName} on {patch.TargetType?.Name}");
             Delegate handler = Delegate.CreateDelegate(eventInfo.EventHandlerType, method.IsStatic ? null : this, method);
 
             _bindings.Add(new(this, method.Name, eventInfo, handler, method.GetCustomAttribute<HookTestAttribute>()));
         }
         catch (Exception exception)
         {
-            throw new Exception($"{patch.EventName} failed", exception);
+            throw new InvalidOperationException($"{patch.EventName} failed", exception);
         }
     }
 }

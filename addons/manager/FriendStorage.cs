@@ -53,6 +53,44 @@ public static class FriendStorage
         }
     }
 
+    private static bool TryReadEntry(string entry, out (string Creature, string Key) key, out string value)
+    {
+        key = default;
+        value = string.Empty;
+
+        int creatureEnd = entry.IndexOf('=');
+
+        if (creatureEnd <= 0)
+        {
+            return false;
+        }
+
+        int keyStart = creatureEnd + 1;
+        int keyEnd = entry.IndexOf('=', keyStart);
+
+        while (keyEnd >= 0 && (keyEnd - keyStart) % 4 != 0)
+        {
+            keyEnd = entry.IndexOf('=', keyEnd + 1);
+        }
+
+        if (keyEnd <= keyStart)
+        {
+            return false;
+        }
+
+        try
+        {
+            key = (entry.Substring(0, creatureEnd), FriendSaveData.Decode(entry.Substring(keyStart, keyEnd - keyStart)));
+            value = FriendSaveData.Decode(entry.Substring(keyEnd + 1));
+
+            return key.Key.Length > 0;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+    }
+
     private sealed class State
     {
         internal readonly Dictionary<(string Creature, string Key), string> Values = [];
@@ -65,20 +103,9 @@ public static class FriendStorage
 
             foreach (string entry in FriendSaveData.ReadEntries(save, SaveKey))
             {
-                string[] parts = entry.Split('=');
-
-                if (parts.Length != 3 || parts[0].Length == 0)
+                if (TryReadEntry(entry, out var key, out string value))
                 {
-                    continue;
-                }
-
-                try
-                {
-                    Values[(parts[0], FriendSaveData.Decode(parts[1]))] = FriendSaveData.Decode(parts[2]);
-                }
-                catch (FormatException)
-                {
-                    continue;
+                    Values[key] = value;
                 }
             }
         }

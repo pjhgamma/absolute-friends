@@ -60,10 +60,9 @@ internal sealed class HookBinding(BaseHooks owner, string methodName, EventInfo 
             return;
         }
 
-        Delegate applied = _applied;
+        eventInfo.RemoveEventHandler(null, _applied);
 
         _applied = null;
-        eventInfo.RemoveEventHandler(null, applied);
     }
 
     public void ClearReport()

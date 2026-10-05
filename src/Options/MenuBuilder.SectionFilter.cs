@@ -21,6 +21,8 @@ public abstract partial class MenuBuilder
 
         private float[] _heights = [];
 
+        private bool[] _visible = [];
+
         private UIelement? _focus;
 
         private bool _isPlacing;
@@ -78,6 +80,8 @@ public abstract partial class MenuBuilder
             _scrollBox = scrollBox;
             _height = height;
             _view = view;
+            _heights = new float[_sections.Length];
+            _visible = new bool[_sections.Length];
             _query = _restored.Trim();
 
             foreach (var section in _sections)
@@ -119,27 +123,28 @@ public abstract partial class MenuBuilder
 
         private void PlaceSections(bool toTop)
         {
-            bool[] visible = new bool[_sections.Length];
-            float[] heights = new float[_sections.Length];
+            bool changed = false;
 
             for (int index = 0; index < _sections.Length; index++)
             {
-                visible[index] = _sections[index].Match(_query);
-                heights[index] = visible[index] ? _sections[index].Current : 0f;
+                bool visible = _sections[index].Match(_query);
+                float height = visible ? _sections[index].Current : 0f;
+
+                changed |= _visible[index] != visible || _heights[index] != height;
+                _visible[index] = visible;
+                _heights[index] = height;
             }
 
-            if (!toTop && _heights.SequenceEqual(heights))
+            if (!toTop && !changed)
             {
                 return;
             }
-
-            _heights = heights;
 
             float hidden = 0f;
 
             for (int index = 0; index < _sections.Length; index++)
             {
-                hidden += _sections[index].Height - heights[index];
+                hidden += _sections[index].Height - _heights[index];
             }
 
             float content = Mathf.Clamp(_height - hidden, _view, 10000f);
@@ -151,9 +156,9 @@ public abstract partial class MenuBuilder
 
             for (int index = 0; index < _sections.Length; index++)
             {
-                _sections[index].Place(visible[index], shift + offset);
+                _sections[index].Place(_visible[index], shift + offset);
 
-                offset += _sections[index].Height - heights[index];
+                offset += _sections[index].Height - _heights[index];
             }
 
             if (_scrollBox is { } scrollBox)

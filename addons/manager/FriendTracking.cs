@@ -133,11 +133,11 @@ internal static class FriendTracking
 
                 if (entry.EndsWith(ExcludedSuffix, StringComparison.Ordinal))
                 {
-                    Exclusions.Add(entry.Substring(0, entry.Length - ExcludedSuffix.Length));
+                    Choose(entry.Substring(0, entry.Length - ExcludedSuffix.Length), false);
                 }
                 else if (entry.EndsWith(IncludedSuffix, StringComparison.Ordinal))
                 {
-                    Inclusions.Add(entry.Substring(0, entry.Length - IncludedSuffix.Length));
+                    Choose(entry.Substring(0, entry.Length - IncludedSuffix.Length), true);
                 }
             }
         }
