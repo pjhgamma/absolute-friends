@@ -58,7 +58,7 @@ internal class FriendTrackerHooks : BaseHooks
         }
 
         if (
-            (self.HasSlugcatFriend && (abstractCreature.IsFriendlyAllowed || abstractCreature.IsFriend(self.friend?.abstractCreature)))
+            (self.HasSlugcatFriend && abstractCreature.IsFriend(self.friend?.abstractCreature))
             || abstractCreature.IsCloseFriendOfPlayer
         )
         {

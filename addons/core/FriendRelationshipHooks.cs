@@ -1,6 +1,5 @@
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Options;
-using UnityEngine;
 
 namespace AbsoluteFriends.Core;
 
@@ -28,25 +27,22 @@ internal class FriendRelationshipHooks : BaseHooks
             || !source.IsFriend(target, direct: true))
         {
             orig(self);
+            self.RecordVanillaRelationship(self.currentRelationship);
 
             return;
-        }
-
-        if (Config.FriendChaining.IsActive && source.state?.socialMemory?.GetOrInitiateRelationship(target.ID) is { } socialRelationship)
-        {
-            socialRelationship.like = Mathf.Max(socialRelationship.like, FriendUtils.FriendLikeThreshold);
-            socialRelationship.tempLike = Mathf.Max(socialRelationship.tempLike, FriendUtils.FriendLikeThreshold);
-            socialRelationship.know = Mathf.Max(socialRelationship.know, FriendUtils.FriendLikeThreshold);
         }
 
         if (relationshipTracker.AI is not IUseARelationshipTracker relationshipUser)
         {
             orig(self);
+            self.RecordVanillaRelationship(self.currentRelationship);
 
             return;
         }
 
         CreatureTemplate.Relationship relationship = relationshipUser.UpdateDynamicRelationship(self);
+
+        self.RecordVanillaRelationship(relationship);
 
         if (ShouldNeutralize(relationship.type))
         {

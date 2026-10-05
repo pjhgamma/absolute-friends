@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
@@ -25,6 +26,8 @@ public static partial class FriendUtils
     private static readonly List<Func<AbstractCreature, AbstractCreature, bool?>> _friendshipRules = [];
 
     private static readonly Dictionary<(AbstractCreature, AbstractCreature), bool> _chainingFriendships = [];
+
+    private static readonly ConditionalWeakTable<RelationshipTracker.DynamicRelationship, StrongBox<CreatureTemplate.Relationship>> _vanillaRelationships = new();
 
     private static RainWorldGame? _chainingGame;
 
@@ -247,7 +250,10 @@ public static partial class FriendUtils
                 return null;
             }
 
-            CreatureTemplate.Relationship relationship = aiSource.DynamicRelationship(abstractSlugcat);
+            CreatureTemplate.Relationship relationship = aiSource.tracker.RepresentationForCreature(abstractSlugcat, false)?.dynamicRelationship is { } dynamicRelationship
+                && _vanillaRelationships.TryGetValue(dynamicRelationship, out StrongBox<CreatureTemplate.Relationship> vanillaRelationship)
+                ? vanillaRelationship.Value
+                : aiSource.DynamicRelationship(abstractSlugcat);
 
             if (relationship.type == CreatureTemplate.Relationship.Type.Pack)
             {
@@ -440,6 +446,12 @@ public static partial class FriendUtils
         public bool IsFriend(AbstractPhysicalObject? target, bool direct = false) => (source?.abstractPhysicalObject).IsFriend(target, direct);
 
         public bool IsFriend(PhysicalObject? target, bool direct = false) => (source?.abstractPhysicalObject).IsFriend(target?.abstractPhysicalObject, direct);
+    }
+
+    extension(RelationshipTracker.DynamicRelationship dynamicRelationship)
+    {
+        internal void RecordVanillaRelationship(CreatureTemplate.Relationship relationship) =>
+            _vanillaRelationships.GetValue(dynamicRelationship, _ => new()).Value = relationship;
     }
 
     extension(Room? room)
