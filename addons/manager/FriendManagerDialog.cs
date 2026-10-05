@@ -1,3 +1,4 @@
+using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Utils;
 using Menu;
 using Menu.Remix;
@@ -8,17 +9,27 @@ namespace AbsoluteFriends.Manager;
 
 internal sealed partial class FriendManagerDialog : Dialog
 {
-    private const float RowSpacing = 40f;
+    private const float RowSpacing = 30f;
 
-    private const float DetailRowSpacing = 30f;
+    private const float ListWidth = 250f;
 
-    private const float ViewHeight = 420f;
+    private const float ListHeight = 650f;
 
-    private const float ListWidth = 390f;
+    private const float RowInset = 2f;
 
-    private const float DetailWidth = 390f;
+    private const float RowWidth = ListWidth - RowInset * 2f;
 
-    private const float TransitionOffset = ViewHeight + 180f;
+    private const float CanvasSize = 630f;
+
+    private const float TabAreaHeight = 600f;
+
+    private const float CanvasInset = 15f;
+
+    private const float TopPadding = 12f;
+
+    private const float VerticalOffset = 35f;
+
+    private const float TransitionOffset = CanvasSize + 180f;
 
     private const float TransitionDuration = 0.3f;
 
@@ -30,7 +41,11 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     private const float SelectionEase = 0.35f;
 
-    private const float PersonalityThreshold = 0.2f;
+    private const int MaxVisibleTabs = 8;
+
+    private const float TabWidth = 30f;
+
+    private static readonly AddonLogger _logger = Reporter.GetLogger(Plugin.Name);
 
     private readonly RainWorldGame _game;
 
@@ -40,13 +55,17 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     private readonly List<FriendRow> _rows = [];
 
-    private readonly List<PlayerLine> _playerLines = [];
+    private readonly List<FriendTab> _tabs = [];
+
+    private readonly List<FriendTab> _shownTabs = [];
+
+    private readonly List<TabButton> _tabButtons = [];
 
     private readonly MenuLabel _emptyLabel;
 
-    private readonly float _listX;
+    private readonly FocusCursor _cursor;
 
-    private readonly float _screenY;
+    private readonly Vector2 _listPos;
 
     private OpScrollBox? _scrollBox;
 
@@ -54,29 +73,7 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     private OpRect? _selectionBox;
 
-    private MenuLabel _nameLabel = null!;
-
-    private OpImage _typeIcon = null!;
-
-    private MenuLabel _locationLabel = null!;
-
-    private MenuLabel _statusLabel = null!;
-
-    private MenuLabel _personalityLabel = null!;
-
-    private MenuLabel _metLabel = null!;
-
-    private NicknameTextBox _nicknameBox = null!;
-
-    private OpSimpleImageButton _saveNickname = null!;
-
-    private OpSimpleImageButton _clearNickname = null!;
-
-    private OpLabel _trackingLabel = null!;
-
-    private OpCheckBox _trackingCheckbox = null!;
-
-    private HoldButton _forgetButton = null!;
+    private FriendTab? _activeTab;
 
     private AbstractCreature? _selectedFriend;
 
@@ -106,6 +103,16 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     private int _lastFocusedRow = -1;
 
+    private TabScrollButton? _tabScrollUp;
+
+    private TabScrollButton? _tabScrollDown;
+
+    private int _tabTop;
+
+    private float _tabColumnX;
+
+    private float _tabColumnTop;
+
     internal FriendManagerDialog(ProcessManager manager, RainWorldGame game) : base(manager)
     {
         _game = game;
@@ -113,11 +120,11 @@ internal sealed partial class FriendManagerDialog : Dialog
 
         Vector2 screen = manager.rainWorld.options.ScreenSize;
         float center = screen.x * 0.5f;
-        float detailX = center + 10f;
+        Vector2 remix = new(center - 683f, screen.y - 768f - VerticalOffset);
+        Vector2 canvasPos = remix + new Vector2(543f, 105f);
         Page page = dialogPage;
 
-        _listX = center - 410f;
-        _screenY = screen.y;
+        _listPos = remix + new Vector2(208f, 60f);
 
         _pageContainer = new()
         {
@@ -130,42 +137,50 @@ internal sealed partial class FriendManagerDialog : Dialog
         darkSprite.scaleX = Futile.screen.pixelWidth + 2f;
         darkSprite.scaleY = Futile.screen.pixelHeight + 2f;
 
-        string titleText = Translation.Of("Tracked Friends");
-        bool bigTitle = titleText == "Tracked Friends";
-        float titleY = screen.y - 82f;
+        string titleText = Translation.Of("Friend Manager");
+        bool bigTitle = titleText == "Friend Manager";
+        float titleY = canvasPos.y + CanvasSize + 28f;
         MenuLabel title = new(this, page, titleText, new Vector2(center - 420f, titleY - 20f), new Vector2(840f, 40f), bigTitle, default);
 
         title.label.scale = bigTitle ? 1.4f : 1.8f;
         page.subObjects.Add(title);
 
-        AddLabel(page, Translation.Of("Friendship is maintained when tracking is disabled."), center - 420f, screen.y - 135f, 840f);
-
         _wrapper = new(this, page);
         page.subObjects.Add(_wrapper);
 
-        OpRect detailBorder = new(new Vector2(detailX, screen.y - 568f), new Vector2(DetailWidth, ViewHeight));
+        OpRect canvas = new(canvasPos, new Vector2(CanvasSize, CanvasSize));
 
-        _ = new UIelementWrapper(_wrapper, detailBorder);
+        _ = new UIelementWrapper(_wrapper, canvas);
 
-        _emptyLabel = AddLabel(page, string.Empty, _listX, screen.y - 360f, ListWidth);
+        _emptyLabel = AddLabel(page, string.Empty, _listPos.x, _listPos.y + ListHeight * 0.5f, ListWidth);
+        _ = new UIelementWrapper(_wrapper, new ListScrollBar(this, _listPos - new Vector2(ListScrollBar.Width, 0f), ListHeight));
+        _ = new UIelementWrapper(_wrapper, new OpImage(_listPos + new Vector2(265f, -ListScrollBar.LineOverhang), "pixel")
+        {
+            scale = new(2f, ListHeight + ListScrollBar.LineOverhang * 2f),
+            color = MenuColorEffect.rgbMediumGrey
+        });
 
-        BuildDetails(page, detailX, screen.y);
+        BuildTabs(canvasPos, remix + new Vector2(520f, 120f));
         BuildList(CollectCreatures(), 0f);
         _scrollBox?.ScrollToTop(true);
         SelectFriend(_rows.FirstOrDefault()?.Creature);
+
+        _cursor = new(_pageContainer);
 
         _nextMembershipRefresh = Time.unscaledTime + 1f;
     }
 
     public override void Update()
     {
-        PauseGame();
+        OpScrollBox? wheelTarget = WheelTarget();
+        float previousScroll = wheelTarget?.targetScrollOffset ?? 0f;
 
-        float previousScroll = _scrollBox?.targetScrollOffset ?? 0f;
-
+        LinkFocus();
         base.Update();
+        UpdateCursor();
 
         UpdateList();
+        UpdateTab();
 
         bool togglePressed = FriendManagerHooks.ConsumeShortcut() || RWInput.CheckPauseButton(0);
 
@@ -194,17 +209,16 @@ internal sealed partial class FriendManagerDialog : Dialog
         {
             _nextDetailsRefresh = Time.unscaledTime + 0.25f;
 
-            RefreshRows();
-            RefreshDetails();
+            RefreshAll();
         }
 
         float wheel = mouseScrollWheelMovement != 0
             ? -mouseScrollWheelMovement * 40f
             : -Input.mouseScrollDelta.y * RowSpacing;
 
-        if (_scrollBox != null && wheel != 0f && !Input.GetMouseButton(0))
+        if (wheelTarget is { ScrollLocked: false } && wheel != 0f && !Input.GetMouseButton(0))
         {
-            _scrollBox.targetScrollOffset = Mathf.Clamp(previousScroll + wheel, _scrollBox.MaxScroll, 0f);
+            wheelTarget.targetScrollOffset = Mathf.Clamp(previousScroll + wheel, wheelTarget.MaxScroll, 0f);
         }
 
         if (_showDelay > 0 && --_showDelay == 0)
@@ -221,6 +235,8 @@ internal sealed partial class FriendManagerDialog : Dialog
     public override void GrafUpdate(float timeStacker)
     {
         PlaceSelection(timeStacker);
+        GrafUpdateTab(timeStacker);
+        _cursor.GrafUpdate(timeStacker);
 
         base.GrafUpdate(timeStacker);
 
@@ -238,8 +254,15 @@ internal sealed partial class FriendManagerDialog : Dialog
             _game.paused = _previousPaused;
         }
 
+        CloseTabs();
+        _cursor.Remove();
+
         base.ShutDownProcess();
     }
+
+    private OpScrollBox? WheelTarget() => ContentElements()
+        .OfType<OpScrollBox>()
+        .FirstOrDefault(scrollBox => !scrollBox.IsInactive && scrollBox.MouseOver) ?? _scrollBox;
 
     internal void PauseGame()
     {
@@ -251,6 +274,27 @@ internal sealed partial class FriendManagerDialog : Dialog
         _previousPaused = _game.paused;
         _game.paused = true;
         _pausedGame = true;
+    }
+
+    internal static void Snap(UIelement element)
+    {
+        element.lastScreenPos = element.ScreenPos;
+        element.GrafUpdate(1f);
+    }
+
+    internal UIelementWrapper? WrapperOf(UIelement element) => _wrapper.wrappers.TryGetValue(element, out UIelementWrapper wrapper) ? wrapper : null;
+
+    private static void SetShown(UIelement element, bool shown)
+    {
+        if (shown && element.Hidden)
+        {
+            element.Show();
+            Snap(element);
+        }
+        else if (!shown && !element.Hidden)
+        {
+            element.Hide();
+        }
     }
 
     private static void FitIcon(OpImage icon)

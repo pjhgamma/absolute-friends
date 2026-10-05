@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Utils;
 
@@ -8,21 +7,15 @@ internal static class FriendTracking
 {
     private const int ScanInterval = 10;
 
-    private static ConditionalWeakTable<RainWorldGame, TrackingChoices> _choices = new();
+    private static readonly FriendSaveData.Store<TrackingChoices> _choices = new(save => new(save));
 
-    private static ConditionalWeakTable<RainWorldGame, HashSet<AbstractCreature>> _metFriends = new();
+    private static readonly FriendSaveData.Store<HashSet<AbstractCreature>> _metFriends = new(_ => []);
 
     private static int _scanTimer;
 
     internal static void Register() => FriendUtils.RegisterTrackingRule(IsIncluded);
 
     internal static void Unregister() => FriendUtils.UnregisterTrackingRule(IsIncluded);
-
-    internal static void ResetTracking()
-    {
-        _choices = new();
-        _metFriends = new();
-    }
 
     internal static void MeetNewFriends(RainWorldGame game)
     {
@@ -33,9 +26,9 @@ internal static class FriendTracking
 
         _scanTimer = 0;
 
-        HashSet<AbstractCreature> metFriends = _metFriends.GetOrCreateValue(game);
+        HashSet<AbstractCreature> metFriends = _metFriends.For(game);
 
-        foreach (var abstractCreature in FriendUtils.TrackingCandidates)
+        foreach (AbstractCreature abstractCreature in FriendUtils.TrackingCandidates)
         {
             if (abstractCreature.IsPlayer || !metFriends.Add(abstractCreature))
             {
@@ -43,25 +36,20 @@ internal static class FriendTracking
             }
 
             abstractCreature.ApplyDefaultTracking();
-            abstractCreature.RecordMeeting();
         }
     }
 
     private static bool IsIncluded(AbstractCreature abstractCreature) => !abstractCreature.IsExcluded;
 
-    private static TrackingChoices? ChoicesFor(AbstractCreature abstractCreature) => abstractCreature.Game is { } game
-        ? _choices.GetValue(game, game => new(game.StorySaveState))
-        : null;
-
     extension(AbstractCreature abstractCreature)
     {
-        internal bool IsExcluded => ChoicesFor(abstractCreature)?.Exclusions.Contains(abstractCreature.SaveDataKey) == true;
+        internal bool IsExcluded => _choices.For(abstractCreature)?.Exclusions.Contains(abstractCreature.SaveDataKey) == true;
 
         internal bool HasFriendTracker => abstractCreature.IsSlugpup || abstractCreature.creatureTemplate is { IsLizard: true } or { IsCicada: true };
 
         internal void SetTracked(bool tracked)
         {
-            if (abstractCreature.IsPlayer || ChoicesFor(abstractCreature) is not { } choices)
+            if (abstractCreature.IsPlayer || _choices.For(abstractCreature) is not { } choices)
             {
                 return;
             }
@@ -89,24 +77,20 @@ internal static class FriendTracking
 
             string key = abstractCreature.SaveDataKey;
 
-            if (ChoicesFor(abstractCreature) is { } choices && (choices.Exclusions.Remove(key) | choices.Inclusions.Remove(key)))
+            if (_choices.For(abstractCreature) is { } choices && (choices.Exclusions.Remove(key) | choices.Inclusions.Remove(key)))
             {
                 choices.Write();
             }
 
-            if (abstractCreature.Game is { } game && _metFriends.TryGetValue(game, out HashSet<AbstractCreature> metFriends))
-            {
-                metFriends.Remove(abstractCreature);
-            }
-
+            _metFriends.For(abstractCreature)?.Remove(abstractCreature);
             abstractCreature.SetNickname(null);
-            abstractCreature.ForgetMeeting();
+            abstractCreature.ClearFriendData();
             abstractCreature.Untrack();
         }
 
         private void ApplyDefaultTracking()
         {
-            if (ChoicesFor(abstractCreature) is not { } choices)
+            if (_choices.For(abstractCreature) is not { } choices)
             {
                 return;
             }

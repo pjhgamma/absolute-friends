@@ -9,9 +9,9 @@ namespace AbsoluteFriends.Options;
 
 public abstract partial class MenuBuilder : OptionInterface
 {
-    private const float CanvasSize = 600f;
+    public const float Padding = 30f;
 
-    private const float Padding = 30f;
+    private const float CanvasSize = 600f;
 
     private const float Spacing = 24f;
 

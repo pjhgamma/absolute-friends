@@ -8,7 +8,7 @@ namespace AbsoluteFriends.Manager;
 
 internal sealed partial class FriendManagerDialog
 {
-    private sealed class FriendRow(AbstractCreature creature, RowButton button, RowWrapper focus, OpLabel name, OpLabel status, OpImage? icon, UIelementWrapper[] wrappers)
+    private sealed class FriendRow(AbstractCreature creature, RowButton button, RowWrapper focus, OpLabel name, OpImage? icon, UIelementWrapper[] wrappers)
     {
         internal AbstractCreature Creature { get; } = creature;
 
@@ -17,8 +17,6 @@ internal sealed partial class FriendManagerDialog
         internal RowWrapper Focus { get; } = focus;
 
         internal OpLabel Name { get; } = name;
-
-        internal OpLabel Status { get; } = status;
 
         internal OpImage? Icon { get; } = icon;
 
@@ -30,11 +28,7 @@ internal sealed partial class FriendManagerDialog
         .ThenBy(creature => creature.creatureTemplate?.name, StringComparer.Ordinal)
         .ThenBy(creature => creature.ID.number)];
 
-    private static float ContentHeight(int count) => Mathf.Max(ViewHeight, count * RowSpacing + 20f);
-
-    private static string RowStatus(AbstractCreature creature) => creature.IsPlayer ? string.Empty : TrackingLabel(creature.IsTracked);
-
-    private static AbstractRoom? CreatureRoom(AbstractCreature creature) => creature.realizedCreature?.room?.abstractRoom ?? creature.Room;
+    private static float ContentHeight(int count) => Mathf.Max(ListHeight, count * RowSpacing + 20f);
 
     private void RefreshMembership()
     {
@@ -52,7 +46,7 @@ internal sealed partial class FriendManagerDialog
 
         if (selected != null && creatures.Contains(selected))
         {
-            RefreshDetails();
+            RefreshTab();
         }
         else
         {
@@ -68,9 +62,7 @@ internal sealed partial class FriendManagerDialog
 
         _contentHeight = ContentHeight(creatures.Count);
 
-        bool hasSlideBar = _contentHeight > ViewHeight;
-
-        _scrollBox = new(new Vector2(_listX, _screenY - 568f), new Vector2(ListWidth, ViewHeight), _contentHeight, false, false, hasSlideBar)
+        _scrollBox = new(_listPos, new Vector2(ListWidth, ListHeight), _contentHeight, false, false, false)
         {
             doesBackBump = false
         };
@@ -84,23 +76,22 @@ internal sealed partial class FriendManagerDialog
             AbstractCreature creature = creatures[index];
             float y = RowY(index);
             (string symbol, Color color) = creature.Icon;
-            OpLabel name = new(new Vector2(44f, y + 7f), new Vector2(157f, 30f), creature.FriendName, FLabelAlignment.Left)
+            OpLabel name = new(new Vector2(RowInset + 36f, y + RowSpacing * 0.5f - 15f), new Vector2(RowWidth - 36f, 30f), creature.FriendName, FLabelAlignment.Left)
             {
                 color = creature.ShortcutColor
             };
-            OpLabel status = new(new Vector2(205f, y + 7f), new Vector2(136f, 30f), RowStatus(creature), FLabelAlignment.Right);
-            RowButton button = new(new Vector2(8f, y + 4f), new Vector2(344f, 36f))
+            RowButton button = new(new Vector2(RowInset, y + 2f), new Vector2(RowWidth, RowSpacing - 4f))
             {
                 description = Translation.Of("Show this friend's details.")
             };
-            List<UIelement> elements = [name, status];
+            List<UIelement> elements = [name];
 
             button.Clicked += () => ClickRow(creature);
             OpImage? icon = null;
 
             if (Futile.atlasManager.DoesContainElementWithName(symbol))
             {
-                icon = new(new Vector2(24f, y + 22f), symbol)
+                icon = new(new Vector2(RowInset + 16f, y + RowSpacing * 0.5f), symbol)
                 {
                     anchor = new(0.5f, 0.5f),
                     color = color
@@ -119,7 +110,7 @@ internal sealed partial class FriendManagerDialog
                 FitIcon(icon);
             }
 
-            _rows.Add(new(creature, button, focus, name, status, icon, wrappers));
+            _rows.Add(new(creature, button, focus, name, icon, wrappers));
         }
 
         LinkRows();
@@ -147,7 +138,7 @@ internal sealed partial class FriendManagerDialog
 
         _rows.Clear();
 
-        if (_selectionBox != null && _wrapper.wrappers.TryGetValue(_selectionBox, out UIelementWrapper selectionWrapper))
+        if (_selectionBox != null && WrapperOf(_selectionBox) is { } selectionWrapper)
         {
             RemoveElement(selectionWrapper);
         }
@@ -162,7 +153,7 @@ internal sealed partial class FriendManagerDialog
         }
     }
 
-    private void RemoveElement(UIelementWrapper wrapper)
+    internal void RemoveElement(UIelementWrapper wrapper)
     {
         UIelement element = wrapper.thisElement;
 
@@ -185,11 +176,11 @@ internal sealed partial class FriendManagerDialog
         element.Unload();
     }
 
-    private float RowY(int index) => _contentHeight - 50f - index * RowSpacing;
+    private float RowY(int index) => _contentHeight - 10f - (index + 1) * RowSpacing;
 
     private OpRect AddSelectionBox()
     {
-        OpRect box = new(new Vector2(8f, 0f), new Vector2(344f, 36f), HighlightAlpha);
+        OpRect box = new(new Vector2(RowInset, 0f), new Vector2(RowWidth, RowSpacing - 4f), HighlightAlpha);
 
         _scrollBox!.AddItems(box);
         _ = new UIelementWrapper(_wrapper, box);
@@ -200,20 +191,26 @@ internal sealed partial class FriendManagerDialog
 
     private void LinkRows()
     {
-        _wrapper.wrappers.TryGetValue(_trackingCheckbox, out UIelementWrapper? details);
-
         for (int index = 0; index < _rows.Count; index++)
         {
             RowWrapper focus = _rows[index].Focus;
 
             focus.nextSelectable[0] = focus;
             focus.nextSelectable[1] = _rows[(index + _rows.Count - 1) % _rows.Count].Focus;
-            focus.nextSelectable[2] = details;
             focus.nextSelectable[3] = _rows[(index + 1) % _rows.Count].Focus;
         }
     }
 
     private FriendRow? SelectedRow() => _rows.Find(row => row.Creature == _selectedFriend);
+
+    private void SelectFriend(AbstractCreature? creature)
+    {
+        _selectedFriend = creature;
+
+        HighlightSelection(false);
+        UpdateTabs();
+        RefreshTab();
+    }
 
     private void HighlightSelection(bool snap)
     {
@@ -231,7 +228,7 @@ internal sealed partial class FriendManagerDialog
             return;
         }
 
-        _selectionTarget = RowY(index) + 4f;
+        _selectionTarget = RowY(index) + 2f;
 
         if (snap || _selectionBox.Hidden)
         {
@@ -280,13 +277,12 @@ internal sealed partial class FriendManagerDialog
             return;
         }
 
-        PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
         SelectFriend(creature);
     }
 
     private void PlaceSelection(float timeStacker)
     {
-        _selectionBox?.SetPos(new Vector2(8f, Mathf.Lerp(_lastSelectionY, _selectionY, timeStacker)));
+        _selectionBox?.SetPos(new Vector2(RowInset, Mathf.Lerp(_lastSelectionY, _selectionY, timeStacker)));
     }
 
     private void RefreshRows()
@@ -295,7 +291,6 @@ internal sealed partial class FriendManagerDialog
         {
             row.Name.text = row.Creature.FriendName;
             row.Name.color = row.Creature.ShortcutColor;
-            row.Status.text = RowStatus(row.Creature);
 
             row.Icon?.color = row.Creature.Icon.Color;
         }

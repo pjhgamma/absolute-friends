@@ -2,7 +2,6 @@ using AbsoluteFriends.Core;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using Menu;
-using Menu.Remix;
 using Menu.Remix.MixedUI;
 using UnityEngine;
 
@@ -10,372 +9,444 @@ namespace AbsoluteFriends.Manager;
 
 internal sealed partial class FriendManagerDialog
 {
-    private void BuildDetails(Page page, float detailX, float screenY)
+    private sealed class DetailsTab
     {
-        float textX = detailX + 15f;
-        float textWidth = DetailWidth - 30f;
-        float nameY = screenY - 205f;
+        private const float ButtonSize = 24f;
 
-        _typeIcon = new(new Vector2(textX + 17f, nameY + 12f), "Futile_White")
+        private const float NameX = 35f;
+
+        private const float ForgetWidth = 120f;
+
+        private const float TitleHeight = 30f;
+
+        private const float FooterHeight = 52f;
+
+        private readonly FriendManagerDialog _dialog;
+
+        private readonly FriendTab _tab;
+
+        private readonly OpImage _icon;
+
+        private readonly OpLabel _name;
+
+        private readonly NicknameTextBox _nickname;
+
+        private readonly OpSimpleImageButton _save;
+
+        private readonly OpSimpleImageButton _clear;
+
+        private readonly OpCheckBox _tracking;
+
+        private readonly OpLabel _trackingLabel;
+
+        private readonly OpLabel _relationshipsTitle;
+
+        private readonly AutoScrollBox _relationships;
+
+        private readonly OpLabel _noRelationships;
+
+        private readonly List<RelationshipRow> _rows = [];
+
+        private readonly OpImage _divider;
+
+        private readonly OpLabel _forgetNote;
+
+        private readonly HoldButton _forget;
+
+        private AbstractCreature? _shownFriend;
+
+        internal DetailsTab(FriendManagerDialog dialog, FriendTab tab)
         {
-            anchor = new(0.5f, 0.5f)
-        };
+            _dialog = dialog;
+            _tab = tab;
 
-        _ = new UIelementWrapper(_wrapper, _typeIcon);
-        _typeIcon.Hide();
+            float width = tab.Size.x;
+            float nameY = tab.Size.y - ButtonSize;
+            float trackingY = nameY - 36f;
+            float relationshipsTitleY = trackingY - 50f;
+            float relationshipsHeight = relationshipsTitleY - 8f - FooterHeight;
 
-        Configurable<bool> tracking = (Configurable<bool>)Activator.CreateInstance(
-            typeof(Configurable<bool>), false, new ConfigurableInfo("Track this friend."))!;
-
-        _trackingCheckbox = new(tracking, new Vector2(textX + 40f, nameY - 36f));
-        _trackingCheckbox.OnValueUpdate += delegate { SetTracked(_trackingCheckbox.value == "true"); };
-        _trackingLabel = new(new Vector2(textX + 72f, nameY - 36f), new Vector2(150f, 24f), string.Empty, FLabelAlignment.Left);
-        _ = new UIelementWrapper(_wrapper, _trackingCheckbox);
-        _ = new UIelementWrapper(_wrapper, _trackingLabel);
-
-        _nameLabel = AddLabel(page, string.Empty, textX + 40f, nameY - 3f, 225f, FLabelAlignment.Left);
-
-        Configurable<string> nickname = (Configurable<string>)Activator.CreateInstance(
-            typeof(Configurable<string>), string.Empty, new ConfigurableInfo("Edit this friend's name."))!;
-
-        _nicknameBox = new NicknameTextBox(nickname, new Vector2(textX + 40f, nameY), 225f)
-        {
-            allowSpace = true,
-            maxLength = FriendNicknames.MaxNicknameLength,
-            description = Translation.Of("Edit this friend's name.")
-        };
-        _saveNickname = new(new Vector2(textX + 271f, nameY), new Vector2(24f, 24f), "Menu_Symbol_CheckBox")
-        {
-            description = Translation.Of("Save this nickname.")
-        };
-        _clearNickname = new(new Vector2(textX + 301f, nameY), new Vector2(24f, 24f), "Menu_Symbol_Clear_All")
-        {
-            description = Translation.Of("Clear this nickname.")
-        };
-
-        _saveNickname.OnClick += delegate { SaveNickname(); };
-        _clearNickname.OnClick += delegate { ClearNickname(); };
-
-        _ = new UIelementWrapper(_wrapper, _nicknameBox);
-        _ = new UIelementWrapper(_wrapper, _saveNickname);
-        _ = new UIelementWrapper(_wrapper, _clearNickname);
-
-        float detailY = nameY - 74f;
-
-        _locationLabel = AddLabel(page, string.Empty, textX, detailY, textWidth, FLabelAlignment.Left);
-        _statusLabel = AddLabel(page, string.Empty, textX, detailY - DetailRowSpacing, textWidth, FLabelAlignment.Left);
-
-        _personalityLabel = AddLabel(page, string.Empty, textX, detailY - DetailRowSpacing * 2f, textWidth, FLabelAlignment.Left);
-
-        _metLabel = AddLabel(page, string.Empty, textX, detailY - DetailRowSpacing * 3f, textWidth, FLabelAlignment.Left);
-
-        _forgetButton = new(new Vector2(detailX + DetailWidth - 130f, screenY - 558f), new Vector2(120f, 24f), Translation.Of("Forget Friend"))
-        {
-            description = Translation.Of("Hold to forget this friend and clear its like toward every slugcat.")
-        };
-        _forgetButton.Done += ForgetFriend;
-        _ = new UIelementWrapper(_wrapper, _forgetButton);
-
-        float playerY = detailY - DetailRowSpacing * 4f;
-
-        foreach (var abstractPlayer in _game.Players)
-        {
-            _playerLines.Add(new(abstractPlayer, AddLabel(page, string.Empty, textX, playerY, textWidth, FLabelAlignment.Left)));
-            playerY -= DetailRowSpacing;
-        }
-    }
-
-    private void SetTracked(bool tracked)
-    {
-        if (_selectedFriend is not { } friend)
-        {
-            return;
-        }
-
-        friend.SetTracked(tracked);
-        RefreshRows();
-        RefreshDetails();
-    }
-
-    private void ForgetFriend()
-    {
-        if (_selectedFriend is not { IsPlayer: false } friend)
-        {
-            return;
-        }
-
-        friend.Forget();
-        RefreshMembership();
-    }
-
-    private void SaveNickname()
-    {
-        if (_selectedFriend is not { IsPlayer: false } friend)
-        {
-            return;
-        }
-
-        string value = _nicknameBox.value;
-
-        friend.SetNickname(value == friend.DefaultName ? null : value);
-        SelectFriend(friend);
-        RefreshRows();
-    }
-
-    private void ClearNickname()
-    {
-        if (_selectedFriend is not { IsPlayer: false } friend)
-        {
-            return;
-        }
-
-        friend.SetNickname(null);
-        SelectFriend(friend);
-        RefreshRows();
-    }
-
-    private void SelectFriend(AbstractCreature? creature)
-    {
-        _selectedFriend = creature;
-
-        HighlightSelection(false);
-
-        if (creature == null)
-        {
-            _nameLabel.label.text = string.Empty;
-            _typeIcon.Hide();
-            _locationLabel.label.text = string.Empty;
-            _statusLabel.label.text = string.Empty;
-            _personalityLabel.label.text = string.Empty;
-            _metLabel.label.text = string.Empty;
-
-            foreach (PlayerLine line in _playerLines)
+            _icon = new(new Vector2(ButtonSize * 0.5f, nameY + ButtonSize * 0.5f), "Futile_White")
             {
-                line.Label.label.text = string.Empty;
+                anchor = new(0.5f, 0.5f)
+            };
+            _name = new(new Vector2(NameX, nameY), new Vector2(width - NameX, ButtonSize), string.Empty, FLabelAlignment.Left);
+            _nickname = new(new Configurable<string>(string.Empty, new ConfigurableInfo("Edit this friend's name.")), new Vector2(NameX, nameY), width - NameX - ButtonSize * 2f - 12f)
+            {
+                allowSpace = true,
+                maxLength = FriendNicknames.MaxNicknameLength,
+                description = Translation.Of("Edit this friend's name.")
+            };
+            _save = new(new Vector2(width - ButtonSize * 2f - 6f, nameY), new Vector2(ButtonSize, ButtonSize), "Menu_Symbol_CheckBox")
+            {
+                description = Translation.Of("Save this nickname.")
+            };
+            _clear = new(new Vector2(width - ButtonSize, nameY), new Vector2(ButtonSize, ButtonSize), "Menu_Symbol_Clear_All")
+            {
+                description = Translation.Of("Clear this nickname.")
+            };
+            _tracking = new(new Configurable<bool>(false, new ConfigurableInfo("Track this friend.")), new Vector2(0f, trackingY));
+            _trackingLabel = new(new Vector2(32f, trackingY), new Vector2(width - 32f, ButtonSize), Translation.Of("Track this friend"), FLabelAlignment.Left);
+            _relationshipsTitle = new(new Vector2(0f, relationshipsTitleY), new Vector2(width, TitleHeight), Translation.Of("Friend Relationships"), FLabelAlignment.Center, true);
+            _relationships = new(new Vector2(0f, FooterHeight), new Vector2(width, relationshipsHeight));
+            _noRelationships = new(new Vector2(0f, FooterHeight), new Vector2(width, relationshipsHeight), Translation.Of("No other friends"), FLabelAlignment.Center)
+            {
+                color = MenuColorEffect.rgbMediumGrey
+            };
+            _divider = new(new Vector2(0f, FooterHeight - 8f), "pixel")
+            {
+                scale = new(width, 1f),
+                color = MenuColorEffect.rgbMediumGrey
+            };
+            _forgetNote = new(Vector2.zero, new Vector2(width - ForgetWidth - 12f, ButtonSize), Translation.Of("Clears its like toward every slugcat."), FLabelAlignment.Left)
+            {
+                color = MenuColorEffect.rgbMediumGrey
+            };
+            _forget = new(new Vector2(width - ForgetWidth, 0f), new Vector2(ForgetWidth, ButtonSize), Translation.Of("Forget Friend"))
+            {
+                description = Translation.Of("Hold to forget this friend.")
+            };
+
+            _save.OnClick += delegate { SetNickname(_nickname.value); };
+            _clear.OnClick += delegate { SetNickname(null); };
+            _tracking.OnValueUpdate += delegate { SetTracked(_tracking.value == "true"); };
+            _forget.Done += Forget;
+
+            foreach (UIelement element in (UIelement[])[_icon, _name, _nickname, _save, _clear, _tracking, _trackingLabel, _relationshipsTitle, _relationships, _noRelationships, _divider, _forgetNote, _forget])
+            {
+                tab.Add(element);
             }
 
-            _nicknameBox.Hide();
-            _saveNickname.Hide();
-            _clearNickname.Hide();
-            _trackingLabel.Hide();
-            _trackingCheckbox.Hide();
-            _forgetButton.Hide();
-
-            return;
+            tab.FriendChanged += LoadFriend;
+            tab.Refresh += Refresh;
         }
 
-        _nameLabel.label.color = creature.ShortcutColor;
-        _nicknameBox.colorText = creature.ShortcutColor;
-
-        if (creature.IsPlayer)
+        private void LoadFriend(AbstractCreature? friend)
         {
-            _nameLabel.label.text = creature.PlayerName;
-            _nicknameBox.Hide();
-            _saveNickname.Hide();
-            _clearNickname.Hide();
-            _forgetButton.Hide();
-        }
-        else
-        {
-            _nameLabel.label.text = string.Empty;
-            _nicknameBox.value = creature.FriendName;
-            _nicknameBox.Show();
-            _saveNickname.Show();
-            _clearNickname.Show();
-
-            if (creature.HasFriendTracker)
+            if (friend is { IsPlayer: false })
             {
-                _forgetButton.Show();
-            }
-            else
-            {
-                _forgetButton.Hide();
+                _nickname.value = friend.FriendName;
             }
         }
 
-        _trackingLabel.Show();
-        _trackingCheckbox.Show();
-
-        SnapDetails();
-        RefreshDetails();
-    }
-
-    private void RefreshDetails()
-    {
-        if (_selectedFriend is not { } friend)
+        private void Refresh()
         {
-            return;
-        }
+            AbstractCreature? friend = _tab.Friend;
+            bool named = friend is { IsPlayer: false };
+            bool forgettable = friend is { IsPlayer: false, HasFriendTracker: true };
+            (string symbol, Color color) = friend?.Icon ?? (string.Empty, Color.white);
 
-        string life = Translation.Of(friend.state is not { } state ? "Unknown" : state.dead ? "Dead" : "Alive");
-        bool tracked = friend.IsTracked;
-        bool blocked = !friend.IsPlayer && !tracked && !friend.IsExcluded;
+            SetShown(_icon, friend != null && Futile.atlasManager.DoesContainElementWithName(symbol));
+            SetShown(_name, friend is { IsPlayer: true });
 
-        (string symbol, Color color) = friend.Icon;
-
-        if (Futile.atlasManager.DoesContainElementWithName(symbol))
-        {
-            _typeIcon.sprite.SetElementByName(symbol);
-            _typeIcon.color = color;
-            FitIcon(_typeIcon);
-            _typeIcon.Show();
-        }
-        else
-        {
-            _typeIcon.Hide();
-        }
-
-        _locationLabel.label.text = $"{Translation.Of("Location")}: {LocationOf(friend)}";
-        _statusLabel.label.text = $"{Translation.Of("Status")}: {life}";
-        _personalityLabel.label.text = $"{Translation.Of("Personality")}: {PersonalityOf(friend.personality)}";
-        _metLabel.label.text = friend.MetRecord is { } record
-            ? Translation.Of("Met in <PLACEHOLDER> on cycle <PLACEHOLDER>, <PLACEHOLDER> cycles together").FillPlaceholders(
-                record.Room.Length > 0 ? record.Room : Translation.Of("Unknown"),
-                record.Cycle,
-                record.Cycles
-            )
-            : string.Empty;
-        _trackingLabel.text = TrackingLabel(tracked);
-        _trackingCheckbox.ForceValue(tracked ? "true" : "false");
-        _trackingCheckbox.greyedOut = friend.IsPlayer || blocked;
-        _trackingCheckbox.description = Translation.Of(friend.IsPlayer
-            ? "Players are always tracked."
-            : blocked
-                ? "Another addon keeps this friend untracked."
-                : tracked ? "Stop tracking this friend." : "Track this friend.");
-
-        foreach (PlayerLine line in _playerLines)
-        {
-            line.Label.label.text = friend.IsPlayer || Core.Config.FriendSharing.IsActive ? string.Empty : PlayerRelationship(friend, line.Player);
-            line.Label.label.color = line.Player.ShortcutColor;
-        }
-    }
-
-    private void SnapDetails()
-    {
-        UIelement[] elements = [_typeIcon, _trackingCheckbox, _trackingLabel, _nicknameBox, _saveNickname, _clearNickname, _forgetButton];
-
-        foreach (UIelement element in elements)
-        {
-            element.lastScreenPos = element.ScreenPos;
-            element.GrafUpdate(1f);
-        }
-    }
-
-    private string LocationOf(AbstractCreature creature)
-    {
-        AbstractRoom? room = CreatureRoom(creature);
-
-        if (creature.InDen)
-        {
-            return room?.name is { Length: > 0 } name
-                ? $"{Translation.Of("In den")}: {name}"
-                : Translation.Of("In den");
-        }
-
-        if (room?.name is not { Length: > 0 } roomName)
-        {
-            return Translation.Of("Location unknown");
-        }
-
-        return ReferenceEquals(room, RainWorldUtils.MainCamera(_game)?.room?.abstractRoom)
-            ? $"{Translation.Of("Current room")}: {roomName}"
-            : $"{Translation.Of("Room")}: {roomName}";
-    }
-
-    private static string PersonalityOf(AbstractCreature.Personality personality)
-    {
-        (float Value, string High, string Low)[] traits =
-        [
-            (personality.sympathy, "Kind", "Cold"),
-            (personality.energy, "Energetic", "Lazy"),
-            (personality.bravery, "Brave", "Timid"),
-            (personality.nervous, "Nervous", "Calm"),
-            (personality.aggression, "Aggressive", "Gentle"),
-            (personality.dominance, "Dominant", "Submissive"),
-        ];
-
-        string[] words = [.. traits
-            .Where(trait => Mathf.Abs(trait.Value - 0.5f) >= PersonalityThreshold)
-            .OrderByDescending(trait => Mathf.Abs(trait.Value - 0.5f))
-            .Take(2)
-            .Select(trait => Translation.Of(trait.Value > 0.5f ? trait.High : trait.Low))];
-
-        return words.Length > 0 ? string.Join(", ", words) : Translation.Of("Balanced");
-    }
-
-    private static string PlayerRelationship(AbstractCreature friend, AbstractCreature abstractPlayer)
-    {
-        string text = $"{abstractPlayer.PlayerName}: {Translation.Of(RelationshipLabel(friend.FriendshipWith(abstractPlayer)))}";
-
-        if (friend.state?.socialMemory?.GetRelationship(abstractPlayer.ID) is { } relationship)
-        {
-            text += $", {Translation.Of("Like")} {Mathf.RoundToInt(relationship.like * 100f)}%";
-        }
-
-        return text;
-    }
-
-    private static string RelationshipLabel(FriendshipType type) => type switch
-    {
-        FriendshipType.Tracked => "Tracked",
-        FriendshipType.Friendly => "Friendly",
-        FriendshipType.Neutral => "Neutral",
-        FriendshipType.Indirect => "Indirect",
-        _ => "Not friends",
-    };
-
-    private static string TrackingLabel(bool tracked) => Translation.Of(tracked ? "Tracked" : "Not tracked");
-
-    private sealed class PlayerLine(AbstractCreature player, MenuLabel label)
-    {
-        internal AbstractCreature Player { get; } = player;
-
-        internal MenuLabel Label { get; } = label;
-    }
-
-    private sealed class HoldButton : OpHoldButton
-    {
-        private const float FillTime = 80f;
-
-        private float _hold;
-
-        private bool _done;
-
-        internal HoldButton(Vector2 pos, Vector2 size, string displayText) : base(pos, size, displayText, FillTime)
-        {
-            _isProgress = true;
-        }
-
-        internal event Action? Done;
-
-        public override void Update()
-        {
-            base.Update();
-
-            if (greyedOut || !held)
+            foreach (UIelement element in (UIelement[])[_nickname, _save, _clear])
             {
-                _done = false;
-                _hold = Mathf.Max(0f, _hold - 4f * frameMulti / FillTime);
+                SetShown(element, named);
             }
-            else if (!_done)
-            {
-                _hold = Mathf.Min(1f, _hold + frameMulti / FillTime);
 
-                if (_hold >= 1f)
+            foreach (UIelement element in (UIelement[])[_tracking, _trackingLabel, _relationshipsTitle, _relationships])
+            {
+                SetShown(element, friend != null);
+            }
+
+            foreach (UIelement element in (UIelement[])[_divider, _forgetNote, _forget])
+            {
+                SetShown(element, forgettable);
+            }
+
+            RefreshRelationships(friend);
+
+            if (friend == null)
+            {
+                return;
+            }
+
+            bool tracked = friend.IsTracked;
+            bool blocked = !friend.IsPlayer && !tracked && !friend.IsExcluded;
+
+            if (!_icon.Hidden)
+            {
+                _icon.sprite.SetElementByName(symbol);
+                _icon.color = color;
+                FitIcon(_icon);
+            }
+
+            _name.text = friend.PlayerName;
+            _name.color = friend.ShortcutColor;
+            _nickname.colorText = friend.ShortcutColor;
+            _tracking.ForceValue(tracked ? "true" : "false");
+            _tracking.greyedOut = friend.IsPlayer || blocked;
+            _tracking.description = Translation.Of(friend.IsPlayer
+                ? "Players are always tracked."
+                : blocked
+                    ? "Another addon keeps this friend untracked."
+                    : tracked ? "Stop tracking this friend. Friendship is kept." : "Track this friend.");
+        }
+
+        private void RefreshRelationships(AbstractCreature? friend)
+        {
+            List<AbstractCreature> others = friend == null ? [] : [.. _dialog._rows.Select(row => row.Creature).Where(other => other != friend)];
+
+            while (_rows.Count < others.Count)
+            {
+                _rows.Add(new RelationshipRow(_tab, _relationships));
+            }
+
+            _relationships.ContentHeight = others.Count * RelationshipRow.Height;
+
+            if (friend != _shownFriend)
+            {
+                _shownFriend = friend;
+                _relationships.ScrollToTop();
+            }
+
+            for (int index = 0; index < _rows.Count; index++)
+            {
+                if (friend != null && index < others.Count)
                 {
-                    _done = true;
-                    PlaySound(SoundID.MENU_Security_Button_Release);
-                    Done?.Invoke();
+                    _rows[index].Show(friend, others[index], _relationships.Top - (index + 1) * RelationshipRow.Height);
+                }
+                else
+                {
+                    _rows[index].Hide();
                 }
             }
 
-            progress = _hold * 100f;
+            SetShown(_noRelationships, friend != null && others.Count == 0);
+        }
+
+        private void SetTracked(bool tracked)
+        {
+            if (_tab.Friend is not { } friend)
+            {
+                return;
+            }
+
+            friend.SetTracked(tracked);
+            _tab.RefreshManager();
+            Refresh();
+        }
+
+        private void SetNickname(string? value)
+        {
+            if (_tab.Friend is not { IsPlayer: false } friend)
+            {
+                return;
+            }
+
+            friend.SetNickname(value == friend.DefaultName ? null : value);
+            _nickname.value = friend.FriendName;
+            _tab.RefreshManager();
+        }
+
+        private void Forget()
+        {
+            if (_tab.Friend is not { IsPlayer: false } friend)
+            {
+                return;
+            }
+
+            friend.Forget();
+            _tab.RefreshManager();
+            Refresh();
+        }
+
+        private static string RelationshipLabel(FriendshipType type) => type switch
+        {
+            FriendshipType.Tracked => "Tracking",
+            FriendshipType.Friendly => "Friendly",
+            FriendshipType.Neutral => "Neutral",
+            FriendshipType.Indirect => "Indirect",
+            _ => "Not friends",
+        };
+
+        private static Color RelationshipColor(FriendshipType type) => type switch
+        {
+            FriendshipType.Tracked => Palette.Tracked,
+            FriendshipType.Friendly => Palette.Friendly,
+            FriendshipType.Neutral => Palette.Neutral,
+            FriendshipType.Indirect => Palette.Indirect,
+            _ => MenuColorEffect.rgbMediumGrey,
+        };
+
+        private sealed class RelationshipRow
+        {
+            internal const float Height = 30f;
+
+            private const float LabelHeight = 24f;
+
+            private const float NameX = 28f;
+
+            private const float NameWidth = 150f;
+
+            private const float RelationX = 184f;
+
+            private const float RelationWidth = 100f;
+
+            private const float BarX = 290f;
+
+            private const float BarWidth = 150f;
+
+            private const float BarHeight = 6f;
+
+            private const float TickWidth = 2f;
+
+            private const float TickHeight = 12f;
+
+            private const float TickOutline = 1f;
+
+            private const float PercentWidth = 50f;
+
+            private readonly OpImage _icon;
+
+            private readonly OpLabel _name;
+
+            private readonly OpLabel _relation;
+
+            private readonly OpImage _barBack;
+
+            private readonly OpImage _barFill;
+
+            private readonly OpImage _threshold;
+
+            private readonly OpImage _tempTickBack;
+
+            private readonly OpImage _tempTick;
+
+            private readonly OpLabel _percent;
+
+            private readonly float _percentX;
+
+            internal RelationshipRow(FriendTab tab, AutoScrollBox scrollBox)
+            {
+                _percentX = scrollBox.size.x - 25f - PercentWidth;
+                _icon = new(Vector2.zero, "Futile_White")
+                {
+                    anchor = new(0.5f, 0.5f)
+                };
+                _name = new(Vector2.zero, new Vector2(NameWidth, LabelHeight), string.Empty, FLabelAlignment.Left);
+                _relation = new(Vector2.zero, new Vector2(RelationWidth, LabelHeight), string.Empty, FLabelAlignment.Left);
+                _barBack = new(Vector2.zero, "pixel")
+                {
+                    scale = new(BarWidth, BarHeight),
+                    color = MenuColorEffect.rgbDarkGrey
+                };
+                _barFill = new(Vector2.zero, "pixel")
+                {
+                    scale = new(0f, BarHeight)
+                };
+                _threshold = new(Vector2.zero, "pixel")
+                {
+                    scale = new(1f, BarHeight),
+                    color = MenuColorEffect.rgbMediumGrey
+                };
+                _tempTickBack = new(Vector2.zero, "pixel")
+                {
+                    scale = new(TickWidth + TickOutline * 2f, TickHeight + TickOutline * 2f),
+                    color = Color.black
+                };
+                _tempTick = new(Vector2.zero, "pixel")
+                {
+                    scale = new(TickWidth, TickHeight),
+                    color = Color.white
+                };
+                _percent = new(Vector2.zero, new Vector2(PercentWidth, LabelHeight), string.Empty, FLabelAlignment.Right);
+
+                foreach (UIelement element in Elements)
+                {
+                    tab.Add(scrollBox, element);
+                }
+            }
+
+            private UIelement[] Elements => [_icon, _name, _relation, _barBack, _barFill, _threshold, _tempTickBack, _tempTick, _percent];
+
+            internal void Show(AbstractCreature friend, AbstractCreature other, float y)
+            {
+                (string symbol, Color color) = other.Icon;
+                bool hasIcon = Futile.atlasManager.DoesContainElementWithName(symbol);
+                FriendshipType friendship = friend.FriendshipWith(other);
+                SocialMemory.Relationship? relationship = friend.IsPlayer
+                    ? MemoryOf(other, friend)
+                    : MemoryOf(friend, other) ?? MemoryOf(other, friend);
+                float labelY = y + (Height - LabelHeight) * 0.5f;
+
+                Place(_icon, new Vector2(12f, y + Height * 0.5f));
+                Place(_name, new Vector2(NameX, labelY));
+                Place(_relation, new Vector2(RelationX, labelY));
+                Place(_barBack, new Vector2(BarX, y + (Height - BarHeight) * 0.5f));
+                Place(_barFill, new Vector2(BarX, y + (Height - BarHeight) * 0.5f));
+                Place(_threshold, new Vector2(BarX + BarWidth * FriendUtils.FriendLikeThreshold, y + (Height - BarHeight) * 0.5f));
+                Place(_percent, new Vector2(_percentX, labelY));
+
+                SetShown(_icon, hasIcon);
+                SetShown(_name, true);
+                SetShown(_relation, true);
+                SetShown(_barBack, relationship != null);
+                SetShown(_barFill, relationship != null);
+                SetShown(_threshold, relationship != null);
+                SetShown(_tempTickBack, relationship != null);
+                SetShown(_tempTick, relationship != null);
+                SetShown(_percent, relationship != null);
+
+                if (hasIcon)
+                {
+                    _icon.sprite.SetElementByName(symbol);
+                    _icon.color = color;
+                    FitIcon(_icon);
+                }
+
+                string name = other.FriendName;
+
+                _name.text = LabelTest.GetWidth(name) > NameWidth ? LabelTest.TrimText(name, NameWidth, true) : name;
+                _name.color = other.ShortcutColor;
+                _relation.text = Translation.Of(RelationshipLabel(friendship));
+                _relation.color = RelationshipColor(friendship);
+
+                if (relationship == null)
+                {
+                    return;
+                }
+
+                float like = Mathf.Clamp(relationship.like, -1f, 1f);
+                float tempLike = Mathf.Clamp(relationship.tempLike, -1f, 1f);
+
+                Vector2 tick = new(BarX + Mathf.Clamp(BarWidth * Mathf.Abs(tempLike) - TickWidth * 0.5f, 0f, BarWidth - TickWidth), y + (Height - TickHeight) * 0.5f);
+
+                Place(_tempTickBack, tick - new Vector2(TickOutline, TickOutline));
+                Place(_tempTick, tick);
+                _barFill.scale = new(BarWidth * Mathf.Abs(like), BarHeight);
+                _barFill.color = _relation.color;
+                _percent.text = $"{Mathf.RoundToInt(like * 100f)}%";
+                _percent.color = _relation.color;
+            }
+
+            internal void Hide()
+            {
+                foreach (UIelement element in Elements)
+                {
+                    SetShown(element, false);
+                }
+            }
+
+            private static SocialMemory.Relationship? MemoryOf(AbstractCreature creature, AbstractCreature subject) => creature.state?.socialMemory?.GetRelationship(subject.ID);
+
+            private static void Place(UIelement element, Vector2 position)
+            {
+                if (element.GetPos() == position)
+                {
+                    return;
+                }
+
+                element.SetPos(position);
+                Snap(element);
+            }
         }
     }
 
     private sealed class NicknameTextBox(ConfigurableBase configurable, Vector2 position, float width) : OpTextBox(configurable, position, width)
     {
+        public override bool CurrentlyFocusableNonMouse => false;
+
         public override string value
         {
             get => _value;

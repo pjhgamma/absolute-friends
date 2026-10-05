@@ -104,3 +104,10 @@ Gives each Hunter Long Legs a name.|헌터 롱 레그마다 이름을 붙입니�
 Green Neuron Ownership|녹색 신경파리 소유
 Makes every green Neuron self-owned.|모든 녹색 신경파리를 자기 소유로 취급합니다.
 Treats Hunter Long Legs as a friend and lets it own what it holds.|헌터 롱 레그를 친구로 취급하고 붙잡은 것을 소유하게 합니다.
+
+Notes|메모
+Marks this friend as a favorite.|이 친구를 즐겨찾기로 표시합니다.
+Favorite|즐겨찾기
+Wave|흔들기
+Spins this friend's icon.|이 친구의 아이콘을 돌립니다.
+Holding with <PLACEHOLDER> tentacles|촉수 <PLACEHOLDER>개로 붙잡는 중

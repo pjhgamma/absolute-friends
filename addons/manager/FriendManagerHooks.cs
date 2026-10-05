@@ -16,7 +16,7 @@ internal class FriendManagerHooks : BaseHooks
 
     protected override bool IsOptionEnabled => true;
 
-    protected override string? Subject => "Friend Manager Shortcut";
+    protected override string? Subject => "Friend Manager";
 
     internal static bool ConsumeShortcut()
     {
@@ -76,20 +76,7 @@ internal class FriendManagerHooks : BaseHooks
     {
         orig(self, saveString, game);
 
-        FriendTracking.ResetTracking();
-        FriendNicknames.ResetNicknames();
-        FriendHistory.ResetHistory();
-    }
-
-    [HookPatch(typeof(On.SaveState), nameof(On.SaveState.SessionEnded))]
-    private static void On_SaveState_SessionEnded(On.SaveState.orig_SessionEnded orig, SaveState self, RainWorldGame game, bool survived, bool newMalnourished)
-    {
-        if (survived)
-        {
-            FriendHistory.CountSurvivedCycle(game);
-        }
-
-        orig(self, game, survived, newMalnourished);
+        FriendSaveData.Reset();
     }
 
     [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.ctor))]
@@ -97,9 +84,7 @@ internal class FriendManagerHooks : BaseHooks
     {
         orig(self, manager);
 
-        FriendTracking.ResetTracking();
-        FriendNicknames.ResetNicknames();
-        FriendHistory.ResetHistory();
+        FriendSaveData.Reset();
     }
 
     [HookPatch(typeof(On.Menu.PauseMenu), nameof(On.Menu.PauseMenu.Update))]
@@ -113,6 +98,24 @@ internal class FriendManagerHooks : BaseHooks
         orig(self);
 
         TryOpen(self.manager, self.game);
+    }
+
+    [HookPatch(typeof(On.Menu.Menu), nameof(On.Menu.Menu.PlaySound_SoundID))]
+    private static void On_Menu_PlaySound_SoundID(On.Menu.Menu.orig_PlaySound_SoundID orig, global::Menu.Menu self, SoundID soundID)
+    {
+        if (self is not FriendManagerDialog)
+        {
+            orig(self, soundID);
+        }
+    }
+
+    [HookPatch(typeof(On.Menu.Menu), nameof(On.Menu.Menu.PlaySound_SoundID_float_float_float))]
+    private static void On_Menu_PlaySound_SoundID_float_float_float(On.Menu.Menu.orig_PlaySound_SoundID_float_float_float orig, global::Menu.Menu self, SoundID soundID, float pan, float vol, float pitch)
+    {
+        if (self is not FriendManagerDialog)
+        {
+            orig(self, soundID, pan, vol, pitch);
+        }
     }
 
     [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.Update))]

@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using System.Text;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Utils;
 
@@ -11,30 +10,24 @@ internal static class FriendNicknames
 
     private const string SaveKey = "ABSOLUTEFRIENDS_NICKNAMES<svB>";
 
-    private static ConditionalWeakTable<RainWorldGame, State> _states = new();
+    private static readonly FriendSaveData.Store<State> _states = new(save => new(save));
 
     internal static void Register() => FriendDisplayNames.RegisterNameRule(NicknameOf);
 
     internal static void Unregister() => FriendDisplayNames.UnregisterNameRule(NicknameOf);
 
-    internal static void ResetNicknames() => _states = new();
-
-    private static string? NicknameOf(AbstractCreature abstractCreature) => StateFor(abstractCreature)?.Get(abstractCreature);
+    private static string? NicknameOf(AbstractCreature abstractCreature) => _states.For(abstractCreature)?.Get(abstractCreature);
 
     private static string Normalize(string? value) => new([.. (value ?? string.Empty)
         .Trim()
         .Where(character => !char.IsControl(character))
         .Take(MaxNicknameLength)]);
 
-    private static State? StateFor(AbstractCreature abstractCreature) => abstractCreature.Game is { } game
-        ? _states.GetValue(game, game => new(game.StorySaveState))
-        : null;
-
     extension(AbstractCreature abstractCreature)
     {
         internal void SetNickname(string? value)
         {
-            if (abstractCreature.IsPlayer || StateFor(abstractCreature) is not { } state)
+            if (abstractCreature.IsPlayer || _states.For(abstractCreature) is not { } state)
             {
                 return;
             }
@@ -80,7 +73,7 @@ internal static class FriendNicknames
 
                 try
                 {
-                    string nickname = Normalize(Encoding.UTF8.GetString(Convert.FromBase64String(entry.Substring(separator + 1))));
+                    string nickname = Normalize(FriendSaveData.Decode(entry.Substring(separator + 1)));
 
                     if (nickname.Length > 0)
                     {
@@ -107,7 +100,7 @@ internal static class FriendNicknames
 
             FriendSaveData.WriteEntries(_save, SaveKey, Nicknames
                 .OrderBy(pair => pair.Key, StringComparer.Ordinal)
-                .Select(pair => $"{pair.Key}={Convert.ToBase64String(Encoding.UTF8.GetBytes(pair.Value))}"));
+                .Select(pair => $"{pair.Key}={FriendSaveData.Encode(pair.Value)}"));
         }
     }
 

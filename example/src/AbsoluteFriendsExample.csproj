@@ -24,6 +24,7 @@
     <Reference Include="AbsoluteFriends" HintPath="$(LibraryPath)AbsoluteFriends.dll" Private="false" />
     <!-- Add or remove Core and other addon references as needed. For example, AbsoluteFriends.Core provides friendship and ownership features for addons. -->
     <Reference Include="AbsoluteFriends.Core" HintPath="$(LibraryPath)AbsoluteFriends.Core.dll" Private="false" />
+    <Reference Include="AbsoluteFriends.Manager" HintPath="$(LibraryPath)AbsoluteFriends.Manager.dll" Private="false" />
     <Reference Include="UnityEngine" HintPath="$(LibraryPath)UnityEngine.dll" Private="false" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(LibraryPath)UnityEngine.CoreModule.dll" Private="false" />
   </ItemGroup>
