@@ -1,5 +1,3 @@
-using AbsoluteFriends.Options;
-
 namespace AbsoluteFriends.Creatures;
 
 internal static class Config

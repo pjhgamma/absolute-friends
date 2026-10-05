@@ -1,6 +1,5 @@
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Hooks;
-using AbsoluteFriends.Options;
 using UnityEngine;
 
 namespace AbsoluteFriends.General;

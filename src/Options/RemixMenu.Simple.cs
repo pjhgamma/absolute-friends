@@ -1,20 +1,19 @@
 using AbsoluteFriends.Addons;
-using Menu.Remix.MixedUI;
 
 namespace AbsoluteFriends.Options;
 
 internal sealed partial class RemixMenu
 {
-    private static SwitchState StateOf(Addon addon, Configurable<bool>[] options)
+    private static SwitchState StateOf(Configurable<bool>[] options)
     {
         int count = options.Count(option => option.IsChecked);
 
         return count == 0 ? SwitchState.Off : count == options.Length ? SwitchState.On : SwitchState.Mixed;
     }
 
-    private static void Toggle(Addon addon, Configurable<bool>[] options)
+    private static void Toggle(Configurable<bool>[] options)
     {
-        bool value = StateOf(addon, options) != SwitchState.On;
+        bool value = StateOf(options) != SwitchState.On;
 
         foreach (var option in options)
         {
@@ -22,19 +21,19 @@ internal sealed partial class RemixMenu
         }
     }
 
-    private static bool IsAllowed(Addon addon, Configurable<bool>[] options, Configurable<bool> option)
+    private static bool IsAllowed(Configurable<bool>[] options, Configurable<bool> option)
     {
-        return option.Requirements.All(masters => masters.Any(master => IsSatisfied(addon, options, master)));
+        return option.Requirements.All(masters => masters.Any(master => IsSatisfied(options, master)));
     }
 
-    private static bool IsSatisfied(Addon addon, Configurable<bool>[] options, Configurable<bool> master)
+    private static bool IsSatisfied(Configurable<bool>[] options, Configurable<bool> master)
     {
-        return options.Contains(master) || (master.IsChecked && IsAllowed(addon, options, master));
+        return options.Contains(master) || (master.IsChecked && IsAllowed(options, master));
     }
 
     private bool IsAvailable(Addon addon, Configurable<bool>[] options)
     {
-        return (addon.Enabled == null || (IsUsable(addon.Enabled) && addon.Enabled.IsChecked)) && options.Any(option => IsAllowed(addon, options, option));
+        return (addon.Enabled == null || (IsUsable(addon.Enabled) && addon.Enabled.IsChecked)) && options.Any(option => IsAllowed(options, option));
     }
 
     private void BuildSimpleAddon(Addon addon)
@@ -77,7 +76,7 @@ internal sealed partial class RemixMenu
                 continue;
             }
 
-            AddSwitch(group.Label, group.Description, () => StateOf(addon, options), () => IsAvailable(addon, options), () => Toggle(addon, options));
+            AddSwitch(group.Label, group.Description, () => StateOf(options), () => IsAvailable(addon, options), () => Toggle(options));
             switches++;
         }
 

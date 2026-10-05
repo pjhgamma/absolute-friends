@@ -80,7 +80,7 @@ public sealed class Addon
 
     public int OptionCount => _switches.Count;
 
-    public int EnabledOptionCount => _switches.Count(IsSelected);
+    public int EnabledOptionCount => _switches.Count(option => option.IsSelected);
 
     public Configurable<bool>? Enabled { get; }
 
@@ -183,11 +183,6 @@ public sealed class Addon
         {
             return null;
         }
-    }
-
-    private static bool IsSelected(Configurable<bool> option)
-    {
-        return option.IsChecked && option.Requirements.All(group => group.Any(IsSelected));
     }
 
     private void SetRunning(bool isRunning)

@@ -44,6 +44,8 @@ public static class Config
     {
         public bool IsActive => option is { Value: true } && option.IsAllowed;
 
+        internal bool IsSelected => option.IsChecked && option.Requirements.All(group => group.Any(master => master.IsSelected));
+
         internal bool IsChecked => option?.BoundUIconfig is { } control && bool.TryParse(control.value, out bool value) ? value : option?.Value == true;
 
         internal void Check(bool value)

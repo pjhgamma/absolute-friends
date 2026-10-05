@@ -1,4 +1,3 @@
-using AbsoluteFriends.Options;
 using UnityEngine;
 
 namespace AbsoluteFriends.Manager;

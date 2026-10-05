@@ -1,4 +1,3 @@
-using AbsoluteFriends.Core;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using RWCustom;

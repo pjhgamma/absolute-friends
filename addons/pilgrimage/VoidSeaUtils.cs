@@ -7,7 +7,7 @@ using VoidSea;
 
 namespace AbsoluteFriends.Pilgrimage;
 
-internal static class VoidSeaUtils
+internal static partial class VoidSeaUtils
 {
     public const float DepthHeight = 100f;
 
@@ -20,10 +20,6 @@ internal static class VoidSeaUtils
     private const float PullFactor = 0.02f;
 
     private const float MaxPull = 3f;
-
-    private const float RowSpacing = 40f;
-
-    private const int ReleaseTime = 400;
 
     private static readonly ConditionalWeakTable<VoidSeaScene, VoidSeaState> _states = new();
 
@@ -109,64 +105,6 @@ internal static class VoidSeaUtils
 
     public static void Stop(PhysicalObject physicalObject) => SetVelocity(physicalObject, Vector2.zero);
 
-    public static void FollowWormRide(VoidSeaScene scene, VoidSeaState state, Creature[] companions, HashSet<Creature> riders)
-    {
-        if (!scene.IsWormRiding || Lead(scene.room.game) is not { } lead || lead.room != scene.room)
-        {
-            return;
-        }
-
-        Vector2 leadPos = lead.mainBodyChunk.pos;
-        Vector2 velocity = lead.mainBodyChunk.vel;
-        int slot = 0;
-        HashSet<PhysicalObject> moved = [];
-
-        foreach (var player in OtherTrackedPlayers(scene, lead))
-        {
-            Vector2 delta = leadPos + new Vector2(RowOffset(slot++), 0f) - player.mainBodyChunk.pos;
-
-            Carry(player, delta, velocity);
-
-            foreach (var grasp in player.grasps)
-            {
-                if (grasp?.grabbed is { } held && held.room == scene.room && moved.Add(held))
-                {
-                    Carry(held, delta, velocity);
-
-                    if (held is Creature creature)
-                    {
-                        riders.Add(creature);
-                    }
-                }
-            }
-
-            foreach (var companion in companions)
-            {
-                if (companion is Player { onBack: var carrier } && carrier == player && moved.Add(companion))
-                {
-                    Carry(companion, delta, velocity);
-
-                    riders.Add(companion);
-                }
-            }
-        }
-
-        foreach (var companion in companions)
-        {
-            if (!companion.IsCarried && moved.Add(companion))
-            {
-                Carry(companion, leadPos + new Vector2(RowOffset(slot++), 0f) - companion.mainBodyChunk.pos, velocity);
-            }
-
-            riders.Add(companion);
-        }
-
-        if (scene.MainWormBehavior is { } behavior && behavior.phase == VoidWorm.MainWormBehavior.Phase.DepthReached && behavior.timeInPhase >= ReleaseTime)
-        {
-            state.RideReleased = true;
-        }
-    }
-
     public static void FollowDiver(Creature friend, Player diver)
     {
         if (friend.mainBodyChunk.pos.y < DepthHeight && diver.mainBodyChunk.pos.y < friend.mainBodyChunk.pos.y - DiveDepth)
@@ -220,40 +158,6 @@ internal static class VoidSeaUtils
         }
     }
 
-    public static void AttachThreads(VoidSeaScene scene, VoidSeaState state, Creature[] companions)
-    {
-        VoidWorm? worm = scene.worms.FirstOrDefault(worm => worm.mainWorm && worm.arms.Any(HasThread));
-
-        if (worm?.arms.FirstOrDefault(HasThread) is not { } arm)
-        {
-            return;
-        }
-
-        IEnumerable<Creature> riders = Lead(scene.room.game) is { } lead && lead.room == scene.room
-            ? companions.Concat(OtherTrackedPlayers(scene, lead))
-            : companions;
-
-        foreach (var rider in riders)
-        {
-            if (state.Threads.TryGetValue(rider, out WormThreadOverlay existing) && !existing.slatedForDeletetion)
-            {
-                continue;
-            }
-
-            WormThreadOverlay overlay = new(scene, worm, arm, rider);
-
-            state.Threads[rider] = overlay;
-            scene.room.AddObject(overlay);
-        }
-    }
-
-    private static float RowOffset(int slot)
-    {
-        int step = slot / 2 + 1;
-
-        return slot % 2 == 0 ? -step * RowSpacing : step * RowSpacing;
-    }
-
     private static Player? Lead(RainWorldGame game)
     {
         return ModManager.CoopAvailable ? game.RealizedPlayerFollowedByCamera : game.FirstRealizedPlayer;
@@ -262,11 +166,6 @@ internal static class VoidSeaUtils
     private static bool IsInMap(AImap aiMap, IntVector2 tile)
     {
         return tile.x >= 0 && tile.x < aiMap.width && tile.y >= 0 && tile.y < aiMap.height;
-    }
-
-    private static bool HasThread(VoidWorm.Arm arm)
-    {
-        return arm.thread != null && arm.threadStatus > 0;
     }
 
     private static Vector2[,]? DrawPositions(PhysicalObject physicalObject) => physicalObject.graphicsModule switch
@@ -297,17 +196,6 @@ internal static class VoidSeaUtils
         }
     }
 
-    private static IEnumerable<Player> OtherTrackedPlayers(VoidSeaScene scene, Player lead)
-    {
-        foreach (var abstractPlayer in scene.room.game.Players)
-        {
-            if (abstractPlayer.IsTracked && abstractPlayer.realizedCreature is Player player && player != lead && player.room == scene.room)
-            {
-                yield return player;
-            }
-        }
-    }
-
     private static Player? NearestPlayer(Creature creature, Func<AbstractCreature, Player, bool> isEligible)
     {
         Player? nearest = null;
@@ -330,16 +218,6 @@ internal static class VoidSeaUtils
         }
 
         return nearest;
-    }
-
-    private static void Carry(PhysicalObject physicalObject, Vector2 delta, Vector2 velocity)
-    {
-        if (delta.sqrMagnitude >= 1f)
-        {
-            Shift(physicalObject, delta);
-        }
-
-        SetVelocity(physicalObject, velocity);
     }
 
     private static void SetVelocity(PhysicalObject physicalObject, Vector2 velocity)

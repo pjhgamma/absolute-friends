@@ -142,26 +142,7 @@ public abstract class BaseHooks
 
             foreach (var methodInfo in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
             {
-                if (methodInfo?.GetCustomAttribute<HookPatchAttribute>() is { } attr)
-                {
-                    try
-                    {
-                        if (attr.TargetType?.GetEvent(attr.EventName, BindingFlags.Static | BindingFlags.Public) is { } eventInfo)
-                        {
-                            Delegate handler = Delegate.CreateDelegate(eventInfo.EventHandlerType, methodInfo.IsStatic ? null : this, methodInfo);
-
-                            _bindings.Add(new(this, methodInfo.Name, eventInfo, handler, methodInfo.GetCustomAttribute<HookTestAttribute>()));
-                        }
-                        else
-                        {
-                            throw new($"Failed to bind event {attr.EventName} on {attr.TargetType?.Name}");
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        throw new($"{attr.EventName} failed", exception);
-                    }
-                }
+                Bind(methodInfo);
             }
         }
         catch (Exception exception)
@@ -169,6 +150,27 @@ public abstract class BaseHooks
             Disable();
 
             Reporter.LogError($"{Name}: Hooks failed", exception);
+        }
+    }
+
+    private void Bind(MethodInfo method)
+    {
+        if (method.GetCustomAttribute<HookPatchAttribute>() is not { } patch)
+        {
+            return;
+        }
+
+        try
+        {
+            EventInfo eventInfo = patch.TargetType?.GetEvent(patch.EventName, BindingFlags.Static | BindingFlags.Public)
+                ?? throw new Exception($"Failed to bind event {patch.EventName} on {patch.TargetType?.Name}");
+            Delegate handler = Delegate.CreateDelegate(eventInfo.EventHandlerType, method.IsStatic ? null : this, method);
+
+            _bindings.Add(new(this, method.Name, eventInfo, handler, method.GetCustomAttribute<HookTestAttribute>()));
+        }
+        catch (Exception exception)
+        {
+            throw new Exception($"{patch.EventName} failed", exception);
         }
     }
 }

@@ -193,37 +193,47 @@ internal class FriendHudOverlay : HudOverlay
 
     private void UpdateDeaths()
     {
-        foreach (var creature in _sources.Concat(room.game.Players))
+        foreach (var creature in _sources)
         {
-            bool isDead = creature.IsDead;
+            UpdateDeath(creature);
+        }
 
-            if (!_deaths.TryGetValue(creature, out bool wasDead))
-            {
-                _deaths[creature] = isDead;
+        foreach (var creature in room.game.Players)
+        {
+            UpdateDeath(creature);
+        }
+    }
 
-                continue;
-            }
+    private void UpdateDeath(AbstractCreature creature)
+    {
+        bool isDead = creature.IsDead;
 
-            if (isDead == wasDead)
-            {
-                continue;
-            }
-
+        if (!_deaths.TryGetValue(creature, out bool wasDead))
+        {
             _deaths[creature] = isDead;
 
-            if (!Config.BumpEffect.IsActive || creature.realizedCreature is not { } realized || realized.room != room)
-            {
-                continue;
-            }
+            return;
+        }
 
-            if (!isDead)
-            {
-                room.AddObject(new RevivalBump(realized));
-            }
-            else if (!creature.IsPlayer)
-            {
-                room.AddObject(new DeathBump(realized));
-            }
+        if (isDead == wasDead)
+        {
+            return;
+        }
+
+        _deaths[creature] = isDead;
+
+        if (!Config.BumpEffect.IsActive || creature.realizedCreature is not { } realized || realized.room != room)
+        {
+            return;
+        }
+
+        if (!isDead)
+        {
+            room.AddObject(new RevivalBump(realized));
+        }
+        else if (!creature.IsPlayer)
+        {
+            room.AddObject(new DeathBump(realized));
         }
     }
 
