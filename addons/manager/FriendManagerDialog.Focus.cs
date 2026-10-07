@@ -91,7 +91,9 @@ internal sealed partial class FriendManagerDialog
     {
         Vector2 origin = CenterOf(from);
         MenuObject? best = null;
+        MenuObject? aligned = null;
         float bestScore = float.MaxValue;
+        float alignedScore = float.MaxValue;
 
         foreach (MenuObject candidate in candidates)
         {
@@ -116,9 +118,15 @@ internal sealed partial class FriendManagerDialog
                 best = candidate;
                 bestScore = score;
             }
+
+            if (across <= along && score < alignedScore)
+            {
+                aligned = candidate;
+                alignedScore = score;
+            }
         }
 
-        return best;
+        return aligned ?? best;
     }
 
     private Vector2 CenterOf(MenuObject menuObject) => menuObject is UIelementWrapper { thisElement: { } element } and not RowWrapper
