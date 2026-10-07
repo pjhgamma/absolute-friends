@@ -323,6 +323,8 @@ internal sealed partial class FriendManagerDialog : Dialog
         icon.scale = new(scale, scale);
     }
 
+    private static string Trim(string text, float width) => LabelTest.GetWidth(text) > width ? LabelTest.TrimText(text, width, true) : text;
+
     private MenuLabel AddLabel(Page page, string text, float x, float y, float width, FLabelAlignment alignment = default)
     {
         float offset = alignment switch

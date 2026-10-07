@@ -47,7 +47,7 @@ internal sealed partial class FriendManagerDialog
             _size = new Vector2(TabWidth, height - 6f);
             Change();
 
-            _label.text = LabelTest.GetWidth(_title) > height - 16f ? LabelTest.TrimText(_title, height - 16f, true) : _title;
+            _label.text = Trim(_title, height - 16f);
             _label.alignment = FLabelAlignment.Left;
             Snap(this);
         }

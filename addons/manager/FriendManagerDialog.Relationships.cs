@@ -36,17 +36,25 @@ internal sealed partial class FriendManagerDialog
 
             private const float NameX = 28f;
 
-            private const float NameWidth = 150f;
+            private const float NameWidth = 192f;
 
-            private const float RelationX = 184f;
+            private const float RelationX = 226f;
 
-            private const float RelationWidth = 100f;
+            private const float RelationWidth = 70f;
 
-            private const float BarX = 290f;
+            private const float BarX = 302f;
 
-            private const float BarWidth = 150f;
+            private const float BarWidth = 167f;
+
+            private const float BarCenter = BarX + BarWidth * 0.5f;
 
             private const float BarHeight = 6f;
+
+            private const float KnowHeight = 2f;
+
+            private const float KnowGap = 4f;
+
+            private const float ThresholdOverhang = 2f;
 
             private const float TickWidth = 2f;
 
@@ -54,7 +62,7 @@ internal sealed partial class FriendManagerDialog
 
             private const float TickOutline = 1f;
 
-            private const float PercentWidth = 50f;
+            private const float PercentWidth = 40f;
 
             private readonly OpImage _icon;
 
@@ -65,6 +73,10 @@ internal sealed partial class FriendManagerDialog
             private readonly OpImage _barBack;
 
             private readonly OpImage _barFill;
+
+            private readonly OpImage _knowFill;
+
+            private readonly OpImage _center;
 
             private readonly OpImage _threshold;
 
@@ -78,7 +90,7 @@ internal sealed partial class FriendManagerDialog
 
             internal RelationshipRow(FriendTab tab, AutoScrollBox scrollBox)
             {
-                _percentX = scrollBox.size.x - 25f - PercentWidth;
+                _percentX = tab.Size.x - 25f - PercentWidth;
                 _icon = new(Vector2.zero, "Futile_White")
                 {
                     anchor = new(0.5f, 0.5f)
@@ -94,9 +106,19 @@ internal sealed partial class FriendManagerDialog
                 {
                     scale = new(0f, BarHeight)
                 };
+                _knowFill = new(Vector2.zero, "pixel")
+                {
+                    scale = new(0f, KnowHeight),
+                    color = MenuColorEffect.rgbMediumGrey
+                };
+                _center = new(Vector2.zero, "pixel")
+                {
+                    scale = new(1f, BarHeight + ThresholdOverhang * 2f),
+                    color = MenuColorEffect.rgbMediumGrey
+                };
                 _threshold = new(Vector2.zero, "pixel")
                 {
-                    scale = new(1f, BarHeight),
+                    scale = new(1f, BarHeight + ThresholdOverhang * 2f),
                     color = MenuColorEffect.rgbMediumGrey
                 };
                 _tempTickBack = new(Vector2.zero, "pixel")
@@ -117,7 +139,7 @@ internal sealed partial class FriendManagerDialog
                 }
             }
 
-            private UIelement[] Elements => [_icon, _name, _relation, _barBack, _barFill, _threshold, _tempTickBack, _tempTick, _percent];
+            private UIelement[] Elements => [_icon, _name, _relation, _barBack, _barFill, _knowFill, _center, _threshold, _tempTickBack, _tempTick, _percent];
 
             internal void Show(AbstractCreature friend, AbstractCreature other, float y)
             {
@@ -128,24 +150,25 @@ internal sealed partial class FriendManagerDialog
                     ? MemoryOf(other, friend)
                     : MemoryOf(friend, other) ?? MemoryOf(other, friend);
                 float labelY = y + (Height - LabelHeight) * 0.5f;
+                float barY = y + (Height - BarHeight) * 0.5f;
 
                 Place(_icon, new Vector2(12f, y + Height * 0.5f));
                 Place(_name, new Vector2(NameX, labelY));
                 Place(_relation, new Vector2(RelationX, labelY));
-                Place(_barBack, new Vector2(BarX, y + (Height - BarHeight) * 0.5f));
-                Place(_barFill, new Vector2(BarX, y + (Height - BarHeight) * 0.5f));
-                Place(_threshold, new Vector2(BarX + BarWidth * FriendUtils.FriendLikeThreshold, y + (Height - BarHeight) * 0.5f));
+                Place(_barBack, new Vector2(BarX, barY));
+                Place(_knowFill, new Vector2(BarX, barY - KnowGap - KnowHeight));
+                Place(_center, new Vector2(BarCenter, barY - ThresholdOverhang));
+                Place(_threshold, new Vector2(BarCenter + BarWidth * 0.5f * FriendUtils.FriendLikeThreshold, barY - ThresholdOverhang));
                 Place(_percent, new Vector2(_percentX, labelY));
 
                 SetShown(_icon, hasIcon);
                 SetShown(_name, true);
                 SetShown(_relation, true);
-                SetShown(_barBack, relationship != null);
-                SetShown(_barFill, relationship != null);
-                SetShown(_threshold, relationship != null);
-                SetShown(_tempTickBack, relationship != null);
-                SetShown(_tempTick, relationship != null);
-                SetShown(_percent, relationship != null);
+
+                foreach (UIelement element in (UIelement[])[_barBack, _barFill, _knowFill, _center, _threshold, _tempTickBack, _tempTick, _percent])
+                {
+                    SetShown(element, relationship != null);
+                }
 
                 if (hasIcon)
                 {
@@ -155,10 +178,11 @@ internal sealed partial class FriendManagerDialog
                 }
 
                 string name = other.FriendName;
+                string relation = Translation.Of(RelationshipLabel(friendship));
 
-                _name.text = LabelTest.GetWidth(name) > NameWidth ? LabelTest.TrimText(name, NameWidth, true) : name;
+                _name.text = Trim(name, NameWidth);
                 _name.color = other.ShortcutColor;
-                _relation.text = Translation.Of(RelationshipLabel(friendship));
+                _relation.text = Trim(relation, RelationWidth);
                 _relation.color = RelationshipColor(friendship);
 
                 if (relationship == null)
@@ -169,12 +193,15 @@ internal sealed partial class FriendManagerDialog
                 float like = Mathf.Clamp(relationship.like, -1f, 1f);
                 float tempLike = Mathf.Clamp(relationship.tempLike, -1f, 1f);
 
-                Vector2 tick = new(BarX + Mathf.Clamp(BarWidth * Mathf.Abs(tempLike) - TickWidth * 0.5f, 0f, BarWidth - TickWidth), y + (Height - TickHeight) * 0.5f);
+                float fill = BarWidth * 0.5f * like;
+                Vector2 tick = new(Mathf.Clamp(BarCenter + BarWidth * 0.5f * tempLike - TickWidth * 0.5f, BarX, BarX + BarWidth - TickWidth), y + (Height - TickHeight) * 0.5f);
 
                 Place(_tempTickBack, tick - new Vector2(TickOutline, TickOutline));
                 Place(_tempTick, tick);
-                _barFill.scale = new(BarWidth * Mathf.Abs(like), BarHeight);
+                Place(_barFill, new Vector2(fill < 0f ? BarCenter + fill : BarCenter, barY));
+                _barFill.scale = new(Mathf.Abs(fill), BarHeight);
                 _barFill.color = _relation.color;
+                _knowFill.scale = new(BarWidth * Mathf.Clamp01(relationship.know), KnowHeight);
                 _percent.text = $"{Mathf.RoundToInt(like * 100f)}%";
                 _percent.color = _relation.color;
             }
