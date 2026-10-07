@@ -1,5 +1,7 @@
 using AbsoluteFriends.Hooks;
 using Menu;
+using Menu.Remix;
+using Menu.Remix.MixedUI;
 using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
@@ -69,6 +71,11 @@ internal class FriendManagerHooks : BaseHooks
         }
 
         orig(self);
+
+        if (self.processManager?.dialog is FriendManagerDialog dialog)
+        {
+            dialog.CollectScroll();
+        }
     }
 
     [HookPatch(typeof(On.SaveState), nameof(On.SaveState.LoadGame))]
@@ -115,6 +122,22 @@ internal class FriendManagerHooks : BaseHooks
         if (self is not FriendManagerDialog)
         {
             orig(self, soundID, pan, vol, pitch);
+        }
+    }
+
+    [HookPatch(typeof(On.Menu.Remix.MixedUI.OpTab), nameof(On.Menu.Remix.MixedUI.OpTab._Update))]
+    private static void On_OpTab_Update(On.Menu.Remix.MixedUI.OpTab.orig__Update orig, OpTab self)
+    {
+        if (self is not WrappedMenuTab { wrapper.menu: FriendManagerDialog dialog } || dialog.HeldElement is not { } held)
+        {
+            orig(self);
+
+            return;
+        }
+
+        if (!held.IsInactive)
+        {
+            held.Update();
         }
     }
 

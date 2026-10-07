@@ -69,6 +69,10 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     private OpScrollBox? _scrollBox;
 
+    private float _pendingScroll;
+
+    private int _tickFrame = -1;
+
     private UIelementWrapper? _scrollWrapper;
 
     private OpRect? _selectionBox;
@@ -170,8 +174,16 @@ internal sealed partial class FriendManagerDialog : Dialog
         _nextMembershipRefresh = Time.unscaledTime + 1f;
     }
 
+    internal UIfocusable? HeldElement => _wrapper is { holdElement: true } && selectedObject is UIelementWrapper { tabWrapper: var tabWrapper, thisElement: UIfocusable { held: true } held } && tabWrapper == _wrapper
+        ? held
+        : null;
+
     public override void Update()
     {
+        floatScrollWheel += _pendingScroll;
+        _pendingScroll = 0f;
+        _tickFrame = Time.frameCount;
+
         OpScrollBox? wheelTarget = WheelTarget();
         float previousScroll = wheelTarget?.targetScrollOffset ?? 0f;
 
@@ -212,11 +224,9 @@ internal sealed partial class FriendManagerDialog : Dialog
             RefreshAll();
         }
 
-        float wheel = mouseScrollWheelMovement != 0
-            ? -mouseScrollWheelMovement * 40f
-            : -Input.mouseScrollDelta.y * RowSpacing;
+        float wheel = mouseScrollWheelMovement * 40f;
 
-        if (wheelTarget is { ScrollLocked: false } && wheel != 0f && !Input.GetMouseButton(0))
+        if (wheelTarget is { ScrollLocked: false } && wheel != 0f && !Input.GetMouseButton(0) && HeldElement == null)
         {
             wheelTarget.targetScrollOffset = Mathf.Clamp(previousScroll + wheel, wheelTarget.MaxScroll, 0f);
         }
@@ -263,6 +273,14 @@ internal sealed partial class FriendManagerDialog : Dialog
     private OpScrollBox? WheelTarget() => ContentElements()
         .OfType<OpScrollBox>()
         .FirstOrDefault(scrollBox => !scrollBox.IsInactive && scrollBox.MouseOver) ?? _scrollBox;
+
+    internal void CollectScroll()
+    {
+        if (_tickFrame != Time.frameCount && manager.menuesMouseMode)
+        {
+            _pendingScroll += Input.GetAxis("Mouse ScrollWheel");
+        }
+    }
 
     internal void PauseGame()
     {
