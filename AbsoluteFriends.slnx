@@ -10,7 +10,6 @@
     <Project Path="addons/creatures/AbsoluteCreatures.csproj" />
     <Project Path="addons/iterators/AbsoluteIterators.csproj" />
     <Project Path="addons/pilgrimage/AbsolutePilgrimage.csproj" />
-    <Project Path="addons/resonance/AbsoluteResonance.csproj" />
   </Folder>
 
   <Project Path="src/AbsoluteFriends.csproj" />

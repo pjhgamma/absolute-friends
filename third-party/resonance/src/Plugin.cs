@@ -8,13 +8,15 @@ using BepInEx;
 
 namespace AbsoluteFriends.Resonance;
 
-[BepInPlugin(GUID, Name, AbsoluteFriends.Plugin.Version)]
+[BepInPlugin(GUID, Name, Version)]
 [BepInDependency(Core.Plugin.GUID)]
 public class Plugin : AddonPlugin
 {
     public const string GUID = "pjhgamma.absolutefriends.resonance";
 
     public const string Name = "Absolute Friends: Resonance";
+
+    public const string Version = "0.1.0";
 
     public override string AddonDescription => "Warps and mends tracked friends through resonance.";
 
