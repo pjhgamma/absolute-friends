@@ -6,7 +6,7 @@ namespace AbsoluteFriends.Manager;
 
 internal static class FriendNicknames
 {
-    internal const int MaxNicknameLength = 20;
+    internal const int MaxNicknameLength = 32;
 
     private const string SaveKey = "ABSOLUTEFRIENDS_NICKNAMES<svB>";
 

@@ -75,7 +75,7 @@ internal sealed partial class FriendManagerDialog
             {
                 allowSpace = true,
                 maxLength = FriendNicknames.MaxNicknameLength,
-                description = Translation.Of("Edit this friend's name.")
+                description = Translation.Of("Edit this friend's nickname.")
             };
             _save = new(new Vector2(width - ButtonSize * 2f - 6f, nameY), new Vector2(ButtonSize, ButtonSize), "Menu_Symbol_CheckBox")
             {
