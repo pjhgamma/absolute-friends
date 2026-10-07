@@ -88,6 +88,11 @@ internal class GateHooks : BaseHooks
     [HookPatch(typeof(On.RegionGate), nameof(On.RegionGate.AllPlayersThroughToOtherSide))]
     private static bool On_RegionGate_AllPlayersThroughToOtherSide(On.RegionGate.orig_AllPlayersThroughToOtherSide orig, RegionGate self)
     {
+        if (!orig(self))
+        {
+            return false;
+        }
+
         foreach (var creature in self.room.PlayerFriends)
         {
             foreach (var bodyChunk in creature?.bodyChunks ?? [])
