@@ -41,7 +41,7 @@ internal sealed class ManagerTab
     {
         _tab = tab;
 
-        // A centered OpImage draws the creature icon exactly like the manager's Friend Info tab.
+        // A centered OpImage draws the creature icon exactly like the manager's Profile tab.
         // For drawing that MixedUI cannot do, add Futile sprites to tab.Container, which sits at the tab's origin and hides with the tab.
         _icon = new OpImage(new Vector2(12f, tab.Size.y - 12f), "Futile_White")
         {
@@ -49,7 +49,7 @@ internal sealed class ManagerTab
         };
         tab.Add(_icon);
 
-        // The icon and this label line up with the icon and name box of the manager's Friend Info tab.
+        // The icon and this label line up with the icon and name box of the manager's Profile tab.
         _infoLabel = new OpLabel(new Vector2(40f, tab.Size.y - 24f), new Vector2(tab.Size.x - 40f, 24f), string.Empty, FLabelAlignment.Left);
         tab.Add(_infoLabel);
 

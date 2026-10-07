@@ -151,8 +151,7 @@ Track New Friends|새 친구 추적
 Tracks newly tamed friends. When off, new friends start untracked.|새로 길들인 친구를 추적합니다. 끄면 새 친구는 추적하지 않는 상태로 시작합니다.
 
 No trackable friends|추적할 수 있는 친구 없음
-Show this friend's details.|이 친구의 상세 정보를 표시합니다.
-Friend Info|친구 정보
+Show this tracked friend's details.|이 추적되는 친구의 상세 정보를 표시합니다.
 Show <PLACEHOLDER>.|<PLACEHOLDER> 탭을 표시합니다.
 Show earlier tabs.|이전 탭을 표시합니다.
 Show later tabs.|다음 탭을 표시합니다.

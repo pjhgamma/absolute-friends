@@ -11,7 +11,7 @@ internal sealed partial class FriendManagerDialog
     {
         Vector2 origin = canvasPos + new Vector2(CanvasInset + MenuBuilder.Padding, CanvasInset);
         Vector2 size = new(CanvasSize - (CanvasInset + MenuBuilder.Padding) * 2f, CanvasSize - CanvasInset * 2f - TopPadding);
-        FriendManager.TabRegistration details = new("details", "Friend Info", tab => _ = new DetailsTab(this, tab), null);
+        FriendManager.TabRegistration details = new("details", "Profile", tab => _ = new DetailsTab(this, tab), null);
 
         foreach (FriendManager.TabRegistration registration in FriendManager.Tabs.Prepend(details))
         {
