@@ -1,4 +1,5 @@
 using AbsoluteFriends.Core;
+using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using Menu;
 using Menu.Remix.MixedUI;
@@ -87,7 +88,7 @@ internal sealed partial class FriendManagerDialog
             _tracking = new(new Configurable<bool>(false, new ConfigurableInfo("Track this friend.")), new Vector2(0f, trackingY));
             _trackingLabel = new(new Vector2(32f, trackingY), new Vector2(width - 32f, ButtonSize), Translation.Of("Track this friend"), FLabelAlignment.Left);
             _relationshipsTitle = new(new Vector2(0f, relationshipsTitleY), new Vector2(width, TitleHeight), Translation.Of("Friend Relationships"), FLabelAlignment.Center, true);
-            _relationships = new(new Vector2(0f, FooterHeight), new Vector2(width, relationshipsHeight));
+            _relationships = new(new Vector2(0f, FooterHeight), new Vector2(width + MenuBuilder.Padding, relationshipsHeight));
             _noRelationships = new(new Vector2(0f, FooterHeight), new Vector2(width, relationshipsHeight), Translation.Of("No other friends"), FLabelAlignment.Center)
             {
                 color = MenuColorEffect.rgbMediumGrey

@@ -90,7 +90,7 @@ public sealed class FriendTab
         }
     }
 
-    internal void Add(OpScrollBox scrollBox, UIelement element)
+    public void Add(OpScrollBox scrollBox, UIelement element)
     {
         if (element == null || _elements.Contains(element))
         {
