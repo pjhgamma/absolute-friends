@@ -168,7 +168,14 @@ internal class FriendLinkOverlay : CosmeticSprite
         }
 
         _objects.Clear();
-        _objects.AddRange(room.Objects);
+
+        foreach (var physicalObject in room.Objects)
+        {
+            if (physicalObject is Creature || physicalObject.Owner != null)
+            {
+                _objects.Add(physicalObject);
+            }
+        }
 
         for (int i = 0; i < _objects.Count; ++i)
         {
