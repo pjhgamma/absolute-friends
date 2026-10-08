@@ -4,7 +4,9 @@ namespace AbsoluteFriends.FriendshipEditor;
 
 internal static class RuleStore
 {
-    private const string SectionKey = "ABSOLUTEFRIENDS_EDITOR<svB>";
+    private const string SectionName = "ABSOLUTEFRIENDS_EDITOR";
+
+    private const string SectionKey = SectionName + "<dpB>";
 
     private static readonly ConditionalWeakTable<SaveState, Rules> _saves = new();
 
@@ -23,7 +25,7 @@ internal static class RuleStore
 
         Rules rules = For(game);
 
-        sections.RemoveAll(section => section.StartsWith(SectionKey, StringComparison.Ordinal));
+        sections.RemoveAll(section => section == SectionName || section.StartsWith(SectionName + "<", StringComparison.Ordinal));
 
         if (!rules.IsEmpty)
         {

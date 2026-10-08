@@ -106,7 +106,7 @@ internal static class FriendTracking
 
     private sealed class TrackingChoices
     {
-        private const string SaveKey = "ABSOLUTEFRIENDS_TRACKING<svB>";
+        private const string SaveKey = "ABSOLUTEFRIENDS_TRACKING";
 
         private const string ExcludedSuffix = "=0";
 

@@ -8,7 +8,7 @@ internal static class FriendNicknames
 {
     internal const int MaxNicknameLength = 32;
 
-    private const string SaveKey = "ABSOLUTEFRIENDS_NICKNAMES<svB>";
+    private const string SaveKey = "ABSOLUTEFRIENDS_NICKNAMES";
 
     private static readonly FriendSaveData.Store<State> _states = new(save => new(save));
 

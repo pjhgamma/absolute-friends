@@ -2,7 +2,7 @@ namespace AbsoluteFriends.Manager;
 
 public static class FriendStorage
 {
-    private const string SaveKey = "ABSOLUTEFRIENDS_STORAGE<svB>";
+    private const string SaveKey = "ABSOLUTEFRIENDS_STORAGE";
 
     private static readonly FriendSaveData.Store<State> _states = new(save => new(save));
 

@@ -6,7 +6,13 @@ namespace AbsoluteFriends.Manager;
 
 internal static class FriendSaveData
 {
-    private const string EntrySeparator = "<svC>";
+    private const string SectionSeparator = "<dpB>";
+
+    private const string EntrySeparator = "<dpC>";
+
+    private const string LegacySectionSeparator = "<svB>";
+
+    private const string LegacyEntrySeparator = "<svC>";
 
     private static readonly List<Action> _resets = [];
 
@@ -18,16 +24,19 @@ internal static class FriendSaveData
 
     internal static IEnumerable<string> ReadEntries(SaveState? save, string sectionKey)
     {
-        List<string> sections = [.. save?.unrecognizedSaveStrings ?? [], .. save?.deathPersistentSaveData?.unrecognizedSaveStrings ?? []];
+        IEnumerable<(string Section, string Prefix, string Separator)> sections = [
+            .. (save?.unrecognizedSaveStrings ?? []).Select(section => (section, sectionKey + LegacySectionSeparator, LegacyEntrySeparator)),
+            .. (save?.deathPersistentSaveData?.unrecognizedSaveStrings ?? []).Select(section => (section, sectionKey + SectionSeparator, EntrySeparator))
+        ];
 
-        foreach (string section in sections)
+        foreach (var (section, prefix, separator) in sections)
         {
-            if (!section.StartsWith(sectionKey, StringComparison.Ordinal))
+            if (!section.StartsWith(prefix, StringComparison.Ordinal))
             {
                 continue;
             }
 
-            foreach (string entry in section.Substring(sectionKey.Length).Split([EntrySeparator], StringSplitOptions.RemoveEmptyEntries))
+            foreach (string entry in section.Substring(prefix.Length).Split([separator], StringSplitOptions.RemoveEmptyEntries))
             {
                 yield return entry;
             }
@@ -41,14 +50,16 @@ internal static class FriendSaveData
             return;
         }
 
-        string content = string.Concat(entries.Select(entry => entry + EntrySeparator));
+        string content = string.Join(EntrySeparator, entries);
 
-        sections.RemoveAll(section => section.StartsWith(sectionKey, StringComparison.Ordinal));
-        save.unrecognizedSaveStrings?.RemoveAll(section => section.StartsWith(sectionKey, StringComparison.Ordinal));
+        sections.RemoveAll(section => section == sectionKey
+            || section.StartsWith(sectionKey + SectionSeparator, StringComparison.Ordinal)
+            || section.StartsWith(sectionKey + LegacySectionSeparator, StringComparison.Ordinal));
+        save.unrecognizedSaveStrings?.RemoveAll(section => section.StartsWith(sectionKey + LegacySectionSeparator, StringComparison.Ordinal));
 
         if (content.Length > 0)
         {
-            sections.Add(sectionKey + content);
+            sections.Add(sectionKey + SectionSeparator + content);
         }
     }
 
