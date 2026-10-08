@@ -49,8 +49,6 @@ internal sealed partial class FriendManagerDialog
 
         private readonly OpImage _divider;
 
-        private readonly OpLabel _forgetNote;
-
         private readonly HoldButton _forget;
 
         private AbstractCreature? _shownFriend;
@@ -71,7 +69,7 @@ internal sealed partial class FriendManagerDialog
                 anchor = new(0.5f, 0.5f)
             };
             _name = new(new Vector2(NameX, nameY), new Vector2(width - NameX, ButtonSize), string.Empty, FLabelAlignment.Left);
-            _nickname = new(new Configurable<string>(string.Empty, new ConfigurableInfo("Edit this friend's name.")), new Vector2(NameX, nameY), width - NameX - ButtonSize * 2f - 12f)
+            _nickname = new(new Configurable<string>(string.Empty, new ConfigurableInfo("Edit this friend's nickname.")), new Vector2(NameX, nameY), width - NameX - ButtonSize * 2f - 12f)
             {
                 allowSpace = true,
                 maxLength = FriendNicknames.MaxNicknameLength,
@@ -98,13 +96,9 @@ internal sealed partial class FriendManagerDialog
                 scale = new(width, 1f),
                 color = MenuColorEffect.rgbMediumGrey
             };
-            _forgetNote = new(Vector2.zero, new Vector2(width - ForgetWidth - 12f, ButtonSize), Translation.Of("Clears its like toward every slugcat."), FLabelAlignment.Left)
-            {
-                color = MenuColorEffect.rgbMediumGrey
-            };
             _forget = new(new Vector2(width - ForgetWidth, 0f), new Vector2(ForgetWidth, ButtonSize), Translation.Of("Forget Friend"))
             {
-                description = Translation.Of("Hold to forget this friend.")
+                description = Translation.Of("Hold to forget this friend. Clears its like toward every slugcat and its nickname, and stops tracking it.")
             };
 
             _save.OnClick += delegate { SetNickname(_nickname.value); };
@@ -112,7 +106,7 @@ internal sealed partial class FriendManagerDialog
             _tracking.OnValueUpdate += delegate { SetTracked(_tracking.value == "true"); };
             _forget.Done += Forget;
 
-            foreach (UIelement element in (UIelement[])[_icon, _name, _nickname, _save, _clear, _tracking, _trackingLabel, _relationshipsTitle, _relationships, _noRelationships, _divider, _forgetNote, _forget])
+            foreach (UIelement element in (UIelement[])[_icon, _name, _nickname, _save, _clear, _tracking, _trackingLabel, _relationshipsTitle, _relationships, _noRelationships, _divider, _forget])
             {
                 tab.Add(element);
             }
@@ -149,7 +143,7 @@ internal sealed partial class FriendManagerDialog
                 SetShown(element, friend != null);
             }
 
-            foreach (UIelement element in (UIelement[])[_divider, _forgetNote, _forget])
+            foreach (UIelement element in (UIelement[])[_divider, _forget])
             {
                 SetShown(element, forgettable);
             }

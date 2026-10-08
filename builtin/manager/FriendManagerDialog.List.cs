@@ -82,7 +82,7 @@ internal sealed partial class FriendManagerDialog
             };
             RowButton button = new(new Vector2(RowInset, y + 2f), new Vector2(RowWidth, RowSpacing - 4f))
             {
-                description = Translation.Of("Show this tracked friend's details.")
+                description = Translation.Of("Show this friend's details.")
             };
             List<UIelement> elements = [name];
 
