@@ -19,6 +19,8 @@ public abstract partial class MenuBuilder : OptionInterface
 
     private static readonly Vector2 _defaultMarginX = new(Padding, CanvasSize - Padding);
 
+    private static readonly Vector2[] _focusDirections = [Vector2.left, Vector2.up, Vector2.right, Vector2.down];
+
     private readonly List<UIelement> _elements = [];
 
     private readonly List<ConfigurableBase> _options = [];
@@ -172,7 +174,13 @@ public abstract partial class MenuBuilder : OptionInterface
             scrollBox = new(new Vector2(0f, 0f), new Vector2(CanvasSize, view), height, false, false, true);
             _currentTab.AddItems(scrollBox);
             scrollBox.AddItems(body);
-            scrollBox.OnUpdate += () => FocusScrollChild(scrollBox, body);
+            Dictionary<UIfocusable, UIfocusable?[]> links = [];
+
+            scrollBox.OnUpdate += () =>
+            {
+                FocusScrollChild(scrollBox, body);
+                LinkScrollChild(scrollBox, body, header, links);
+            };
         }
         else
         {
@@ -287,20 +295,106 @@ public abstract partial class MenuBuilder : OptionInterface
     {
         if (!ReferenceEquals(ConfigContainer.FocusedElement, scrollBox)
             || scrollBox.held
+            || ReferenceEquals(ConfigContainer.lastFocusedElement?.scrollBox, scrollBox)
             || Custom.rainWorld?.processManager?.menuesMouseMode == true)
         {
             return;
         }
 
         UIfocusable? firstVisible = body.OfType<UIfocusable>()
-            .FirstOrDefault(item => !item.IsInactive && item.CurrentlyFocusableNonMouse && OpScrollBox.IsChildVisible(item))
-            ?? body.OfType<UIfocusable>().FirstOrDefault(item => !item.IsInactive && item.CurrentlyFocusableNonMouse);
+            .FirstOrDefault(item => IsNavigable(item) && OpScrollBox.IsChildVisible(item))
+            ?? body.OfType<UIfocusable>().FirstOrDefault(IsNavigable);
 
         if (firstVisible != null)
         {
             ConfigConnector.FocusNewElement(firstVisible);
         }
     }
+
+    private static void LinkScrollChild(OpScrollBox scrollBox, UIelement[] body, UIelement[] header, Dictionary<UIfocusable, UIfocusable?[]> links)
+    {
+        if (ConfigContainer.FocusedElement is not { InScrollBox: true } focused
+            || !ReferenceEquals(focused.scrollBox, scrollBox)
+            || Custom.rainWorld?.processManager?.menuesMouseMode == true)
+        {
+            return;
+        }
+
+        if (!links.TryGetValue(focused, out UIfocusable?[] written))
+        {
+            written = links[focused] = new UIfocusable?[_focusDirections.Length];
+        }
+
+        UIfocusable[] children = [.. body.OfType<UIfocusable>().Where(IsNavigable)];
+        Vector2 center = CenterOf(focused);
+        Vector2 top = scrollBox.GetPos() + new Vector2(center.x, scrollBox.size.y);
+
+        for (int index = 0; index < _focusDirections.Length; index++)
+        {
+            if (focused.NextFocusable[index] is { } link && link != written[index])
+            {
+                continue;
+            }
+
+            Vector2 direction = _focusDirections[index];
+            UIfocusable next = Nearest(focused, center, children, direction)
+                ?? (direction == Vector2.up ? Nearest(focused, top, header.OfType<UIfocusable>().Where(IsNavigable), direction) : null)
+                ?? (direction == Vector2.left ? TabButton() : null)
+                ?? focused;
+
+            focused.NextFocusable[index] = written[index] = next;
+        }
+    }
+
+    private static UIfocusable? Nearest(UIfocusable from, Vector2 origin, IEnumerable<UIfocusable> candidates, Vector2 direction)
+    {
+        UIfocusable? best = null;
+        UIfocusable? aligned = null;
+        float bestScore = float.MaxValue;
+        float alignedScore = float.MaxValue;
+
+        foreach (var candidate in candidates)
+        {
+            if (candidate == from)
+            {
+                continue;
+            }
+
+            Vector2 offset = CenterOf(candidate) - origin;
+            float along = Vector2.Dot(offset, direction);
+
+            if (along <= 1f)
+            {
+                continue;
+            }
+
+            float across = Mathf.Abs(offset.x * direction.y - offset.y * direction.x);
+            float score = along + across * 2f;
+
+            if (score < bestScore)
+            {
+                best = candidate;
+                bestScore = score;
+            }
+
+            if (across <= along && score < alignedScore)
+            {
+                aligned = candidate;
+                alignedScore = score;
+            }
+        }
+
+        return aligned ?? best;
+    }
+
+    private static UIfocusable? TabButton()
+    {
+        return ConfigContainer.menuTab?.tabCtrler?.GetCurrentTabButton() is { } button && IsNavigable(button) ? button : null;
+    }
+
+    private static bool IsNavigable(UIfocusable element) => !element.IsInactive && element.CurrentlyFocusableNonMouse;
+
+    private static Vector2 CenterOf(UIelement element) => element.GetPos() + (element.isRectangular ? element.size * 0.5f : Vector2.one * element.rad);
 
     private void EndSection()
     {
