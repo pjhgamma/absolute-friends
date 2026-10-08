@@ -6,7 +6,6 @@ internal static class Menu
 {
     public static void Build(MenuBuilder menu)
     {
-        menu.AddTitle("Resonance");
         menu.SetColumns(3);
         menu.AddCheckBox(Config.ResonanceGate);
         menu.AddCheckBox(Config.ResonanceRoom);

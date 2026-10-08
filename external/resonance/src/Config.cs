@@ -46,14 +46,14 @@ internal static class Config
             .Require(ResonanceCost);
         ResonanceAftershockRatio = addon.Bind("ResonanceAftershockRatio", 0.1f, new ConfigurableInfo("Sets how much of the paid resonance cost lingers as an aftershock. A value of 1 leaves all of it behind, and 0 leaves nothing.", new ConfigAcceptableRange<float>(0f, 1f)))
             .Require(ResonanceAftershock);
-        ResonanceMelt = addon.Bind("ResonanceEffect", true, new ConfigurableInfo("A gate resonance melts the room into the void.", tags: ["Resonance Melt"]))
+        ResonanceMelt = addon.Bind("ResonanceEffect", true, new ConfigurableInfo("Shows the room melting into the void during a gate resonance.", tags: ["Resonance Melt"]))
             .Require(ResonanceGate)
             .RequireAny(ResonanceWarp, ResonanceMend);
-        ResonanceShockwave = addon.Bind("ResonanceShockwave", true, new ConfigurableInfo("A resonance bursts into ripples around everyone who resonated.", tags: ["Resonance Shockwave"]))
+        ResonanceShockwave = addon.Bind("ResonanceShockwave", true, new ConfigurableInfo("Shows ripples bursting around everyone who resonated.", tags: ["Resonance Shockwave"]))
             .RequireAny(ResonanceWarp, ResonanceMend);
 
         addon.Group("Resonance", "Resonance warps and mends tracked friends.", ResonanceGate, ResonanceRoom, ResonanceGrab, ResonanceWarp, ResonanceMend);
         addon.Group("Backlash", "Resonance demands a cost and leaves an aftershock.", ResonanceCost, ResonanceAftershock);
-        addon.Group("Visual Effect", "Resonance melts the room and bursts into ripples.", ResonanceMelt, ResonanceShockwave);
+        addon.Group("Visual Effect", "Shows resonance melting the room and bursting into ripples.", ResonanceMelt, ResonanceShockwave);
     }
 }
