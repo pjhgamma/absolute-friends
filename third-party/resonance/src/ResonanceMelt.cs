@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Resonance;
 
-internal class ResonanceEffect : UpdatableAndDeletable
+internal class ResonanceMelt : UpdatableAndDeletable
 {
     private readonly RoomSettings.RoomEffect? _roomEffect;
 
@@ -15,7 +15,7 @@ internal class ResonanceEffect : UpdatableAndDeletable
 
     private bool _restored;
 
-    public ResonanceEffect(Room room)
+    public ResonanceMelt(Room room)
     {
         foreach (var effect in room.roomSettings?.effects ?? [])
         {

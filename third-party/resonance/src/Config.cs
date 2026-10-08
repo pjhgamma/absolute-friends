@@ -22,7 +22,9 @@ internal static class Config
 
     public static Configurable<float> ResonanceAftershockRatio = null!;
 
-    public static Configurable<bool> ResonanceEffect = null!;
+    public static Configurable<bool> ResonanceMelt = null!;
+
+    public static Configurable<bool> ResonanceShockwave = null!;
 
     public static void Bind(Addon addon)
     {
@@ -44,10 +46,14 @@ internal static class Config
             .Require(ResonanceCost);
         ResonanceAftershockRatio = addon.Bind("ResonanceAftershockRatio", 0.1f, new ConfigurableInfo("Sets how much of the paid resonance cost lingers as an aftershock. A value of 1 leaves all of it behind, and 0 leaves nothing."))
             .Require(ResonanceAftershock);
-        ResonanceEffect = addon.Bind("ResonanceEffect", true, new ConfigurableInfo("Displays visual effects upon resonance. A gate resonance melts the room into the void, while a room or grab resonance answers with ripples.", tags: ["Visual Effect"]))
+        ResonanceMelt = addon.Bind("ResonanceEffect", true, new ConfigurableInfo("A gate resonance melts the room into the void.", tags: ["Resonance Melt"]))
+            .Require(ResonanceGate)
+            .RequireAny(ResonanceWarp, ResonanceMend);
+        ResonanceShockwave = addon.Bind("ResonanceShockwave", true, new ConfigurableInfo("A resonance bursts into ripples around everyone who resonated.", tags: ["Resonance Shockwave"]))
             .RequireAny(ResonanceWarp, ResonanceMend);
 
-        addon.Group("Resonance", "Resonance warps and mends tracked friends.", ResonanceGate, ResonanceRoom, ResonanceGrab, ResonanceWarp, ResonanceMend, ResonanceEffect);
+        addon.Group("Resonance", "Resonance warps and mends tracked friends.", ResonanceGate, ResonanceRoom, ResonanceGrab, ResonanceWarp, ResonanceMend);
         addon.Group("Backlash", "Resonance demands a cost and leaves an aftershock.", ResonanceCost, ResonanceAftershock);
+        addon.Group("Visual Effect", "Resonance melts the room and bursts into ripples.", ResonanceMelt, ResonanceShockwave);
     }
 }

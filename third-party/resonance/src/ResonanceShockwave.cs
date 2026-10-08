@@ -1,8 +1,8 @@
 namespace AbsoluteFriends.Resonance;
 
-internal class ResonanceBurst : UpdatableAndDeletable
+internal class ResonanceShockwave : UpdatableAndDeletable
 {
-    public ResonanceBurst(Room room, IEnumerable<AbstractCreature> abstractCreatures)
+    public ResonanceShockwave(Room room, IEnumerable<AbstractCreature> abstractCreatures)
     {
         foreach (var abstractCreature in abstractCreatures)
         {

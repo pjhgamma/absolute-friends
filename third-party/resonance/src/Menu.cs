@@ -19,6 +19,8 @@ internal static class Menu
         menu.AddFloatSlider(Config.ResonanceCostRatio, span: 3f);
         menu.AddCheckBox(Config.ResonanceAftershock);
         menu.AddFloatSlider(Config.ResonanceAftershockRatio, span: 3f);
-        menu.AddCheckBox(Config.ResonanceEffect);
+        menu.SetColumns(2);
+        menu.AddCheckBox(Config.ResonanceMelt);
+        menu.AddCheckBox(Config.ResonanceShockwave);
     }
 }

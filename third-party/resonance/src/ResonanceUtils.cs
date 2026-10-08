@@ -111,16 +111,15 @@ internal static partial class ResonanceUtils
 
         private void Echo(ResonanceType type, List<AbstractCreature> resonated)
         {
-            if (!Config.ResonanceEffect.IsActive)
+            if (Config.ResonanceMelt.IsActive && type != ResonanceType.Ungathered)
             {
-                return;
+                room.AddObject(new ResonanceMelt(room));
             }
 
-            if (type == ResonanceType.Automatic)
+            if (Config.ResonanceShockwave.IsActive)
             {
-                room.AddObject(new ResonanceEffect(room));
+                room.AddObject(new ResonanceShockwave(room, resonated));
             }
-            room.AddObject(new ResonanceBurst(room, resonated));
         }
 
         private bool Resonate(List<AbstractCreature> resonators, List<AbstractCreature> resonatees, ResonanceProfile profile, Func<Creature, bool> predicate, ResonanceType type)
