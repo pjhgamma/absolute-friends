@@ -70,5 +70,7 @@ public static class Config
             ModManager.Expedition ? "Enables friendship rules in Story and Expedition modes." : "Enables friendship rules in Story mode.",
             FriendStory, FriendExpedition
         );
+        addon.Group("Arena", "Enables friendship rules in Arena mode.", FriendArena);
+        addon.Group("Safari", "Enables friendship rules in Safari mode.", FriendSafari);
     }
 }
