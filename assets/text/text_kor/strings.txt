@@ -198,6 +198,8 @@ Relationship Link|관계 연결선
 Draws lines between shown friends and between owners and owned things. Ownership lines are thickest at the owner's end.|표시 관계의 친구끼리, 그리고 소유자와 소유된 대상을 연결선으로 잇습니다. 소유 연결선은 소유자 쪽 끝이 가장 굵습니다.
 
 Shown Relationships|표시 관계
+Friend Relationship|친구 관계
+Includes friendship in relationship overlays.|친구 관계를 관계 표시에 포함합니다.
 Shown Friendship|표시 친구 관계
 Sets the weakest friendship that relationship overlays show. Moving right shows more friends.|관계 표시에 포함할 가장 약한 친구 관계를 설정합니다. 오른쪽으로 갈수록 더 많은 친구를 표시합니다.
 Tracking|추적
@@ -206,8 +208,6 @@ Neutral|중립
 Indirect|간접
 Owner Relationship|소유 관계
 Includes ownership in relationship overlays.|소유 관계를 관계 표시에 포함합니다.
-
-Overlay Updates|표시 갱신
 Update Interval|갱신 간격
 Sets how many frames pass between friend and owner checks.|친구와 소유자를 확인하는 간격을 프레임 단위로 설정합니다.
 

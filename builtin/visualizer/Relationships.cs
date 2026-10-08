@@ -44,7 +44,7 @@ internal static class Relationships
         _ => FriendshipType.Indirect,
     };
 
-    public static bool IsShown(FriendshipType type) => type != FriendshipType.None && type >= WeakestShown;
+    public static bool IsShown(FriendshipType type) => Config.FriendRelationship.IsActive && type != FriendshipType.None && type >= WeakestShown;
 
     public static Color ColorOf(FriendshipType type) => type switch
     {

@@ -18,6 +18,8 @@ internal static class Config
 
     public static Configurable<bool> Link = null!;
 
+    public static Configurable<bool> FriendRelationship = null!;
+
     public static Configurable<int> ShownFriendship = null!;
 
     public static Configurable<bool> Owner = null!;
@@ -36,11 +38,12 @@ internal static class Config
         Name = addon.Bind("Name", false, new ConfigurableInfo("Draws names above shown friends, and owners' names above owned things. Dead creatures' names are dimmed.", tags: ["Relationship Name"]));
         Link = addon.Bind("Link", false, new ConfigurableInfo("Draws lines between shown friends and between owners and owned things. Ownership lines are thickest at the owner's end.", tags: ["Relationship Link"]));
 
-        ShownFriendship = addon.Bind("ShownFriendship", (int)ShownFriendshipChoice.Indirect, new ConfigurableInfo("Sets the weakest friendship that relationship overlays show. Moving right shows more friends.", new ConfigAcceptableRange<int>(0, 3), tags: ["Shown Friendship"]))
+        FriendRelationship = addon.Bind("FriendRelationship", true, new ConfigurableInfo("Includes friendship in relationship overlays.", tags: ["Friend Relationship"]))
             .RequireAny(Icon, Name, Link);
+        ShownFriendship = addon.Bind("ShownFriendship", (int)ShownFriendshipChoice.Indirect, new ConfigurableInfo("Sets the weakest friendship that relationship overlays show. Moving right shows more friends.", new ConfigAcceptableRange<int>(0, 3), tags: ["Shown Friendship"]))
+            .Require(FriendRelationship);
         Owner = addon.Bind("Owner", false, new ConfigurableInfo("Includes ownership in relationship overlays.", tags: ["Owner Relationship"]))
             .RequireAny(Icon, Name, Link);
-
         UpdateInterval = addon.Bind("UpdateInterval", 10, new ConfigurableInfo("Sets how many frames pass between friend and owner checks.", new ConfigAcceptableRange<int>(1, 40), tags: ["Update Interval"]))
             .RequireAny(FriendMarker, FriendMeter, Icon, Name, Link);
 
