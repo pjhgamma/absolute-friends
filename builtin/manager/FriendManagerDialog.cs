@@ -27,6 +27,10 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     private const float TopPadding = 12f;
 
+    private const float ModHeaderHeight = 20f;
+
+    private const float ModHeaderInset = 8f;
+
     private const float VerticalOffset = 35f;
 
     private const float TransitionOffset = CanvasSize + 180f;

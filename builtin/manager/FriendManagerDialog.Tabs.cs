@@ -1,6 +1,8 @@
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
+using Menu;
 using Menu.Remix;
+using Menu.Remix.MixedUI;
 using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
@@ -11,13 +13,18 @@ internal sealed partial class FriendManagerDialog
     {
         Vector2 origin = canvasPos + new Vector2(CanvasInset + MenuBuilder.Padding, CanvasInset);
         Vector2 size = new(CanvasSize - (CanvasInset + MenuBuilder.Padding) * 2f, CanvasSize - CanvasInset * 2f - TopPadding);
-        FriendManager.TabRegistration details = new("details", "Profile", tab => _ = new DetailsTab(this, tab), null);
+        FriendManager.TabRegistration details = new("details", "Profile", tab => _ = new DetailsTab(this, tab), null, Plugin.Name, Plugin.GUID);
 
         foreach (FriendManager.TabRegistration registration in FriendManager.Tabs.Prepend(details))
         {
             FriendTab tab = new(this, _wrapper, origin, size, registration, registration == details);
 
             _tabs.Add(tab);
+
+            if (registration.ModId != null)
+            {
+                AddModHeader(tab);
+            }
 
             Run(tab, () => registration.Build(tab));
         }
@@ -35,6 +42,18 @@ internal sealed partial class FriendManagerDialog
 
         _tabScrollUp = AddScrollButton(true);
         _tabScrollDown = AddScrollButton(false);
+    }
+
+    private static void AddModHeader(FriendTab tab)
+    {
+        Vector2 position = new(ModHeaderInset - CanvasInset - MenuBuilder.Padding, CanvasSize - CanvasInset - ModHeaderInset - ModHeaderHeight);
+        Vector2 size = new(CanvasSize - ModHeaderInset * 2f, ModHeaderHeight);
+
+        tab.Add(new OpLabel(position, size, Translation.Of(tab.Registration.ModName ?? string.Empty), FLabelAlignment.Left));
+        tab.Add(new OpLabel(position, size, tab.Registration.ModId, FLabelAlignment.Right)
+        {
+            color = MenuColorEffect.rgbMediumGrey
+        });
     }
 
     private TabScrollButton AddScrollButton(bool up)
