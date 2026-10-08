@@ -26,8 +26,11 @@ internal static class Menu
         menu.AddTitle("Shown Relationships");
         menu.SetColumns(5);
         menu.AddCheckBox(Config.FriendRelationship);
+
         OpSliderTick? shownFriendship = menu.AddIntSliderTick(Config.ShownFriendship, span: 3f);
+
         menu.AddCheckBox(Config.Owner);
+
         OpLabel[] friendships = menu.AddTickLabels(
             shownFriendship,
             "Tracking",
@@ -35,7 +38,6 @@ internal static class Menu
             "Neutral",
             "Indirect"
         );
-
         FriendshipType[] types = [FriendshipType.Tracked, FriendshipType.Friendly, FriendshipType.Neutral, FriendshipType.Indirect];
 
         for (int index = 0; index < friendships.Length; ++index)
