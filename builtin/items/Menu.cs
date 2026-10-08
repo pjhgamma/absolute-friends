@@ -19,7 +19,6 @@ internal static class Menu
         menu.AddCheckBox(Config.FireEgg, enabled: ModManager.MSC);
         menu.AddCheckBox(Config.SporePlant);
         menu.AddCheckBox(Config.Boomerang, enabled: ModManager.Watcher);
-        menu.AddCheckBox(Config.Mushroom);
         menu.AddCheckBox(Config.FlareBomb);
         menu.AddCheckBox(Config.PuffBall);
         menu.AddCheckBox(Config.WaterNut);
@@ -28,6 +27,7 @@ internal static class Menu
         menu.AddCheckBox(Config.DangleFruit, enabled: ModManager.MSC);
         menu.AddCheckBox(Config.JellyFish);
         menu.AddCheckBox(Config.Pomegranate, enabled: ModManager.Watcher);
+        menu.AddCheckBox(Config.Mushroom);
         menu.AddCheckBox(Config.Snail);
         menu.AddCheckBox(Config.TubeWorm);
         menu.AddCheckBox(Config.Frog, enabled: ModManager.Watcher);

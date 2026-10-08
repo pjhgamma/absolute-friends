@@ -250,8 +250,8 @@ Friends do not hurt, frighten, or steal from one another.|친구끼리 서로 �
 Shared Senses|감각 공유
 Deafness and blindness fade toward those of nearby friends.|이명과 실명이 근처 친구의 상태에 맞춰 점차 사라집니다.
 Recovery|상태 회복
-Breath recovers toward that of nearby friends.|숨이 근처 친구의 상태에 맞춰 회복됩니다.
 Hypothermia and breath recover toward those of nearby friends.|저체온증과 숨이 근처 친구의 상태에 맞춰 회복됩니다.
+Breath recovers toward that of nearby friends.|숨이 근처 친구의 상태에 맞춰 회복됩니다.
 
 Absolute Friends: Items|절대적 친구: 아이템
 Controls interactions with items friends throw or hold.|친구가 던지거나 들고 있는 아이템과의 상호 작용을 설정합니다.
@@ -305,6 +305,8 @@ Jellyfish|해파리
 Will not be caught or stunned by the tentacles of a jellyfish held by a friend, and will not be stunned by a jellyfish thrown by friends.|친구가 쥐고 있는 해파리의 촉수에 잡히거나 기절하지 않고, 친구가 던진 해파리에 감전되지 않습니다.
 Pomegranate|석류
 Will not take damage from a pomegranate dropped by friends.|친구가 떨어뜨린 석류에 피해를 받지 않습니다.
+Mushroom|버섯
+Will share the effects of mushrooms with slugcat friends.|친구인 슬러그캣과 버섯의 효과를 공유합니다.
 Snail|달팽이
 Will not be stunned by the next pop from a snail thrown, hit, or killed by a friend.|친구가 던지거나 맞히거나 죽인 달팽이의 다음 충격파에 기절하지 않습니다.
 Grappling Worm|끈끈이 벌레
@@ -409,7 +411,6 @@ Treats Pebbles and his pearls as friends.|조약돌과 조약돌의 진주를 �
 Absolute Friends: Pilgrimage|절대적 친구: 순례
 Helps tracked friends join the pilgrimage.|추적되는 친구들이 순례에 함께하도록 돕습니다.
 
-Thresholds|관문
 Gate Delay|게이트 지연
 Shelters and karma gates wait for tracked friends and will not activate while any player is entering control inputs.|피난처와 카르마 게이트는 추적되는 친구를 기다리며, 플레이어가 조작 중일 때는 작동하지 않습니다.
 Shelters, karma gates, and warp points wait for tracked friends and will not activate while any player is entering control inputs.|피난처, 카르마 게이트, 워프 포인트는 추적되는 친구를 기다리며, 플레이어가 조작 중일 때는 작동하지 않습니다.

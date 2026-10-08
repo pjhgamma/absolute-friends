@@ -28,8 +28,6 @@ internal static class Config
 
     public static Configurable<bool> Boomerang = null!;
 
-    public static Configurable<bool> Mushroom = null!;
-
     public static Configurable<bool> FlareBomb = null!;
 
     public static Configurable<bool> PuffBall = null!;
@@ -45,6 +43,8 @@ internal static class Config
     public static Configurable<bool> JellyFish = null!;
 
     public static Configurable<bool> Pomegranate = null!;
+
+    public static Configurable<bool> Mushroom = null!;
 
     public static Configurable<bool> Snail = null!;
 
@@ -75,8 +75,6 @@ internal static class Config
             "Will not be caught by bees triggered by friends. However, this does not apply to those spawned by approaching a beehive. This also applies to joke rifle bullets."
         ), tags: ["Beehive"]));
         Boomerang = addon.Bind("Boomerang", true, new ConfigurableInfo("Will not be hit by a boomerang thrown by friends.", tags: ["Boomerang"]));
-        Mushroom = addon.Bind("Mushroom", true, new ConfigurableInfo("Will share the effects of mushrooms with slugcat friends.", tags: ["Mushroom"]))
-            .Require(Core.Config.FriendSlugcat);
         FlareBomb = addon.Bind("FlareBomb", true, new ConfigurableInfo(Options.Config.Downpour(
             "Will not be hit by a flash bang thrown by friends.",
             "Will not be hit by a flash bang thrown by friends. This also applies to joke rifle bullets."
@@ -91,9 +89,11 @@ internal static class Config
             "Will not be stunned by a cherrybomb thrown by friends. However, this does not apply to the final explosion. This also applies to joke rifle bullets."
         ), tags: ["Cherrybomb"]));
         GraffitiBomb = addon.Bind("GraffitiBomb", true, new ConfigurableInfo("Will not be hit by a graffiti bomb thrown by friends.", tags: ["Graffiti Bomb"]));
-        DangleFruit = addon.Bind("DangleFruit", true, new ConfigurableInfo("Will not be hit by a dangle fruit fired from a joke rifle by friends.", tags: ["DangleFruit"]));
+        DangleFruit = addon.Bind("DangleFruit", true, new ConfigurableInfo("Will not be hit by a blue fruit fired from a joke rifle by friends.", tags: ["Blue Fruit"]));
         JellyFish = addon.Bind("JellyFish", true, new ConfigurableInfo("Will not be caught or stunned by the tentacles of a jellyfish held by a friend, and will not be stunned by a jellyfish thrown by friends.", tags: ["Jellyfish"]));
         Pomegranate = addon.Bind("Pomegranate", true, new ConfigurableInfo("Will not take damage from a pomegranate dropped by friends.", tags: ["Pomegranate"]));
+        Mushroom = addon.Bind("Mushroom", true, new ConfigurableInfo("Will share the effects of mushrooms with slugcat friends.", tags: ["Mushroom"]))
+            .Require(Core.Config.FriendSlugcat);
         Snail = addon.Bind("Snail", true, new ConfigurableInfo("Will not be stunned by the next pop from a snail thrown, hit, or killed by a friend.", tags: ["Snail"]));
         TubeWorm = addon.Bind("TubeWorm", true, new ConfigurableInfo("Will not be caught by a grappling worm's tongue used by friends.", tags: ["Grappling Worm"]));
         Frog = addon.Bind("Frog", true, new ConfigurableInfo("Will not be attached by a frog thrown by friends.", tags: ["Frog"]));
