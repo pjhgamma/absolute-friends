@@ -38,7 +38,7 @@ internal static class Config
 
         ShownFriendship = addon.Bind("ShownFriendship", (int)ShownFriendshipChoice.Indirect, new ConfigurableInfo("Sets the weakest friendship that relationship overlays show. Moving right shows more friends.", new ConfigAcceptableRange<int>(0, 3), tags: ["Shown Friendship"]))
             .RequireAny(Icon, Name, Link);
-        Owner = addon.Bind("Owner", true, new ConfigurableInfo("Includes ownership in relationship overlays.", tags: ["Owner Relationship"]))
+        Owner = addon.Bind("Owner", false, new ConfigurableInfo("Includes ownership in relationship overlays.", tags: ["Owner Relationship"]))
             .RequireAny(Icon, Name, Link);
 
         UpdateInterval = addon.Bind("UpdateInterval", 10, new ConfigurableInfo("Sets how many frames pass between friend and owner checks.", new ConfigAcceptableRange<int>(1, 40), tags: ["Update Interval"]))

@@ -26,7 +26,7 @@ internal static class AddonConfig
         AggressiveHunter = addon.Bind("AggressiveHunter", true, new ConfigurableInfo("Preserves Hunter's hostile relationship with Hunter Long Legs.", tags: ["Aggressive Hunter"]))
             .Require(Friendship);
         HunterDaddyOwnership = addon.Bind("HunterDaddyOwnership", true, new ConfigurableInfo("Makes Hunter Long Legs own anything held by its tentacles.", tags: ["Tentacle Ownership"]));
-        UntrackedHunter = addon.Bind("UntrackedHunter", false, new ConfigurableInfo("Keeps Hunter Long Legs untracked, so other addons do not treat it as a companion.", tags: ["Untracked Long Legs"]))
+        UntrackedHunter = addon.Bind("UntrackedHunter", true, new ConfigurableInfo("Keeps Hunter Long Legs untracked, so other addons do not treat it as a companion.", tags: ["Untracked Long Legs"]))
             .Require(Friendship);
         HunterName = addon.Bind("HunterName", true, new ConfigurableInfo("Gives each Hunter Long Legs a name.", tags: ["Long Legs Name"]));
         GreenNeuronOwnership = addon.Bind("GreenNeuronOwnership", true, new ConfigurableInfo("Makes every green Neuron self-owned.", tags: ["Green Neuron Ownership"]));
