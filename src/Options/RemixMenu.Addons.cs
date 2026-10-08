@@ -38,7 +38,7 @@ internal sealed partial class RemixMenu
         Watch(() => Search(filter, addons));
 
         BuildAddonGroup("Built-In Addons", [.. addons.Where(addon => addon.IsBuiltIn)], filter);
-        BuildAddonGroup("Third-Party Addons", [.. addons.Where(addon => !addon.IsBuiltIn)], filter);
+        BuildAddonGroup("External Addons", [.. addons.Where(addon => !addon.IsBuiltIn)], filter);
     }
 
     private void BuildAddonGroup(string title, Addon[] addons, SectionFilter? filter)

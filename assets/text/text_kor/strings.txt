@@ -19,7 +19,7 @@ Search|검색
 Shows only the addons whose name or options contain what is typed here.|입력한 내용이 이름이나 옵션에 포함된 애드온만 표시합니다.
 
 Built-In Addons|내장 애드온
-Third-Party Addons|서드파티 애드온
+External Addons|외부 애드온
 Remix is not enabled.|리믹스가 활성화되지 않았습니다.
 Built for Absolute Friends v<PLACEHOLDER>; it may not work correctly.|Absolute Friends v<PLACEHOLDER>용으로 빌드되었으며, 올바르게 작동하지 않을 수 있습니다.
 Options enabled: <PLACEHOLDER>|활성화된 옵션: <PLACEHOLDER>
