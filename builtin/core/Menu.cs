@@ -16,7 +16,7 @@ internal static partial class Menu
 
         BuildCreatureTypes(menu);
 
-        menu.AddTitle("Extended");
+        menu.AddTitle("Indirect Friendship");
         menu.SetColumns(4);
         menu.AddCheckBox(Config.FriendSharing);
         menu.AddCheckBox(Config.FriendChaining);

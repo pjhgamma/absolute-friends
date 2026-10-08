@@ -112,7 +112,7 @@ Allow friendly|우호적이면 허용
 Allow friendly & neutral|우호적 또는 중립적이면 허용
 Deny friendship|친구 관계 거부
 
-Extended|확장
+Indirect Friendship|간접 친구 관계
 Relationship|관계
 Friend Sharing|친구 공유
 Shares a creature's friendship, like, and reputation toward one slugcat with the others. Changes to relationships and reputation remain after disabling this option.|한 슬러그캣을 향한 생물의 친구 관계와 호감도, 평판을 다른 슬러그캣과 공유합니다. 이 옵션을 꺼도 이미 변경된 관계와 평판은 그대로 유지됩니다.
@@ -284,8 +284,6 @@ Will not be caught by bees triggered by friends. However, this does not apply to
 Will not be caught by bees triggered by friends. However, this does not apply to those spawned by approaching a beehive. This also applies to joke rifle bullets.|친구가 발생시킨 벌에 잡히지 않습니다. 단, 벌집에 근접하여 발생한 벌에게는 적용되지 않습니다. 우스개 소총의 탄환에도 적용됩니다.
 Boomerang|부메랑
 Will not be hit by a boomerang thrown by friends.|친구가 던진 부메랑에 맞지 않습니다.
-Mushroom|버섯
-Will share the effects of mushrooms with slugcat friends.|친구인 슬러그캣과 버섯의 효과를 공유합니다.
 Flash Bang|섬광탄
 Will not be hit by a flash bang thrown by friends.|친구가 던진 섬광탄에 맞지 않습니다.
 Will not be hit by a flash bang thrown by friends. This also applies to joke rifle bullets.|친구가 던진 섬광탄에 맞지 않습니다. 우스개 소총의 탄환에도 적용됩니다.
@@ -299,8 +297,8 @@ Will not be stunned by a cherrybomb thrown by friends. However, this does not ap
 Will not be stunned by a cherrybomb thrown by friends. However, this does not apply to the final explosion. This also applies to joke rifle bullets.|친구가 던진 폭죽 식물에 기절하지 않습니다. 단, 폭발에는 적용되지 않습니다. 우스개 소총의 탄환에도 적용됩니다.
 Graffiti Bomb|그래피티 폭탄
 Will not be hit by a graffiti bomb thrown by friends.|친구가 던진 그래피티 폭탄에 맞지 않습니다.
-DangleFruit|파란 열매
-Will not be hit by a dangle fruit fired from a joke rifle by friends.|친구가 우스개 소총으로 쏜 파란 열매에 맞지 않습니다.
+Blue Fruit|파란 열매
+Will not be hit by a blue fruit fired from a joke rifle by friends.|친구가 우스개 소총으로 쏜 파란 열매에 맞지 않습니다.
 Jellyfish|해파리
 Will not be caught or stunned by the tentacles of a jellyfish held by a friend, and will not be stunned by a jellyfish thrown by friends.|친구가 쥐고 있는 해파리의 촉수에 잡히거나 기절하지 않고, 친구가 던진 해파리에 감전되지 않습니다.
 Pomegranate|석류

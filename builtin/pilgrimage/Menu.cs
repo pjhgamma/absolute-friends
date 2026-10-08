@@ -6,7 +6,6 @@ internal static class Menu
 {
     public static void Build(MenuBuilder menu)
     {
-        menu.AddTitle("Thresholds");
         menu.SetColumns(4);
         menu.AddCheckBox(Config.Gate);
         menu.AddFloatSlider(Config.GateTime, span: 3f);
