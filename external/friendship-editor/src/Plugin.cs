@@ -20,7 +20,7 @@ public sealed class Plugin : AddonPlugin
 
     public const string Version = "0.1.0";
 
-    public override string AddonDescription => "Sets the reputation and like of tracked friends.";
+    public override string AddonDescription => "Sets rules for players' reputation and creatures' like toward friends.";
 
     public override string AbsoluteFriendsVersion => AbsoluteFriends.Plugin.Version;
 

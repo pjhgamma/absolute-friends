@@ -1,14 +1,13 @@
-0pjhgamma.absolutefriends.friendshipeditor-name|절대적 친구: 친구 관계 편집
+0pjhgamma.absolutefriends.friendshipeditor-name|절대적 친구: 친구 관계 편집기
 pjhgamma.absolutefriends.friendshipeditor-description|절대적 친구 관리자에 평판과 호감도 탭을 추가해 평판과 생물 호감도의 규칙을 정합니다.
 
-Absolute Friends: Friendship Editor|절대적 친구: 친구 관계 편집
-Sets the reputation and like of tracked friends.|추적 중인 친구의 평판과 호감도를 정합니다.
-Open the friend manager and select a player or a tracked friend to edit friendship.|친구 관리자를 열고 플레이어나 추적 중인 친구를 선택해 친구 관계를 편집하세요.
+Absolute Friends: Friendship Editor|절대적 친구: 친구 관계 편집기
+Sets rules for players' reputation and creatures' like toward friends.|플레이어의 평판과 친구를 향한 생물의 호감도에 규칙을 정합니다.
 Reputation|평판
 Adds the Reputation tab to players.|플레이어에 평판 탭을 추가합니다.
 Like|호감도
 Adds the Like tab to tracked friends.|추적 중인 친구에 호감도 탭을 추가합니다.
-Friendship Editor|친구 관계 편집
+Friendship Editor|친구 관계 편집기
 Adds the Reputation and Like tabs to the friend manager.|친구 관리자에 평판과 호감도 탭을 추가합니다.
 
 Creature Type|생물 유형
