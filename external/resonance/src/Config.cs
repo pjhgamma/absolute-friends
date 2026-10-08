@@ -40,11 +40,11 @@ internal static class Config
             .RequireAny(ResonanceGate, ResonanceRoom, ResonanceGrab);
         ResonanceCost = addon.Bind("ResonanceCost", true, new ConfigurableInfo("A resonance demands a cost, which grows with the distance each friend is called from and the time it has spent dead, and holds everyone who resonated still and out of breath.", tags: ["Cost"]))
             .RequireAny(ResonanceWarp, ResonanceMend);
-        ResonanceCostRatio = addon.Bind("ResonanceCostRatio", 1f, new ConfigurableInfo("Sets how much of the resonance cost is demanded. A value of 1 demands it in full, and 0 makes a resonance instant and free."))
+        ResonanceCostRatio = addon.Bind("ResonanceCostRatio", 1f, new ConfigurableInfo("Sets how much of the resonance cost is demanded. A value of 1 demands it in full, and 0 makes a resonance instant and free.", new ConfigAcceptableRange<float>(0f, 1f)))
             .Require(ResonanceCost);
         ResonanceAftershock = addon.Bind("ResonanceAftershock", true, new ConfigurableInfo("The paid resonance cost lingers as an aftershock, making everyone who resonated stumble now and then until the cycle ends.", tags: ["Aftershock"]))
             .Require(ResonanceCost);
-        ResonanceAftershockRatio = addon.Bind("ResonanceAftershockRatio", 0.1f, new ConfigurableInfo("Sets how much of the paid resonance cost lingers as an aftershock. A value of 1 leaves all of it behind, and 0 leaves nothing."))
+        ResonanceAftershockRatio = addon.Bind("ResonanceAftershockRatio", 0.1f, new ConfigurableInfo("Sets how much of the paid resonance cost lingers as an aftershock. A value of 1 leaves all of it behind, and 0 leaves nothing.", new ConfigAcceptableRange<float>(0f, 1f)))
             .Require(ResonanceAftershock);
         ResonanceMelt = addon.Bind("ResonanceEffect", true, new ConfigurableInfo("A gate resonance melts the room into the void.", tags: ["Resonance Melt"]))
             .Require(ResonanceGate)

@@ -32,7 +32,7 @@ internal static class Config
     {
         GrabbingPlayer = addon.Bind("GrabbingPlayer", true, new ConfigurableInfo("Will not be grabbed by player friends while entering control inputs.", tags: ["Grab Player"]))
             .Require(Core.Config.FriendSlugcat);
-        GrabbingPlayerTime = addon.Bind("GrabbingPlayerTime", 1f, new ConfigurableInfo("Sets the maximum control input time (in seconds) during which a player friend cannot be grabbed."))
+        GrabbingPlayerTime = addon.Bind("GrabbingPlayerTime", 1f, new ConfigurableInfo("Sets the maximum control input time (in seconds) during which a player friend cannot be grabbed.", new ConfigAcceptableRange<float>(0f, 5f)))
             .Require(GrabbingPlayer);
         Wiggle = addon.Bind("Wiggle", true, new ConfigurableInfo("Can wiggle free from the grasp of player friends.", tags: ["Wiggle"]))
             .Require(Core.Config.FriendSlugcat);

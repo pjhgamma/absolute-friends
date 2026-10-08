@@ -45,19 +45,19 @@ internal static class Config
             "Friends cannot take objects held by other friends. Players can still take from slugpups. Jolly Co-op's No Stealing option always prevents theft between players."
         ), tags: ["Stealing"]));
         Deaf = addon.Bind("Deaf", true, new ConfigurableInfo("Deafness gradually fades toward that of the least deafened friend in the same room.", tags: ["Deaf"]));
-        DeafRatio = addon.Bind("DeafRatio", 0.1f, new ConfigurableInfo("Sets how much of the remaining difference in deafness fades away each frame while a less deafened friend is in the same room. A value of 1 closes the difference at once, and 0 disables the additional fading."))
+        DeafRatio = addon.Bind("DeafRatio", 0.1f, new ConfigurableInfo("Sets how much of the remaining difference in deafness fades away each frame while a less deafened friend is in the same room. A value of 1 closes the difference at once, and 0 disables the additional fading.", new ConfigAcceptableRange<float>(0f, 1f)))
             .Require(Deaf);
         Blind = addon.Bind("Blind", true, new ConfigurableInfo("Blindness gradually fades toward that of the least blinded friend in the same room.", tags: ["Blind"]));
-        BlindRatio = addon.Bind("BlindRatio", 0.1f, new ConfigurableInfo("Sets how much of the remaining difference in blindness fades away each frame while a less blinded friend is in the same room. A value of 1 closes the difference at once, and 0 disables the additional fading."))
+        BlindRatio = addon.Bind("BlindRatio", 0.1f, new ConfigurableInfo("Sets how much of the remaining difference in blindness fades away each frame while a less blinded friend is in the same room. A value of 1 closes the difference at once, and 0 disables the additional fading.", new ConfigAcceptableRange<float>(0f, 1f)))
             .Require(Blind);
         Hypothermia = addon.Bind("Hypothermia", false, new ConfigurableInfo("Hypothermia gradually fades toward that of the least frozen friend in the same room.", tags: ["Hypothermia"]));
-        HypothermiaRatio = addon.Bind("HypothermiaRatio", 0.1f, new ConfigurableInfo("Sets how much of the remaining difference in hypothermia fades away each frame while a less frozen friend is in the same room. A value of 1 closes the difference at once, and 0 disables the warmth."))
+        HypothermiaRatio = addon.Bind("HypothermiaRatio", 0.1f, new ConfigurableInfo("Sets how much of the remaining difference in hypothermia fades away each frame while a less frozen friend is in the same room. A value of 1 closes the difference at once, and 0 disables the warmth.", new ConfigAcceptableRange<float>(0f, 1f)))
             .Require(Hypothermia);
         Breath = addon.Bind("Breath", false, new ConfigurableInfo("Breath gradually recovers toward that of the friend with the most air in the same room.", tags: ["Breath"]));
-        BreathRatio = addon.Bind("BreathRatio", 0.1f, new ConfigurableInfo("Sets how much of the remaining difference in breath recovers each frame while a friend with more air is in the same room. A value of 1 closes the difference at once, and 0 disables the recovery."))
+        BreathRatio = addon.Bind("BreathRatio", 0.1f, new ConfigurableInfo("Sets how much of the remaining difference in breath recovers each frame while a friend with more air is in the same room. A value of 1 closes the difference at once, and 0 disables the recovery.", new ConfigAcceptableRange<float>(0f, 1f)))
             .Require(Breath);
         Forgiveness = addon.Bind("Forgiveness", false, new ConfigurableInfo("Reputation loss between friends is reduced.", tags: ["Forgiveness"]));
-        ForgivenessRatio = addon.Bind("ForgivenessRatio", 0.1f, new ConfigurableInfo("Sets how much reputation loss between friends is forgiven. A value of 1 lets the deed pass unnoticed, and 0 leaves the reputation loss untouched."))
+        ForgivenessRatio = addon.Bind("ForgivenessRatio", 0.1f, new ConfigurableInfo("Sets how much reputation loss between friends is forgiven. A value of 1 lets the deed pass unnoticed, and 0 leaves the reputation loss untouched.", new ConfigAcceptableRange<float>(0f, 1f)))
             .Require(Forgiveness);
 
         addon.Group("Collision", "Will not collide with friends.", Collision);

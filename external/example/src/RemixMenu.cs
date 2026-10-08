@@ -140,12 +140,12 @@ internal sealed class RemixMenu : MenuBuilder
             AddRadioButton("Neutral", "Selects value three.");
             AddRow();
 
-            // Numeric controls.
+            // Numeric controls. Sliders and draggers take their range from the ConfigAcceptableRange; pass min and max only to override it.
             SetColumns(4);
             AddIntSlider(Config.SliderValue, "Integer Slider", span: 2f);
-            AddIntSliderTick(Config.TickedValue, "Ticked Slider", span: 2f, min: 2, max: 14);
-            AddFloatSlider(Config.FloatRange, "Float Slider", span: 2f, min: -1f, max: 2f, decimals: 2, increment: 3);
-            AddDragger(Config.DraggedValue, "Integer Dragger", span: 2f, min: 2, max: 8);
+            AddIntSliderTick(Config.TickedValue, "Ticked Slider", span: 2f);
+            AddFloatSlider(Config.FloatRange, "Float Slider", span: 2f, decimals: 2, increment: 3);
+            AddDragger(Config.DraggedValue, "Integer Dragger", span: 2f);
             AddIntUpdown(Config.IntegerStep, "Integer Up-Down", span: 2f, increment: 4);
             AddFloatUpdown(Config.DecimalStep, "Decimal Up-Down", span: 2f, decimals: 2, increment: 5);
             AddRow();

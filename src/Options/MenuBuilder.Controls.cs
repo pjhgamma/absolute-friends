@@ -42,7 +42,7 @@ public abstract partial class MenuBuilder
         return AddRadioButton(text, out _, description, span, enabled);
     }
 
-    public OpSlider? AddIntSlider(Configurable<int> configurable, string? text = null, float span = 1f, int min = 0, int max = 10, bool enabled = true)
+    public OpSlider? AddIntSlider(Configurable<int> configurable, string? text = null, float span = 1f, int? min = null, int? max = null, bool enabled = true)
     {
         return AddControl(configurable, text, span, enabled, layout => new OpSlider(
             configurable,
@@ -51,12 +51,12 @@ public abstract partial class MenuBuilder
         )
         {
             description = layout.Description,
-            min = min,
-            max = max,
+            min = MinOf(configurable, min, 0),
+            max = MaxOf(configurable, max, 10),
         });
     }
 
-    public OpSliderTick? AddIntSliderTick(Configurable<int> configurable, string? text = null, float span = 1f, int min = 0, int max = 10, bool enabled = true)
+    public OpSliderTick? AddIntSliderTick(Configurable<int> configurable, string? text = null, float span = 1f, int? min = null, int? max = null, bool enabled = true)
     {
         return AddControl(configurable, text, span, enabled, layout => new OpSliderTick(
             configurable,
@@ -66,8 +66,8 @@ public abstract partial class MenuBuilder
         )
         {
             description = layout.Description,
-            min = min,
-            max = max,
+            min = MinOf(configurable, min, 0),
+            max = MaxOf(configurable, max, 10),
         });
     }
 
@@ -114,7 +114,7 @@ public abstract partial class MenuBuilder
         return tickLabels;
     }
 
-    public OpFloatSlider? AddFloatSlider(Configurable<float> configurable, string? text = null, float span = 1f, float min = 0f, float max = 1f, byte decimals = 2, int increment = 1, bool enabled = true)
+    public OpFloatSlider? AddFloatSlider(Configurable<float> configurable, string? text = null, float span = 1f, float? min = null, float? max = null, byte decimals = 2, int increment = 1, bool enabled = true)
     {
         return AddControl(configurable, text, span, enabled, layout => new OpFloatSlider(
             configurable,
@@ -124,13 +124,13 @@ public abstract partial class MenuBuilder
         )
         {
             description = layout.Description,
-            min = min,
-            max = max,
+            min = MinOf(configurable, min, 0f),
+            max = MaxOf(configurable, max, 1f),
             Increment = increment,
         });
     }
 
-    public OpDragger? AddDragger(Configurable<int> configurable, string? text = null, float span = 1f, int min = 0, int max = 10, bool enabled = true)
+    public OpDragger? AddDragger(Configurable<int> configurable, string? text = null, float span = 1f, int? min = null, int? max = null, bool enabled = true)
     {
         if (!enabled)
         {
@@ -142,8 +142,8 @@ public abstract partial class MenuBuilder
             new Vector2(_pos.x, _pos.y - Spacing * 0.5f)
         )
         {
-            min = min,
-            max = max,
+            min = MinOf(configurable, min, 0),
+            max = MaxOf(configurable, max, 10),
         }, text, span);
     }
 
@@ -318,6 +318,16 @@ public abstract partial class MenuBuilder
         AddElements(searchBox);
 
         return filter;
+    }
+
+    private static T MinOf<T>(Configurable<T> configurable, T? min, T fallback) where T : struct, IComparable
+    {
+        return min ?? (configurable.info?.acceptable is ConfigAcceptableRange<T> range ? range.MinValue : fallback);
+    }
+
+    private static T MaxOf<T>(Configurable<T> configurable, T? max, T fallback) where T : struct, IComparable
+    {
+        return max ?? (configurable.info?.acceptable is ConfigAcceptableRange<T> range ? range.MaxValue : fallback);
     }
 
     private T? AddBox<T>(ConfigurableBase configurableBase, Func<T> create, string? text, float span) where T : UIfocusable

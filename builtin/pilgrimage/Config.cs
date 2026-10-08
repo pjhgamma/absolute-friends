@@ -25,7 +25,7 @@ internal static class Config
         GateTime = addon.Bind("GateTime", 1f, new ConfigurableInfo(Options.Config.Watcher(
             "Sets the minimum time (in seconds) of no control input from the player required for shelters and karma gates to activate.",
             "Sets the minimum time (in seconds) of no control input from the player required for shelters, karma gates, and warp points to activate."
-        )))
+        ), new ConfigAcceptableRange<float>(0f, 5f)))
             .Require(Gate);
         GateForce = addon.Bind("GateForce", true, new ConfigurableInfo(Options.Config.Watcher(
             "Shelters and karma gates forcefully activate, ignoring non-player friends.",
@@ -35,7 +35,7 @@ internal static class Config
         GateForceTime = addon.Bind("GateForceTime", 3f, new ConfigurableInfo(Options.Config.Watcher(
             "Sets how much longer (in seconds) the player must go without control input for shelters and karma gates to forcefully activate, ignoring non-player friends.",
             "Sets how much longer (in seconds) the player must go without control input for shelters, karma gates, and warp points to forcefully activate, ignoring non-player friends."
-        )))
+        ), new ConfigAcceptableRange<float>(0f, 5f)))
             .Require(GateForce);
         TempleGuard = addon.Bind("TempleGuard", true, new ConfigurableInfo("Guardians do not target tracked friends or move them with telekinesis when the players meet the Karma requirement to pass.", tags: ["Guardian"]));
         VoidSea = addon.Bind("VoidSea", true, new ConfigurableInfo(Options.Config.Watcher(

@@ -8,7 +8,7 @@ internal static class Menu
     {
         menu.SetColumns(4);
         menu.AddCheckBox(Config.GrabbingPlayer);
-        menu.AddFloatSlider(Config.GrabbingPlayerTime, span: 3f, max: 5f);
+        menu.AddFloatSlider(Config.GrabbingPlayerTime, span: 3f);
         menu.AddCheckBox(Config.Wiggle);
         menu.AddCheckBox(Config.Carry);
         menu.AddCheckBox(Config.CarryStun);

@@ -26,7 +26,7 @@ internal static class Menu
         menu.AddTitle("Shown Relationships");
         menu.SetColumns(4);
         OpLabel[] friendships = menu.AddTickLabels(
-            menu.AddIntSliderTick(Config.ShownFriendship, "Friendship", span: 4f, min: 0, max: 3),
+            menu.AddIntSliderTick(Config.ShownFriendship, "Friendship", span: 4f),
             "Tracking",
             "Friendly",
             "Neutral",
@@ -44,6 +44,6 @@ internal static class Menu
 
         menu.AddTitle("Overlay Updates");
         menu.SetColumns(4);
-        menu.AddIntSlider(Config.UpdateInterval, "Update Interval", span: 4f, min: 1, max: 40);
+        menu.AddIntSlider(Config.UpdateInterval, "Update Interval", span: 4f);
     }
 }
