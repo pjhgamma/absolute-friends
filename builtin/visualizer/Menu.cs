@@ -24,13 +24,10 @@ internal static class Menu
         menu.AddCheckBox(Config.Link);
 
         menu.AddTitle("Shown Relationships");
-        menu.SetColumns(5);
+        menu.SetColumns(4);
         menu.AddCheckBox(Config.FriendRelationship);
 
         OpSliderTick? shownFriendship = menu.AddIntSliderTick(Config.ShownFriendship, span: 3f);
-
-        menu.AddCheckBox(Config.Owner);
-
         OpLabel[] friendships = menu.AddTickLabels(
             shownFriendship,
             "Tracking",
@@ -45,7 +42,7 @@ internal static class Menu
             friendships[index].color = Relationships.ColorOf(types[index]);
         }
 
-        menu.SetColumns(5);
-        menu.AddIntSlider(Config.UpdateInterval, "Update Interval", span: 5f);
+        menu.AddCheckBox(Config.Owner);
+        menu.AddIntSlider(Config.UpdateInterval, "Update Interval", span: 4f);
     }
 }
