@@ -295,6 +295,7 @@ internal class WatcherVoidSeaHooks : WatcherHooks
     }
 
     [HookPatch(typeof(IL.Watcher.WarpPoint), nameof(IL.Watcher.WarpPoint.SuckInCreatures))]
+    [HookTest([84], ["brtrue; ldloc.s; ldfld PhysicalObject::abstractPhysicalObject"])]
     private static void IL_WarpPoint_SuckInCreatures(ILContext il)
     {
         ILCursor c = new(il);

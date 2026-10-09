@@ -14,7 +14,7 @@ internal class SingularityBombHooks : DownpourHooks
     private static void IL_ScavengerBomb_HitByWeapon(ILContext il) => il.WeaponHitByWeapon<SingularityBomb>("CreateFear");
 
     [HookPatch(typeof(IL.JokeRifle), nameof(IL.JokeRifle.Use))]
-    [HookTest([795], ["callvirt PhysicalObject::get_firstChunk"])]
+    [HookTest([800], ["callvirt PhysicalObject::get_firstChunk"])]
     private static void IL_JokeRifle_Use(ILContext il) => il.JokeRifleUse<SingularityBomb>();
 
     [HookPatch(typeof(IL.MoreSlugcats.SingularityBomb), nameof(IL.MoreSlugcats.SingularityBomb.Update))]

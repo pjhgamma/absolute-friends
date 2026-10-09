@@ -93,7 +93,7 @@ internal class FearHooks : BaseHooks
     }
 
     [HookPatch(typeof(IL.FirecrackerPlant), nameof(IL.FirecrackerPlant.PopLump))]
-    [HookTest([296], ["stfld FirecrackerPlant::scareObj"])]
+    [HookTest([286], ["stfld FirecrackerPlant::scareObj"])]
     private static void IL_FirecrackerPlant_PopLump(ILContext il) => il.ScareObject<FirecrackerPlant>();
 }
 
@@ -102,7 +102,7 @@ internal class DownpourFearHooks : DownpourHooks
     protected override Configurable<bool>[] Options => [Config.Fear];
 
     [HookPatch(typeof(IL.JokeRifle), nameof(IL.JokeRifle.Use))]
-    [HookTest([499], ["stfld JokeRifle::scareObj"])]
+    [HookTest([489], ["stfld JokeRifle::scareObj"])]
     private static void IL_JokeRifle_Use(ILContext il) => il.ScareObject<JokeRifle>();
 
     [HookPatch(typeof(IL.MoreSlugcats.SingularityBomb), nameof(IL.MoreSlugcats.SingularityBomb.CreateFear))]

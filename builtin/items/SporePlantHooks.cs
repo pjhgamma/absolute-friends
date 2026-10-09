@@ -75,7 +75,7 @@ internal class DownpourSporePlantHooks : DownpourHooks
     protected override Configurable<bool>[] Options => [Config.SporePlant];
 
     [HookPatch(typeof(IL.JokeRifle), nameof(IL.JokeRifle.Use))]
-    [HookTest([655], ["stloc.s; ldloc.s; ldc.i4.1"])]
+    [HookTest([660], ["stloc.s; ldloc.s; ldc.i4.1"])]
     private static void IL_JokeRifle_Use(ILContext il)
     {
         ILCursor c = new(il);
