@@ -49,11 +49,11 @@ internal static class Config
         ResonanceMelt = addon.Bind("ResonanceEffect", true, new ConfigurableInfo("Shows the room melting into the void during a gate resonance.", tags: ["Resonance Melt"]))
             .Require(ResonanceGate)
             .RequireAny(ResonanceWarp, ResonanceMend);
-        ResonanceShockwave = addon.Bind("ResonanceShockwave", true, new ConfigurableInfo("Shows ripples bursting around everyone who resonated.", tags: ["Resonance Shockwave"]))
+        ResonanceShockwave = addon.Bind("ResonanceShockwave", true, new ConfigurableInfo("Shows shockwaves bursting around everyone who resonated.", tags: ["Resonance Shockwave"]))
             .RequireAny(ResonanceWarp, ResonanceMend);
 
         addon.Group("Resonance", "Resonance warps and mends tracked friends.", ResonanceGate, ResonanceRoom, ResonanceGrab, ResonanceWarp, ResonanceMend);
         addon.Group("Backlash", "Resonance demands a cost and leaves an aftershock.", ResonanceCost, ResonanceAftershock);
-        addon.Group("Visual Effect", "Shows resonance melting the room and bursting into ripples.", ResonanceMelt, ResonanceShockwave);
+        addon.Group("Visual Effect", "Adds visual effects of the room melting and shockwaves bursting during resonance.", ResonanceMelt, ResonanceShockwave);
     }
 }

@@ -27,11 +27,11 @@ Sets how much of the paid resonance cost lingers as an aftershock. A value of 1 
 Resonance Melt|공명 융해
 Shows the room melting into the void during a gate resonance.|게이트 공명 때 방이 공허로 녹아드는 효과를 보여 줍니다.
 Resonance Shockwave|공명 충격파
-Shows ripples bursting around everyone who resonated.|공명한 모두의 주위로 물결이 퍼지는 효과를 보여 줍니다.
+Shows shockwaves bursting around everyone who resonated.|공명한 모두의 주위로 충격파가 퍼지는 효과를 보여 줍니다.
 
 Resonance|공명
 Resonance warps and mends tracked friends.|공명으로 추적되는 친구를 순간이동시키고 회복시킵니다.
 Backlash|반동
 Resonance demands a cost and leaves an aftershock.|공명에 대가가 따르고 후유증이 남습니다.
 Visual Effect|시각적 효과
-Shows resonance melting the room and bursting into ripples.|공명이 방을 녹이고 물결로 퍼지는 효과를 보여 줍니다.
+Adds visual effects of the room melting and shockwaves bursting during resonance.|공명할 때 방이 녹아들고 충격파가 퍼지는 시각 효과를 더합니다.
