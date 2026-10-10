@@ -400,10 +400,14 @@ Overseers|감시자
 Treats overseers as friends.|감시자를 친구로 취급합니다.
 Mark|표식
 Tracked friends also show the mark while their player's mark is visible.|플레이어의 표식이 보이는 동안 추적되는 친구에게도 표식이 나타납니다.
+Glow|발광
+Tracked friends also glow while their player glows.|플레이어가 빛나는 동안 추적되는 친구도 함께 빛납니다.
 
 Treats Moon and her neurons as friends.|달과 달의 뉴런을 친구로 취급합니다.
 Treats Pebbles as a friend.|조약돌을 친구로 취급합니다.
 Treats Pebbles and his pearls as friends.|조약돌과 조약돌의 진주를 친구로 취급합니다.
+Enlightenment|계몽
+Tracked friends also show the mark and glow of their player.|추적되는 친구에게도 플레이어의 표식과 발광이 나타납니다.
 
 Absolute Friends: Pilgrimage|절대적 친구: 순례
 Helps tracked friends join the pilgrimage.|추적되는 친구들이 순례에 함께하도록 돕습니다.

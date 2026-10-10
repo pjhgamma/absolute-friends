@@ -14,5 +14,6 @@ internal static class Menu
         menu.AddCheckBox(Config.Prince, enabled: ModManager.Watcher);
         menu.AddCheckBox(Config.Overseer);
         menu.AddCheckBox(Config.Mark);
+        menu.AddCheckBox(Config.Glow);
     }
 }
