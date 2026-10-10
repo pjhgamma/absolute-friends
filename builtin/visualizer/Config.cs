@@ -28,9 +28,9 @@ internal static class Config
 
     public static void Bind(Addon addon)
     {
-        FriendMarker = addon.Bind("FriendMarker", false, new ConfigurableInfo("Shows tracked friends' arrows and names in their colors, and their icons at the screen edge when in another room.", tags: ["Friend Marker"]));
-        FriendMeter = addon.Bind("FriendMeter", false, new ConfigurableInfo("Shows tracked friends' icons at the bottom right, pulsing when left behind or unconscious.", tags: ["Friend Meter"]));
-        BumpEffect = addon.Bind("BumpEffect", false, new ConfigurableInfo("Plays animations when tracked friends die and when friends or players revive.", tags: ["Bump Effect"]));
+        FriendMarker = addon.Bind("FriendMarker", true, new ConfigurableInfo("Shows tracked friends' arrows and names in their colors, and their icons at the screen edge when in another room.", tags: ["Friend Marker"]));
+        FriendMeter = addon.Bind("FriendMeter", true, new ConfigurableInfo("Shows tracked friends' icons at the bottom right, pulsing when left behind or unconscious.", tags: ["Friend Meter"]));
+        BumpEffect = addon.Bind("BumpEffect", true, new ConfigurableInfo("Plays animations when tracked friends die and when friends or players revive.", tags: ["Bump Effect"]));
 
         Icon = addon.Bind("Icon", false, new ConfigurableInfo("Draws icons above shown friends, and owners' icons above owned things. Dead creatures' icons are dimmed.", tags: ["Relationship Icon"]));
         IconStyle = addon.Bind("IconStyle", (int)RelationshipIconStyle.Creature, new ConfigurableInfo("Chooses creature artwork or friendship symbols for relationship icons.", new ConfigAcceptableRange<int>(0, 1), tags: ["Icon Style"]))
