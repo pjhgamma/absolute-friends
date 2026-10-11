@@ -46,7 +46,7 @@ internal sealed partial class FriendManagerDialog
 
     private static void AddModHeader(FriendTab tab, string name, string id)
     {
-        Vector2 position = new(ModHeaderInset - CanvasInset - MenuBuilder.Padding, CanvasSize - CanvasInset - ModHeaderInset - ModHeaderHeight);
+        Vector2 position = new(ModHeaderInset - CanvasInset - MenuBuilder.Padding, CanvasSize - CanvasInset - ModHeaderTopInset - ModHeaderHeight);
         Vector2 size = new(CanvasSize - ModHeaderInset * 2f, ModHeaderHeight);
 
         tab.Add(new OpLabel(position, size, Translation.Of(name), FLabelAlignment.Left));
