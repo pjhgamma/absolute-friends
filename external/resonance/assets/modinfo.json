@@ -6,7 +6,10 @@
   "authors": "pjhgamma",
   "description": "Warps and mends tracked friends through resonance.",
   "tags": [
-    "Game Mechanics"
+    "Game Mechanics",
+    "Base",
+    "Downpour",
+    "Watcher"
   ],
   "requirements": [
     "pjhgamma.absolutefriends"

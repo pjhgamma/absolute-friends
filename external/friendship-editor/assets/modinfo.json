@@ -7,7 +7,10 @@
   "description": "Adds a Friendship tab to the Absolute Friends manager to set rules for reputation, creature like, and creature relationships.",
   "tags": [
     "Tools",
-    "Game Mechanics"
+    "Game Mechanics",
+    "Base",
+    "Downpour",
+    "Watcher"
   ],
   "requirements": [
     "pjhgamma.absolutefriends"
