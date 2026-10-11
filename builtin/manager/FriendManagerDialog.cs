@@ -192,6 +192,7 @@ internal sealed partial class FriendManagerDialog : Dialog
         float previousScroll = wheelTarget?.targetScrollOffset ?? 0f;
 
         LinkFocus();
+        KeepHeldSelected();
         base.Update();
         UpdateCursor();
 

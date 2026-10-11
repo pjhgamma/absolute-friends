@@ -40,6 +40,15 @@ internal sealed partial class FriendManagerDialog
         return rect;
     }
 
+    private void KeepHeldSelected()
+    {
+        if (manager.menuesMouseMode && HeldElement != null && selectedObject is UIelementWrapper held && held.page.selectables is { } selectables && selectables.IndexOf(held) > 0)
+        {
+            selectables.Remove(held);
+            selectables.Insert(0, held);
+        }
+    }
+
     private void LinkFocus()
     {
         List<MenuObject> content = [.. ContentElements()
