@@ -53,6 +53,8 @@ internal sealed class CreatureRow
 
     private readonly OpImage _tick;
 
+    private readonly OpLabel _relation;
+
     private readonly OpLabel _percent;
 
     internal CreatureRow(FriendTab tab, ScrollList list)
@@ -74,6 +76,7 @@ internal sealed class CreatureRow
         _tickBack.scale = new Vector2(TickWidth + 2f, TickHeight + 2f);
         _tick = EditorUi.Pixel(Color.white);
         _tick.scale = new Vector2(TickWidth, TickHeight);
+        _relation = new(Vector2.zero, new Vector2(BarWidth, EditorUi.RowHeight), string.Empty, FLabelAlignment.Left);
         _percent = new(Vector2.zero, new Vector2(PercentWidth, EditorUi.RowHeight), string.Empty, FLabelAlignment.Right);
 
         foreach (UIelement element in Elements)
@@ -82,40 +85,28 @@ internal sealed class CreatureRow
         }
     }
 
-    private UIelement[] Elements => [_icon, _name, _barBack, _barFill, _knowFill, _center, _threshold, _tickBack, _tick, _percent];
+    private UIelement[] Elements => [_icon, _name, _barBack, _barFill, _knowFill, _center, _threshold, _tickBack, _tick, _relation, _percent];
 
-    internal void Show(AbstractCreature creature, (float Like, float TempLike, float Know)? likes, float y)
+    private UIelement[] Bars => [_barBack, _barFill, _knowFill, _center, _threshold, _tickBack, _tick];
+
+    private static float LabelY(float y) => y + (Height - EditorUi.RowHeight) * 0.5f;
+
+    internal void ShowLikes(AbstractCreature creature, (float Like, float TempLike, float Know)? likes, float y)
     {
-        (string symbol, Color color) = creature.Icon;
-        bool hasIcon = Futile.atlasManager.DoesContainElementWithName(symbol);
-        float labelY = y + (Height - EditorUi.RowHeight) * 0.5f;
         float barY = y + (Height - BarHeight) * 0.5f;
 
-        EditorUi.Place(_icon, new Vector2(12f, y + Height * 0.5f));
-        EditorUi.Place(_name, new Vector2(NameX, labelY));
+        ShowCreature(creature, y);
         EditorUi.Place(_barBack, new Vector2(BarX, barY));
         EditorUi.Place(_knowFill, new Vector2(BarX, barY - KnowGap - KnowHeight));
         EditorUi.Place(_center, new Vector2(BarCenter, barY - EditorUi.ListMarkOverhang));
         EditorUi.Place(_threshold, new Vector2(BarCenter + BarWidth * 0.5f * FriendUtils.FriendLikeThreshold, barY - EditorUi.ListMarkOverhang));
-        EditorUi.Place(_percent, new Vector2(PercentX, labelY));
+        EditorUi.SetShown(_relation, false);
+        EditorUi.SetShown(_percent, likes != null);
 
-        EditorUi.SetShown(_icon, hasIcon);
-        EditorUi.SetShown(_name, true);
-
-        foreach (UIelement element in (UIelement[])[_barBack, _barFill, _knowFill, _center, _threshold, _tickBack, _tick, _percent])
+        foreach (UIelement element in Bars)
         {
             EditorUi.SetShown(element, likes != null);
         }
-
-        if (hasIcon)
-        {
-            _icon.sprite.SetElementByName(symbol);
-            _icon.color = color;
-            EditorUi.FitIcon(_icon);
-        }
-
-        _name.text = EditorUi.Trim(creature.FriendName, NameWidth);
-        _name.color = creature.ShortcutColor;
 
         if (likes is not { } values)
         {
@@ -139,11 +130,53 @@ internal sealed class CreatureRow
         _percent.color = likeColor;
     }
 
+    internal void ShowRelationship(AbstractCreature creature, CreatureTemplate.Relationship relationship, bool live, float y)
+    {
+        Color color = live ? RelationshipTypes.ColorOf(relationship.type) : MenuColorEffect.rgbMediumGrey;
+
+        ShowCreature(creature, y);
+        EditorUi.Place(_relation, new Vector2(BarX, LabelY(y)));
+        EditorUi.SetShown(_relation, true);
+        EditorUi.SetShown(_percent, true);
+
+        foreach (UIelement element in Bars)
+        {
+            EditorUi.SetShown(element, false);
+        }
+
+        _relation.text = EditorUi.Trim(relationship.type.value, BarWidth);
+        _relation.color = color;
+        _percent.text = EditorUi.PercentText(relationship.intensity);
+        _percent.color = color;
+    }
+
     internal void Hide()
     {
         foreach (UIelement element in Elements)
         {
             EditorUi.SetShown(element, false);
         }
+    }
+
+    private void ShowCreature(AbstractCreature creature, float y)
+    {
+        (string symbol, Color color) = creature.Icon;
+        bool hasIcon = Futile.atlasManager.DoesContainElementWithName(symbol);
+
+        EditorUi.Place(_icon, new Vector2(12f, y + Height * 0.5f));
+        EditorUi.Place(_name, new Vector2(NameX, LabelY(y)));
+        EditorUi.Place(_percent, new Vector2(PercentX, LabelY(y)));
+        EditorUi.SetShown(_icon, hasIcon);
+        EditorUi.SetShown(_name, true);
+
+        if (hasIcon)
+        {
+            _icon.sprite.SetElementByName(symbol);
+            _icon.color = color;
+            EditorUi.FitIcon(_icon);
+        }
+
+        _name.text = EditorUi.Trim(creature.FriendName, NameWidth);
+        _name.color = creature.ShortcutColor;
     }
 }

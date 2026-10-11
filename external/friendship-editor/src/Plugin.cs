@@ -20,7 +20,7 @@ public sealed class Plugin : AddonPlugin
 
     public const string Version = "0.1.0";
 
-    public override string AddonDescription => "Sets rules for players' reputation and creatures' like toward friends.";
+    public override string AddonDescription => "Sets rules for players' reputation and creatures' like and relationships toward friends.";
 
     public override string AbsoluteFriendsVersion => AbsoluteFriends.Plugin.Version;
 
@@ -32,13 +32,11 @@ public sealed class Plugin : AddonPlugin
 
     protected override void Enable()
     {
-        ReputationTab.Register();
-        LikeTab.Register();
+        EditorTab.Register();
     }
 
     protected override void Disable()
     {
-        ReputationTab.Unregister();
-        LikeTab.Unregister();
+        EditorTab.Unregister();
     }
 }

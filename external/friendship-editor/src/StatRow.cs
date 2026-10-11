@@ -1,4 +1,3 @@
-using AbsoluteFriends.Manager;
 using AbsoluteFriends.Utils;
 using Menu;
 using Menu.Remix.MixedUI;
@@ -20,51 +19,46 @@ internal sealed class StatRow
 
     private const float PercentWidth = 44f;
 
+    private const int DefaultIntensity = 50;
+
     private readonly OpComboBox _mode;
 
     private readonly OpSlider _value;
 
     private readonly OpLabel _percent;
 
-    internal StatRow(FriendTab tab, Stat stat, float y, Action<StatRow> save)
-    {
-        Stat = stat;
-        EditorUi.Label(tab, Translation.Of(stat switch
-        {
-            Stat.Reputation => "Reputation",
-            Stat.Like => "Like",
-            Stat.TempLike => "Temp Like",
-            _ => "Know",
-        }), new Vector2(0f, y), LabelWidth);
-        _mode = EditorUi.Combo(tab, EditorUi.ModeItems(false), EditorUi.Inherit, new Vector2(ModeX, y), ModeWidth,
-            Translation.Of("Sets the rule for this value."));
-        _mode.OnValueUpdate += delegate { save(this); };
-        _value = EditorUi.Slider(tab, new Vector2(ValueX, y), tab.Size.x - PercentWidth - 8f - ValueX, stat == Stat.Know ? 0 : -100);
-        _percent = EditorUi.Label(tab, string.Empty, new Vector2(tab.Size.x - PercentWidth, y), PercentWidth, FLabelAlignment.Right);
-        _value.OnValueUpdate += delegate
-        {
-            ShowPercent();
+    private Rule? _resolved;
 
-            if (IsLimit)
-            {
-                save(this);
-            }
-        };
+    internal StatRow(EditorView view, Stat stat, float y)
+    {
+        float width = view.Tab.Size.x;
+
+        Stat = stat;
+        EditorUi.Label(view.Add, EditorUi.StatName(stat), new Vector2(0f, y), LabelWidth);
+        _mode = EditorUi.Combo(view.Add, Items(false), EditorUi.Inherit, new Vector2(ModeX, y), ModeWidth,
+            Translation.Of(stat == Stat.Relationship ? "Sets the relationship and its intensity." : "Sets the rule for this value."));
+        _mode.OnValueUpdate += delegate { Refresh(_resolved); };
+        _value = EditorUi.Slider(view.Add, new Vector2(ValueX, y), width - PercentWidth - 8f - ValueX, stat is Stat.Know or Stat.Relationship ? 0 : -100,
+            stat == Stat.Relationship ? DefaultIntensity : 0);
+        _percent = EditorUi.Label(view.Add, string.Empty, new Vector2(width - PercentWidth, y), PercentWidth, FLabelAlignment.Right);
+        _value.OnValueUpdate += delegate { ShowPercent(); };
     }
 
     internal Stat Stat { get; }
 
-    internal OpComboBox Mode => _mode;
+    internal Rule? EditedRule => _mode.value == EditorUi.Inherit ? null
+        : Enum.TryParse(_mode.value, out RuleMode mode) ? new Rule(mode, Value)
+        : new Rule(RuleMode.Fixed, Value, _mode.value);
 
-    internal Rule? EditedRule => Enum.TryParse(_mode.value, out RuleMode mode) ? new Rule(mode, EditorUi.PercentOf(_value) / 100f) : null;
+    private float Value => EditorUi.PercentOf(_value) / 100f;
 
     private bool IsLimit => EditedRule is { Enforces: true };
 
-    internal void SetModes(bool topLevel) => EditorUi.SetItems(_mode, EditorUi.ModeItems(topLevel), _mode.value);
+    internal void SetModes(bool topLevel) => EditorUi.SetItems(_mode, Items(topLevel), _mode.value);
 
     internal void Load(Rule? rule)
     {
-        string mode = rule?.Mode.ToString() ?? EditorUi.Inherit;
+        string mode = rule?.Relation ?? rule?.Mode.ToString() ?? EditorUi.Inherit;
 
         EditorUi.ShowValue(_mode, _mode.GetItemList().Any(item => item.name == mode) ? mode : EditorUi.Inherit);
 
@@ -79,6 +73,7 @@ internal sealed class StatRow
         bool isLimit = IsLimit;
         Rule? inherited = !isLimit && _mode.value == EditorUi.Inherit && resolved is { Enforces: true } broader ? broader : null;
 
+        _resolved = resolved;
         _value.greyedOut = !isLimit;
 
         if (inherited is { } rule)
@@ -88,6 +83,8 @@ internal sealed class StatRow
 
         ShowPercent();
     }
+
+    private IEnumerable<(string Key, string Name)> Items(bool topLevel) => Stat == Stat.Relationship ? EditorUi.RelationshipItems(topLevel) : EditorUi.ModeItems(topLevel);
 
     private void ShowRuleValue(Rule rule) => EditorUi.ShowValue(_value, Mathf.RoundToInt(rule.Value * 100f).ToString());
 

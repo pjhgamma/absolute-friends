@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "target_game_version": "v1.11.8",
   "authors": "pjhgamma",
-  "description": "Adds Reputation and Like tabs to the Absolute Friends manager to set rules for reputation and creature like.",
+  "description": "Adds a Friendship tab to the Absolute Friends manager to set rules for reputation, creature like, and creature relationships.",
   "tags": [
     "Tools",
     "Game Mechanics"

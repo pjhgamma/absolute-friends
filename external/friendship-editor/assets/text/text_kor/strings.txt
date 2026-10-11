@@ -1,20 +1,31 @@
 0pjhgamma.absolutefriends.friendshipeditor-name|절대적 친구: 친구 관계 편집기
-pjhgamma.absolutefriends.friendshipeditor-description|절대적 친구 관리자에 평판과 호감도 탭을 추가해 평판과 생물 호감도의 규칙을 정합니다.
+pjhgamma.absolutefriends.friendshipeditor-description|절대적 친구 관리자에 친구 관계 탭을 추가해 평판, 생물 호감도, 생물 관계의 규칙을 정합니다.
 
 Absolute Friends: Friendship Editor|절대적 친구: 친구 관계 편집기
-Sets rules for players' reputation and creatures' like toward friends.|플레이어의 평판과 친구를 향한 생물의 호감도에 규칙을 정합니다.
+Sets rules for players' reputation and creatures' like and relationships toward friends.|플레이어의 평판과 친구를 향한 생물의 호감도와 관계에 규칙을 정합니다.
 Reputation|평판
-Adds the Reputation tab to players.|플레이어에 평판 탭을 추가합니다.
+Sets reputation rules for players.|플레이어의 평판 규칙을 정합니다.
 Like|호감도
-Adds the Like tab to tracked friends.|추적 중인 친구에 호감도 탭을 추가합니다.
+Sets like rules toward tracked friends.|추적 중인 친구를 향한 호감도 규칙을 정합니다.
+Relationship|관계
+Sets relationship rules toward tracked friends.|추적 중인 친구를 향한 관계 규칙을 정합니다.
 Friendship Editor|친구 관계 편집기
-Adds the Reputation and Like tabs to the friend manager.|친구 관리자에 평판과 호감도 탭을 추가합니다.
+Adds the Friendship tab to the friend manager.|친구 관리자에 친구 관계 탭을 추가합니다.
 
+Friendship|친구 관계
+View|보기
+Choose what to edit.|편집할 항목을 선택합니다.
 Creature Type|생물 유형
 Choose the creature type to set rules for.|규칙을 정할 생물 유형을 선택합니다.
 Every Creature Type|모든 생물 유형
 Temp Like|임시 호감도
 Know|친숙도
+Choose a rule to show it above.|규칙을 선택해 위에 표시합니다.
+No rules|규칙 없음
+Apply Rule|규칙 적용
+Add or update the rules shown above.|위에 표시된 규칙을 추가하거나 갱신합니다.
+Remove Rule|규칙 제거
+Remove the selected rule.|선택한 규칙을 제거합니다.
 Loaded Creatures|불러온 생물
 Community|공동체
 Choose the community to set rules for.|규칙을 정할 공동체를 선택합니다.
@@ -30,3 +41,4 @@ Minimum|최솟값
 Maximum|최댓값
 Fixed|고정값
 Sets the rule for this value.|이 값의 규칙을 정합니다.
+Sets the relationship and its intensity.|관계와 그 강도를 정합니다.

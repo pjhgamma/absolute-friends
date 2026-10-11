@@ -19,6 +19,8 @@ internal static class RuleEffects
 
     internal static bool LikeActive => Config.LikeEditor.IsActive;
 
+    internal static bool RelationshipActive => Config.RelationshipEditor.IsActive;
+
     private static string RegionKey(RainWorldGame game, int region)
     {
         string[] names = game.rainWorld.progression.regionNames;
@@ -53,6 +55,18 @@ internal static class RuleEffects
         string key = TargetKey(target);
 
         return target.IsPlayer || rules.HasTarget(key) ? rules.Resolve(new RuleKey(creature.creatureTemplate.type.value, Rules.All, key, stat)) : null;
+    }
+
+    internal static CreatureTemplate.Relationship? RelationshipFor(AbstractCreature creature, AbstractCreature target)
+    {
+        if (!RelationshipActive || creature == target || creature.IsPlayer || creature.world?.game is not { } game || !RuleStore.For(game).HasRelationshipRules)
+        {
+            return null;
+        }
+
+        return CreatureRule(creature, target, Stat.Relationship) is { Enforces: true } rule && RelationshipTypes.Find(rule.Relation) is { } type
+            ? new CreatureTemplate.Relationship(type, rule.Value)
+            : null;
     }
 
     internal static Dictionary<EntityID, AbstractCreature> LoadedCreatures(RainWorldGame game)

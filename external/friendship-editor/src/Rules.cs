@@ -9,6 +9,7 @@ internal enum Stat
     Like,
     TempLike,
     Know,
+    Relationship,
 }
 
 internal enum RuleMode
@@ -36,11 +37,13 @@ internal readonly struct RuleKey(string subject, string region, string target, S
     public override int GetHashCode() => (Subject, Region, Target, Stat).GetHashCode();
 }
 
-internal readonly struct Rule(RuleMode mode, float value)
+internal readonly struct Rule(RuleMode mode, float value, string? relation = null)
 {
     internal RuleMode Mode { get; } = mode;
 
     internal float Value { get; } = value;
+
+    internal string? Relation { get; } = relation;
 
     internal bool Enforces => Mode != RuleMode.Vanilla;
 
@@ -52,7 +55,9 @@ internal readonly struct Rule(RuleMode mode, float value)
         _ => value,
     };
 
-    internal bool IsValid(Stat stat) => !Enforces || Value >= (stat == Stat.Know ? 0f : -1f) && Value <= 1f;
+    internal bool IsValid(Stat stat) => stat == Stat.Relationship
+        ? Mode == RuleMode.Vanilla ? Relation == null : Mode == RuleMode.Fixed && RelationshipTypes.Find(Relation) != null && Value >= 0f && Value <= 1f
+        : Relation == null && (!Enforces || Value >= (stat == Stat.Know ? 0f : -1f) && Value <= 1f);
 
     private static float Clamp(float value) => Math.Max(-1f, Math.Min(1f, value));
 }
@@ -71,7 +76,11 @@ internal sealed class Rules
 
     internal bool HasReputationRules { get; private set; }
 
+    internal bool HasRelationshipRules { get; private set; }
+
     internal bool HasTarget(string target) => _targets.Contains(target);
+
+    internal bool Any(Func<RuleKey, bool> match) => _rules.Keys.Any(match);
 
     internal Rule? Exact(RuleKey key) => _rules.TryGetValue(key, out Rule rule) ? rule : null;
 
@@ -114,8 +123,16 @@ internal sealed class Rules
             throw new ArgumentException("Invalid friendship rule");
         }
 
-        HasLikeRules = _rules.Keys.Any(entry => entry.Stat != Stat.Reputation);
+        Index();
+    }
+
+    internal IEnumerable<(RuleKey Key, Rule Rule)> Matching(Func<RuleKey, bool> match) => _rules.Where(pair => match(pair.Key)).Select(pair => (pair.Key, pair.Value));
+
+    private void Index()
+    {
+        HasLikeRules = _rules.Keys.Any(entry => entry.Stat is Stat.Like or Stat.TempLike or Stat.Know);
         HasReputationRules = _rules.Keys.Any(entry => entry.Stat == Stat.Reputation);
+        HasRelationshipRules = _rules.Keys.Any(entry => entry.Stat == Stat.Relationship);
         _targets.Clear();
         _targets.UnionWith(_rules.Keys.Select(entry => entry.Target));
     }
@@ -125,13 +142,7 @@ internal sealed class Rules
         .ThenBy(pair => pair.Key.Subject, StringComparer.Ordinal)
         .ThenBy(pair => pair.Key.Region, StringComparer.Ordinal)
         .ThenBy(pair => pair.Key.Target, StringComparer.Ordinal)
-        .Select(pair => string.Join("\t",
-            Encode(pair.Key.Subject),
-            Encode(pair.Key.Region),
-            Encode(pair.Key.Target),
-            pair.Key.Stat.ToString(),
-            pair.Value.Mode.ToString(),
-            pair.Value.Value.ToString("R", CultureInfo.InvariantCulture)))));
+        .Select(pair => string.Join("\t", Fields(pair.Key, pair.Value)))));
 
     internal static Rules Deserialize(string content)
     {
@@ -153,7 +164,7 @@ internal sealed class Rules
 
                 try
                 {
-                    rules.Set(new(Decode(fields[0]), Decode(fields[1]), Decode(fields[2]), stat), new(mode, value));
+                    rules.Set(new(Decode(fields[0]), Decode(fields[1]), Decode(fields[2]), stat), new(mode, value, fields.Length > 6 ? Decode(fields[6]) : null));
                 }
                 catch (ArgumentException)
                 {
@@ -169,6 +180,17 @@ internal sealed class Rules
 
         return rules;
     }
+
+    private static string[] Fields(RuleKey key, Rule rule) =>
+    [
+        Encode(key.Subject),
+        Encode(key.Region),
+        Encode(key.Target),
+        key.Stat.ToString(),
+        rule.Mode.ToString(),
+        rule.Value.ToString("R", CultureInfo.InvariantCulture),
+        .. rule.Relation is { } relation ? [Encode(relation)] : Array.Empty<string>(),
+    ];
 
     private static IEnumerable<string> Candidates(string value) => value == All ? [All] : [value, All];
 
