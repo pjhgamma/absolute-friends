@@ -219,7 +219,7 @@ internal static partial class ResonanceUtils
                 cost += abstractCreature.stuckObjects.Count * 10 * RainWorldUtils.Second;
             }
 
-            return cost;
+            return (int)(cost * (abstractCreature.creatureTemplate?.bodySize ?? 1f));
         }
 
         private int GetMendCost(ResonanceProfile profile)

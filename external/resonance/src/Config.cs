@@ -38,7 +38,7 @@ internal static class Config
             .RequireAny(ResonanceGate, ResonanceRoom);
         ResonanceMend = addon.Bind("ResonanceMend", true, new ConfigurableInfo("Mends eligible tracked friends upon resonance, closing their wounds and drawing out poison and cold, and bringing back the ones that have died. Revived friends stay alive after disabling this option.", tags: ["Mend"]))
             .RequireAny(ResonanceGate, ResonanceRoom, ResonanceGrab);
-        ResonanceCost = addon.Bind("ResonanceCost", true, new ConfigurableInfo("A resonance demands a cost, which grows with how far away each friend is and the time it has spent dead, and holds everyone who resonated still and out of breath.", tags: ["Cost"]))
+        ResonanceCost = addon.Bind("ResonanceCost", true, new ConfigurableInfo("A resonance demands a cost, which grows with how far away and how big each friend is and the time it has spent dead, and holds everyone who resonated still and out of breath.", tags: ["Cost"]))
             .RequireAny(ResonanceWarp, ResonanceMend);
         ResonanceCostRatio = addon.Bind("ResonanceCostRatio", 1f, new ConfigurableInfo("Sets how much of the resonance cost is demanded. A value of 1 demands it in full, and 0 makes a resonance instant and free.", new ConfigAcceptableRange<float>(0f, 1f)))
             .Require(ResonanceCost);

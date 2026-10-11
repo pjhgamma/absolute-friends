@@ -19,7 +19,7 @@ Warps eligible tracked friends to the player's location upon resonance. Warped f
 Mend|회복
 Mends eligible tracked friends upon resonance, closing their wounds and drawing out poison and cold, and bringing back the ones that have died. Revived friends stay alive after disabling this option.|공명 시 추적되는 친구를 회복시키거나 되살립니다. 이 옵션을 꺼도 이미 되살아난 친구는 그대로 살아 있습니다.
 Cost|대가
-A resonance demands a cost, which grows with how far away each friend is and the time it has spent dead, and holds everyone who resonated still and out of breath.|공명은 대가를 요구하며, 그 대가는 친구가 떨어진 거리와 죽어 있던 시간에 따라 커지고, 공명한 모두를 붙잡고 숨이 차게 합니다.
+A resonance demands a cost, which grows with how far away and how big each friend is and the time it has spent dead, and holds everyone who resonated still and out of breath.|공명은 대가를 요구하며, 그 대가는 친구가 떨어진 거리와 크기, 죽어 있던 시간에 따라 커지고, 공명한 모두를 붙잡고 숨이 차게 합니다.
 Sets how much of the resonance cost is demanded. A value of 1 demands it in full, and 0 makes a resonance instant and free.|공명의 대가를 얼마나 요구할지 설정합니다. 1은 대가를 온전히 요구하며, 0은 공명이 대가 없이 즉시 일어나게 합니다.
 Aftershock|후유증
 The paid resonance cost lingers as an aftershock, making everyone who resonated stumble now and then until the cycle ends.|공명으로 치른 대가는 후유증으로 남아, 공명한 모두가 주기가 끝날 때까지 이따금 휘청이게 합니다.
