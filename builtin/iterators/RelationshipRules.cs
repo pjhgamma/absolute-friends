@@ -46,9 +46,9 @@ internal static class RelationshipRules
 
         return abstractOwner.PhysicalObject switch
         {
-            Oracle oracle when oracle.ID == Oracle.OracleID.SL => Config.Moon.IsActive,
+            Oracle oracle when oracle.ID == Oracle.OracleID.SL || oracle.ID == MoreSlugcatsEnums.OracleID.DM => Config.Moon.IsActive,
             SLOracleSwarmer => Config.MoonNeuron.IsActive,
-            Oracle oracle when oracle.ID == Oracle.OracleID.SS => Config.Pebbles.IsActive,
+            Oracle oracle when oracle.ID == Oracle.OracleID.SS || oracle.ID == MoreSlugcatsEnums.OracleID.CL => Config.Pebbles.IsActive,
             HalcyonPearl => Config.PebblesPearl.IsActive,
             Prince => Config.Prince.IsActive,
             _ => null
