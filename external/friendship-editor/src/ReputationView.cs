@@ -27,7 +27,7 @@ internal sealed class ReputationView : EditorView
         EditorUi.Label(Add, Translation.Of("Community"), new Vector2(0f, y), StatRow.LabelWidth);
         _community = EditorUi.Combo(Add, Communities().Prepend((Rules.All, Translation.Of("Every Community"))), Rules.All, new Vector2(StatRow.LabelWidth, y), width - StatRow.LabelWidth,
             Translation.Of("Choose the community to set rules for."));
-        _community.OnValueUpdate += delegate { Reload(); };
+        _community.OnValueUpdate += delegate { ChangeSubject(); };
         y -= StatRow.Height;
 
         if (game.IsStorySession)
@@ -35,7 +35,7 @@ internal sealed class ReputationView : EditorView
             EditorUi.Label(Add, Translation.Of("Region"), new Vector2(0f, y), StatRow.LabelWidth);
             _region = EditorUi.Combo(Add, Regions().Prepend((Rules.All, Translation.Of("Every Region"))), Rules.All, new Vector2(StatRow.LabelWidth, y), width - StatRow.LabelWidth,
                 Translation.Of("Choose the region to set rules for."));
-            _region.OnValueUpdate += delegate { Reload(); };
+            _region.OnValueUpdate += delegate { ChangeSubject(); };
             y -= StatRow.Height;
         }
 

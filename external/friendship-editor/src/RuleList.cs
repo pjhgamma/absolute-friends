@@ -42,7 +42,8 @@ internal sealed class RuleList
         y -= Gap + ListHeight;
         _list = new OpListBox(new Configurable<string>(Empty), new Vector2(0f, y), width, [.. Items([]).Select((item, index) => new ListItem(item.Key, item.Name, index))], VisibleItems)
         {
-            description = Translation.Of("Choose a rule to show it above.")
+            description = Translation.Of("Choose a rule to show it above."),
+            DASHES = string.Empty
         };
         _list.OnValueUpdate += delegate
         {
@@ -69,7 +70,7 @@ internal sealed class RuleList
 
     private RuleKey? Selected => int.TryParse(_list.value, out int index) && index >= 0 && index < _keys.Count ? _keys[index] : null;
 
-    internal RuleKey? Choose(IReadOnlyCollection<RuleKey> keys, IEnumerable<RuleKey> current)
+    internal RuleKey? Choose(IReadOnlyCollection<RuleKey> keys, IEnumerable<RuleKey> current, bool fallback)
     {
         foreach (RuleKey key in current)
         {
@@ -77,6 +78,11 @@ internal sealed class RuleList
             {
                 return key;
             }
+        }
+
+        if (!fallback)
+        {
+            return null;
         }
 
         if (Selected is { } previous && keys.Contains(previous))
@@ -87,16 +93,19 @@ internal sealed class RuleList
         return keys.Count > 0 ? keys.First() : null;
     }
 
-    internal void Show(IEnumerable<(RuleKey Key, string Text)> rules, RuleKey? selection = null)
+    internal void Show(IEnumerable<(RuleKey Key, string Text)> rules) => Show(rules, Selected, false);
+
+    internal void Select(IEnumerable<(RuleKey Key, string Text)> rules, RuleKey? selection) => Show(rules, selection, true);
+
+    private void Show(IEnumerable<(RuleKey Key, string Text)> rules, RuleKey? selected, bool force)
     {
         List<(RuleKey Key, string Text)> list = [.. rules];
         string shown = string.Join("\n", list.Select(rule => rule.Text));
-        RuleKey? selected = selection ?? Selected;
 
-        _remove.greyedOut = list.Count == 0;
-
-        if (shown == _shown && selection == null)
+        if (shown == _shown && !force)
         {
+            _remove.greyedOut = Selected == null;
+
             return;
         }
 
@@ -108,6 +117,13 @@ internal sealed class RuleList
         List<(string Key, string Name)> items = Items(list.Select(rule => rule.Text));
 
         EditorUi.SetItems(_list, items, items[Math.Max(index, 0)].Key);
+
+        if (index < 0)
+        {
+            _list.ForceValue(string.Empty);
+        }
+
+        _remove.greyedOut = Selected == null;
 
         if (_listTopField?.GetValue(_list) is int top && top > Math.Max(0, items.Count - VisibleItems))
         {

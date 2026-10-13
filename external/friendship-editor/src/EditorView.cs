@@ -39,7 +39,7 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 
     internal abstract bool IsVisibleFor(AbstractCreature friend);
 
-    internal void Reload() => Load(null);
+    internal void Reload() => Load(null, true);
 
     internal void Refresh()
     {
@@ -68,7 +68,7 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 
     protected float AddRuleList(float y)
     {
-        _rules = new RuleList(this, y, ApplyRules, RemoveRule, key => Load(key));
+        _rules = new RuleList(this, y, ApplyRules, RemoveRule, key => Load(key, false));
 
         return y - RuleList.Height;
     }
@@ -83,6 +83,8 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 
     protected abstract void RefreshList(AbstractCreature target);
 
+    protected void ChangeSubject() => Load(null, false);
+
     protected virtual void Apply()
     {
     }
@@ -93,7 +95,7 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 
     private bool Owns(RuleKey key, AbstractCreature friend) => _stats.Any(row => row.Stat == key.Stat) && key.Target == TargetOf(friend);
 
-    private void Load(RuleKey? selection)
+    private void Load(RuleKey? selection, bool fallback)
     {
         if (Target is not { } target || _rules == null)
         {
@@ -102,7 +104,7 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 
         Rules rules = RuleStore.For(Game);
         List<(RuleKey Key, string Text)> configured = [.. ConfiguredRules(target)];
-        RuleKey? shown = selection ?? _rules.Choose([.. configured.Select(rule => rule.Key)], _stats.Select(row => KeyOf(row.Stat)));
+        RuleKey? shown = selection ?? _rules.Choose([.. configured.Select(rule => rule.Key)], _stats.Select(row => KeyOf(row.Stat)), fallback);
 
         if (shown is { } chosen)
         {
@@ -118,7 +120,7 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
         }
 
         Refresh();
-        _rules.Show(configured, shown);
+        _rules.Select(configured, shown);
         Loaded();
     }
 
@@ -161,6 +163,6 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
     {
         RuleStore.Save(Game);
         Apply();
-        Load(null);
+        Load(null, false);
     }
 }

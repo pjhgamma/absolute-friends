@@ -23,7 +23,7 @@ internal abstract class CreatureView : EditorView
         EditorUi.Label(Add, Translation.Of("Creature Type"), new Vector2(0f, y), StatRow.LabelWidth);
         _type = EditorUi.Combo(Add, Types(), Rules.All, new Vector2(StatRow.LabelWidth, y), width - StatRow.LabelWidth,
             Translation.Of("Choose the creature type to set rules for."));
-        _type.OnValueUpdate += delegate { Reload(); };
+        _type.OnValueUpdate += delegate { ChangeSubject(); };
         y -= StatRow.Height;
 
         foreach (Stat stat in stats)
