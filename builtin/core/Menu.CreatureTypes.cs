@@ -46,21 +46,24 @@ internal static partial class Menu
 
         void ShowType(string type)
         {
-            if (rulePicker == null)
-            {
-                return;
-            }
-
             CreatureRule rule = CreatureRules.Get(type);
             string value = (rule == CreatureRule.Inherit ? CreatureRule.Allow : rule).ToString();
 
-            if (rulePicker.value != value)
+            if (rulePicker != null && rulePicker.value != value)
             {
                 rulePicker.value = value;
             }
 
-            if (rule != CreatureRule.Inherit && configuredRules is { } list
-                && list.value != type && list.GetItemList().Any(item => item.name == type))
+            if (configuredRules is not { } list)
+            {
+                return;
+            }
+
+            if (rule == CreatureRule.Inherit || list.GetItemList().All(item => item.name != type))
+            {
+                list.ForceValue(string.Empty);
+            }
+            else if (list.value != type)
             {
                 list.value = type;
             }
@@ -68,18 +71,15 @@ internal static partial class Menu
 
         void ShowConfiguredRule(string type)
         {
-            if (CreatureRules.Get(type) == CreatureRule.Inherit)
+            if (typePicker == null)
             {
-                if (configuredRules is { } list && list.GetItemList() is { Length: > 0 } items && list.value != items[0].name)
-                {
-                    list.value = items[0].name;
-                }
-
                 return;
             }
 
-            if (typePicker == null)
+            if (CreatureRules.Get(type) == CreatureRule.Inherit)
             {
+                ShowType(typePicker.value);
+
                 return;
             }
 
@@ -108,9 +108,15 @@ internal static partial class Menu
             configuredRules.RemoveItems(selectNext: false, previous);
             configuredRules.AddItems(sort: false, current);
             configuredRules.RemoveItems(selectNext: false, ["__refresh"]);
-            configuredRules.value = current.Any(item => item.name == selection && CreatureRules.Get(item.name) != CreatureRule.Inherit)
-                ? selection
-                : current[0].name;
+
+            if (current.Any(item => item.name == selection && CreatureRules.Get(item.name) != CreatureRule.Inherit))
+            {
+                configuredRules.value = selection;
+            }
+            else
+            {
+                ShowType(typePicker?.value ?? "");
+            }
         }
 
         CreatureRules.HandleChanged = () => RefreshConfiguredRules();
@@ -162,6 +168,7 @@ internal static partial class Menu
                     "Configured Creature Rules",
                     visibleItems: VisibleRuleItems
                 );
+                configuredRules?.DASHES = string.Empty;
             }
         );
 
