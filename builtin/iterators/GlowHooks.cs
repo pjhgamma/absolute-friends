@@ -12,6 +12,14 @@ internal class GlowHooks : BaseHooks
 
     protected override Configurable<bool>[] Options => [Config.Glow];
 
+    private static bool CanGlow(Creature creature)
+    {
+        return creature is { slatedForDeletetion: false, room: not null, abstractCreature: not null, mainBodyChunk: not null } and not Player { glowing: true }
+            && !creature.IsPlayer
+            && creature.room.Darkness(creature.mainBodyChunk.pos) > 0f
+            && HasGlowingPlayerFriend(creature);
+    }
+
     private static bool HasGlowingPlayerFriend(Creature creature)
     {
         foreach (var player in creature.room.game.RealizedPlayers)
@@ -23,40 +31,6 @@ internal class GlowHooks : BaseHooks
         }
 
         return false;
-    }
-
-    private static void UpdateGlow(Creature creature)
-    {
-        Vector2 pos = creature.mainBodyChunk.pos;
-
-        if (_lightSources.TryGetValue(creature, out var lightSource))
-        {
-            if (lightSource.slatedForDeletetion || lightSource.room != creature.room || creature.room.Darkness(pos) == 0f || !HasGlowingPlayerFriend(creature))
-            {
-                _lightSources.Remove(creature);
-
-                return;
-            }
-
-            lightSource.stayAlive = true;
-            lightSource.setPos = pos;
-
-            return;
-        }
-
-        if (creature.room.Darkness(pos) > 0f && HasGlowingPlayerFriend(creature))
-        {
-            lightSource = new LightSource(pos, false, Color.Lerp(Color.white, creature.abstractCreature.ShortcutColor, 0.5f), creature)
-            {
-                requireUpKeep = true,
-                setRad = 300f,
-                setAlpha = 1f
-            };
-
-            creature.room.AddObject(lightSource);
-
-            _lightSources.Add(creature, lightSource);
-        }
     }
 
     private static void RemoveGlow(Creature creature)
@@ -74,18 +48,34 @@ internal class GlowHooks : BaseHooks
     {
         orig(self, eu);
 
-        if (self.IsPlayer || self.room == null || self.abstractCreature == null || self.mainBodyChunk == null || self.slatedForDeletetion)
-        {
-            return;
-        }
-
-        if (self is Player { glowing: true })
+        if (!CanGlow(self))
         {
             RemoveGlow(self);
 
             return;
         }
 
-        UpdateGlow(self);
+        Vector2 pos = self.mainBodyChunk.pos;
+
+        if (_lightSources.TryGetValue(self, out var lightSource) && !lightSource.slatedForDeletetion && lightSource.room == self.room)
+        {
+            lightSource.stayAlive = true;
+            lightSource.setPos = pos;
+
+            return;
+        }
+
+        RemoveGlow(self);
+
+        lightSource = new LightSource(pos, false, Color.Lerp(Color.white, self.abstractCreature.ShortcutColor, 0.5f), self)
+        {
+            requireUpKeep = true,
+            setRad = 300f,
+            setAlpha = 1f
+        };
+
+        self.room.AddObject(lightSource);
+
+        _lightSources.Add(self, lightSource);
     }
 }
