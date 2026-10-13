@@ -55,9 +55,12 @@ internal readonly struct Rule(RuleMode mode, float value, string? relation = nul
         _ => value,
     };
 
-    internal bool IsValid(Stat stat) => stat == Stat.Relationship
-        ? Mode == RuleMode.Vanilla ? Relation == null : Mode == RuleMode.Fixed && RelationshipTypes.Find(Relation) != null && Value >= 0f && Value <= 1f
-        : Relation == null && (!Enforces || Value >= (stat == Stat.Know ? 0f : -1f) && Value <= 1f);
+    internal bool IsValid(Stat stat) => stat switch
+    {
+        Stat.Relationship when !Enforces => Relation == null,
+        Stat.Relationship => Mode == RuleMode.Fixed && RelationshipTypes.Find(Relation) != null && Value is >= 0f and <= 1f,
+        _ => Relation == null && (!Enforces || Value >= (stat == Stat.Know ? 0f : -1f) && Value <= 1f),
+    };
 
     private static float Clamp(float value) => Math.Max(-1f, Math.Min(1f, value));
 }
@@ -79,8 +82,6 @@ internal sealed class Rules
     internal bool HasRelationshipRules { get; private set; }
 
     internal bool HasTarget(string target) => _targets.Contains(target);
-
-    internal bool Any(Func<RuleKey, bool> match) => _rules.Keys.Any(match);
 
     internal Rule? Exact(RuleKey key) => _rules.TryGetValue(key, out Rule rule) ? rule : null;
 

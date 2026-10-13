@@ -15,12 +15,6 @@ internal static class RuleEffects
 
     private static readonly ConditionalWeakTable<AbstractCreature, string> _friendKeys = new();
 
-    internal static bool ReputationActive => Config.ReputationEditor.IsActive;
-
-    internal static bool LikeActive => Config.LikeEditor.IsActive;
-
-    internal static bool RelationshipActive => Config.RelationshipEditor.IsActive;
-
     private static string RegionKey(RainWorldGame game, int region)
     {
         string[] names = game.rainWorld.progression.regionNames;
@@ -59,7 +53,7 @@ internal static class RuleEffects
 
     internal static CreatureTemplate.Relationship? RelationshipFor(AbstractCreature creature, AbstractCreature target)
     {
-        if (!RelationshipActive || creature == target || creature.IsPlayer || creature.world?.game is not { } game || !RuleStore.For(game).HasRelationshipRules)
+        if (!Config.RelationshipEditor.IsActive || creature == target || creature.IsPlayer || creature.world?.game is not { } game || !RuleStore.For(game).HasRelationshipRules)
         {
             return null;
         }
@@ -99,7 +93,7 @@ internal static class RuleEffects
 
     internal static void ApplyReputation(RainWorldGame game)
     {
-        if (ReputationActive && RuleStore.For(game).HasReputationRules && game.session?.creatureCommunities is { } communities)
+        if (Config.ReputationEditor.IsActive && RuleStore.For(game).HasReputationRules && game.session?.creatureCommunities is { } communities)
         {
             ApplyReputation(game, communities);
         }
@@ -109,7 +103,7 @@ internal static class RuleEffects
     {
         Rules rules = RuleStore.For(game);
 
-        if (!LikeActive || !rules.HasLikeRules || game.world == null)
+        if (!Config.LikeEditor.IsActive || !rules.HasLikeRules || game.world == null)
         {
             return;
         }
@@ -139,7 +133,7 @@ internal static class RuleEffects
 
     internal static void ApplyReputation(RainWorldGame game, CreatureCommunities communities, int community, int region, int player)
     {
-        if (!ReputationActive || ExtEnum<CreatureCommunities.CommunityID>.values.GetEntry(community + 1) is not { } name)
+        if (!Config.ReputationEditor.IsActive || ExtEnum<CreatureCommunities.CommunityID>.values.GetEntry(community + 1) is not { } name)
         {
             return;
         }
@@ -196,7 +190,7 @@ internal static class RuleEffects
 
     internal static void ApplyRelationship(SocialMemory.Relationship relationship)
     {
-        if (LikeActive && _owners.TryGetValue(relationship, out Owner owner))
+        if (Config.LikeEditor.IsActive && _owners.TryGetValue(relationship, out Owner owner))
         {
             new LikeRules(owner.Creature, owner.Target).Apply(relationship);
         }

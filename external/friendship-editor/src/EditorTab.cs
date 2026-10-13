@@ -103,13 +103,7 @@ internal sealed class EditorTab
         view?.Reload();
     }
 
-    private void Refresh()
-    {
-        _shown?.Refresh();
-    }
+    private void Refresh() => _shown?.Refresh();
 
-    private void Update()
-    {
-        EditorUi.KeepOnTop([_view, .. _shown?.Elements ?? []]);
-    }
+    private void Update() => EditorUi.KeepOnTop([_view, .. _shown?.Elements ?? []]);
 }

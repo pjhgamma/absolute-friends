@@ -12,10 +12,6 @@ internal abstract class CreatureView : EditorView
 
     private readonly OpComboBox _type;
 
-    private readonly List<StatRow> _stats = [];
-
-    private readonly RuleList _rules;
-
     private readonly ScrollList _list;
 
     private readonly List<CreatureRow> _creatureRows = [];
@@ -32,12 +28,10 @@ internal abstract class CreatureView : EditorView
 
         foreach (Stat stat in stats)
         {
-            _stats.Add(new StatRow(this, stat, y));
-            y -= StatRow.Height;
+            y = AddStat(stat, y);
         }
 
-        _rules = new RuleList(this, y, ApplyRules, RemoveRule, SelectRule);
-        y -= RuleList.Height;
+        y = AddRuleList(y);
         _list = EditorUi.List(Add, width, Translation.Of("Loaded Creatures"), y);
     }
 
@@ -53,112 +47,31 @@ internal abstract class CreatureView : EditorView
         .Select(type => (type, type))
         .Prepend((Rules.All, Translation.Of("Every Creature Type")));
 
-    internal override bool Owns(RuleKey key, AbstractCreature friend) => _stats.Any(row => row.Stat == key.Stat) && key.Target == RuleEffects.TargetKey(friend);
+    private static string TypeName(string type) => type == Rules.All ? Translation.Of("Every Creature Type") : type;
 
-    internal override void Reload() => Load(null);
+    protected abstract bool Knows(AbstractCreature creature, AbstractCreature target);
 
-    internal override void Refresh()
+    protected abstract void ShowRow(CreatureRow row, AbstractCreature creature, AbstractCreature target, float y);
+
+    protected override string TargetOf(AbstractCreature friend) => RuleEffects.TargetKey(friend);
+
+    protected override RuleKey KeyOf(Stat stat) => RuleEffects.TypeKey(TypeSubject, Target!, stat);
+
+    protected override string RuleName(RuleKey key) => StatCount > 1 ? $"{TypeName(key.Subject)} - {EditorUi.StatName(key.Stat)}" : TypeName(key.Subject);
+
+    protected override void ShowKey(RuleKey key) => EditorUi.ShowValue(_type, key.Subject);
+
+    protected override void RefreshList(AbstractCreature target)
     {
-        if (Target is not { } target)
-        {
-            return;
-        }
-
-        Rules rules = RuleStore.For(Game);
-
-        foreach (StatRow row in _stats)
-        {
-            row.Refresh(rules.Resolve(KeyOf(row.Stat)));
-        }
-
         ShowCreatures([.. TypeCreatures(target)
             .OrderByDescending(creature => Knows(creature, target))
             .ThenByDescending(creature => creature.realizedCreature != null)
             .ThenBy(creature => creature.creatureTemplate.type.value, StringComparer.Ordinal)
             .ThenBy(creature => creature.ID.number)], target);
         _list.MarkDirty(0.5f);
-        _rules.Show(ConfiguredRules(target));
     }
 
-    protected abstract bool Knows(AbstractCreature creature, AbstractCreature target);
-
-    protected abstract void ShowRow(CreatureRow row, AbstractCreature creature, AbstractCreature target, float y);
-
-    protected virtual void Apply()
-    {
-    }
-
-    private RuleKey KeyOf(Stat stat) => RuleEffects.TypeKey(TypeSubject, Target!, stat);
-
-    private static string TypeName(string type) => type == Rules.All ? Translation.Of("Every Creature Type") : type;
-
-    private void Load(RuleKey? selection)
-    {
-        if (Target is not { } target)
-        {
-            return;
-        }
-
-        Rules rules = RuleStore.For(Game);
-        List<(RuleKey Key, string Text)> configured = [.. ConfiguredRules(target)];
-        RuleKey? shown = selection ?? _rules.Choose([.. configured.Select(rule => rule.Key)], _stats.Select(row => KeyOf(row.Stat)));
-
-        if (shown is { } key)
-        {
-            EditorUi.ShowValue(_type, key.Subject);
-        }
-
-        foreach (StatRow row in _stats)
-        {
-            row.SetModes(TypeSubject == Rules.All);
-            row.Load(rules.Exact(KeyOf(row.Stat)));
-        }
-
-        Refresh();
-        _rules.Show(configured, shown);
-        _list.ScrollToTop();
-    }
-
-    private IEnumerable<(RuleKey Key, string Text)> ConfiguredRules(AbstractCreature target) => RuleStore.For(Game)
-        .Matching(key => Owns(key, target))
-        .OrderBy(rule => rule.Key.Subject != Rules.All)
-        .ThenBy(rule => rule.Key.Subject, StringComparer.Ordinal)
-        .ThenBy(rule => rule.Key.Stat)
-        .Select(rule => (rule.Key, _stats.Count > 1
-            ? $"{TypeName(rule.Key.Subject)} - {EditorUi.StatName(rule.Key.Stat)}: {EditorUi.RuleText(rule.Rule)}"
-            : $"{TypeName(rule.Key.Subject)}: {EditorUi.RuleText(rule.Rule)}"));
-
-    private void ApplyRules()
-    {
-        if (Target == null)
-        {
-            return;
-        }
-
-        Rules rules = RuleStore.For(Game);
-
-        foreach (StatRow row in _stats)
-        {
-            if (row.EditedRule is not { } rule || rule.IsValid(row.Stat))
-            {
-                rules.Set(KeyOf(row.Stat), row.EditedRule);
-            }
-        }
-
-        RuleStore.Save(Game);
-        Apply();
-        Load(null);
-    }
-
-    private void RemoveRule(RuleKey key)
-    {
-        RuleStore.For(Game).Set(key, null);
-        RuleStore.Save(Game);
-        Apply();
-        Load(null);
-    }
-
-    private void SelectRule(RuleKey key) => Load(key);
+    protected override void Loaded() => _list.ScrollToTop();
 
     private void ShowCreatures(List<AbstractCreature> creatures, AbstractCreature target)
     {

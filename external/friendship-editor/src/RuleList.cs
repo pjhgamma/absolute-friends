@@ -69,10 +69,23 @@ internal sealed class RuleList
 
     private RuleKey? Selected => int.TryParse(_list.value, out int index) && index >= 0 && index < _keys.Count ? _keys[index] : null;
 
-    internal RuleKey? Choose(IReadOnlyCollection<RuleKey> keys, IEnumerable<RuleKey> current) =>
-        current.Where(keys.Contains).Select(key => (RuleKey?)key).FirstOrDefault()
-        ?? (Selected is { } previous && keys.Contains(previous) ? previous : (RuleKey?)null)
-        ?? keys.Select(key => (RuleKey?)key).FirstOrDefault();
+    internal RuleKey? Choose(IReadOnlyCollection<RuleKey> keys, IEnumerable<RuleKey> current)
+    {
+        foreach (RuleKey key in current)
+        {
+            if (keys.Contains(key))
+            {
+                return key;
+            }
+        }
+
+        if (Selected is { } previous && keys.Contains(previous))
+        {
+            return previous;
+        }
+
+        return keys.Count > 0 ? keys.First() : null;
+    }
 
     internal void Show(IEnumerable<(RuleKey Key, string Text)> rules, RuleKey? selection = null)
     {

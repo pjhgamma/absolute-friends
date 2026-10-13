@@ -7,6 +7,10 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 {
     private readonly List<UIelement> _elements = [];
 
+    private readonly List<StatRow> _stats = [];
+
+    private RuleList? _rules;
+
     internal FriendTab Tab { get; } = tab;
 
     internal abstract string Title { get; }
@@ -16,6 +20,8 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
     protected RainWorldGame Game { get; } = game;
 
     protected AbstractCreature? Target => Tab.Friend;
+
+    protected int StatCount => _stats.Count;
 
     internal void Add(UIelement element)
     {
@@ -33,9 +39,128 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 
     internal abstract bool IsVisibleFor(AbstractCreature friend);
 
-    internal abstract bool Owns(RuleKey key, AbstractCreature friend);
+    internal void Reload() => Load(null);
 
-    internal abstract void Reload();
+    internal void Refresh()
+    {
+        if (Target is not { } target)
+        {
+            return;
+        }
 
-    internal abstract void Refresh();
+        Rules rules = RuleStore.For(Game);
+
+        foreach (StatRow row in _stats)
+        {
+            row.Refresh(rules.Resolve(KeyOf(row.Stat)));
+        }
+
+        RefreshList(target);
+        _rules?.Show(ConfiguredRules(target));
+    }
+
+    protected float AddStat(Stat stat, float y)
+    {
+        _stats.Add(new StatRow(this, stat, y));
+
+        return y - StatRow.Height;
+    }
+
+    protected float AddRuleList(float y)
+    {
+        _rules = new RuleList(this, y, ApplyRules, RemoveRule, key => Load(key));
+
+        return y - RuleList.Height;
+    }
+
+    protected abstract string TargetOf(AbstractCreature friend);
+
+    protected abstract RuleKey KeyOf(Stat stat);
+
+    protected abstract string RuleName(RuleKey key);
+
+    protected abstract void ShowKey(RuleKey key);
+
+    protected abstract void RefreshList(AbstractCreature target);
+
+    protected virtual void Apply()
+    {
+    }
+
+    protected virtual void Loaded()
+    {
+    }
+
+    private bool Owns(RuleKey key, AbstractCreature friend) => _stats.Any(row => row.Stat == key.Stat) && key.Target == TargetOf(friend);
+
+    private void Load(RuleKey? selection)
+    {
+        if (Target is not { } target || _rules == null)
+        {
+            return;
+        }
+
+        Rules rules = RuleStore.For(Game);
+        List<(RuleKey Key, string Text)> configured = [.. ConfiguredRules(target)];
+        RuleKey? shown = selection ?? _rules.Choose([.. configured.Select(rule => rule.Key)], _stats.Select(row => KeyOf(row.Stat)));
+
+        if (shown is { } chosen)
+        {
+            ShowKey(chosen);
+        }
+
+        foreach (StatRow row in _stats)
+        {
+            RuleKey key = KeyOf(row.Stat);
+
+            row.SetModes(key.Subject == Rules.All && key.Region == Rules.All);
+            row.Load(rules.Exact(key));
+        }
+
+        Refresh();
+        _rules.Show(configured, shown);
+        Loaded();
+    }
+
+    private IEnumerable<(RuleKey Key, string Text)> ConfiguredRules(AbstractCreature target) => RuleStore.For(Game)
+        .Matching(key => Owns(key, target))
+        .OrderBy(rule => rule.Key.Subject != Rules.All)
+        .ThenBy(rule => rule.Key.Subject, StringComparer.Ordinal)
+        .ThenBy(rule => rule.Key.Region != Rules.All)
+        .ThenBy(rule => rule.Key.Region, StringComparer.Ordinal)
+        .ThenBy(rule => rule.Key.Stat)
+        .Select(rule => (rule.Key, $"{RuleName(rule.Key)}: {EditorUi.RuleText(rule.Rule)}"));
+
+    private void ApplyRules()
+    {
+        if (Target == null)
+        {
+            return;
+        }
+
+        Rules rules = RuleStore.For(Game);
+
+        foreach (StatRow row in _stats)
+        {
+            if (row.EditedRule is not { } rule || rule.IsValid(row.Stat))
+            {
+                rules.Set(KeyOf(row.Stat), row.EditedRule);
+            }
+        }
+
+        Save();
+    }
+
+    private void RemoveRule(RuleKey key)
+    {
+        RuleStore.For(Game).Set(key, null);
+        Save();
+    }
+
+    private void Save()
+    {
+        RuleStore.Save(Game);
+        Apply();
+        Load(null);
+    }
 }

@@ -14,10 +14,6 @@ internal sealed class ReputationView : EditorView
 
     private readonly OpComboBox? _region;
 
-    private readonly StatRow _reputation;
-
-    private readonly RuleList _rules;
-
     private readonly ScrollList _list;
 
     private readonly List<ReputationRow> _rows = [];
@@ -43,10 +39,8 @@ internal sealed class ReputationView : EditorView
             y -= StatRow.Height;
         }
 
-        _reputation = new StatRow(this, Stat.Reputation, y);
-        y -= StatRow.Height;
-        _rules = new RuleList(this, y, ApplyRule, RemoveRule, SelectRule);
-        y -= RuleList.Height;
+        y = AddStat(Stat.Reputation, y);
+        y = AddRuleList(y);
         _list = EditorUi.List(Add, width, Translation.Of(game.IsStorySession ? "Regional Reputation" : "Community Reputation"), y);
 
         foreach ((string key, string name) in game.IsStorySession ? Regions() : Communities())
@@ -63,8 +57,6 @@ internal sealed class ReputationView : EditorView
 
     private CreatureCommunities.CommunityID ShownCommunity => _community.value == Rules.All ? CreatureCommunities.CommunityID.All : new(_community.value);
 
-    private RuleKey SelectedKey => RuleEffects.ReputationKey(Game, _community.value, _region?.value ?? Rules.All, ReputationPlayer);
-
     internal static bool IsAvailableFor(AbstractCreature friend) =>
         Config.ReputationEditor.IsActive
         && friend.IsPlayer
@@ -74,43 +66,47 @@ internal sealed class ReputationView : EditorView
 
     private static int PlayerNumber(AbstractCreature? friend) => friend?.state is PlayerState state ? state.playerNumber : 0;
 
+    private static string CommunityName(string community) => community == Rules.All ? Translation.Of("Every Community") : community;
+
+    private static string RegionName(string region) => region switch
+    {
+        Rules.All => Translation.Of("Every Region"),
+        RuleEffects.GlobalRegion => "Global",
+        _ => region,
+    };
+
     internal override bool IsVisibleFor(AbstractCreature friend) => IsAvailableFor(friend);
 
-    internal override bool Owns(RuleKey key, AbstractCreature friend) =>
-        key.Stat == Stat.Reputation && key.Target == RuleEffects.ReputationKey(Game, Rules.All, Rules.All, Game.IsStorySession ? 0 : PlayerNumber(friend)).Target;
+    protected override string TargetOf(AbstractCreature friend) => RuleEffects.ReputationKey(Game, Rules.All, Rules.All, PlayerNumber(friend)).Target;
 
-    internal override void Reload() => Load(null);
+    protected override RuleKey KeyOf(Stat stat) => RuleEffects.ReputationKey(Game, _community.value, _region?.value ?? Rules.All, ReputationPlayer);
 
-    internal override void Refresh()
+    protected override string RuleName(RuleKey key) => Game.IsStorySession ? $"{CommunityName(key.Subject)} - {RegionName(key.Region)}" : CommunityName(key.Subject);
+
+    protected override void ShowKey(RuleKey key)
     {
-        if (Target == null)
+        EditorUi.ShowValue(_community, key.Subject);
+
+        if (_region != null)
         {
-            return;
+            EditorUi.ShowValue(_region, key.Region);
         }
+    }
 
-        _reputation.Refresh(RuleStore.For(Game).Resolve(SelectedKey));
-
+    protected override void RefreshList(AbstractCreature target)
+    {
         float y = _list.ContentHeight;
 
         foreach (ReputationRow row in _rows)
         {
             y -= ReputationRow.Height;
-
-            if (Game.IsStorySession)
-            {
-                row.Show(y, Saved(ShownCommunity, RegionIndex(row.Key)));
-            }
-            else
-            {
-                CreatureCommunities.CommunityID community = new(row.Key);
-
-                row.Show(y, Saved(community, -1));
-            }
+            row.Show(y, Game.IsStorySession ? Saved(ShownCommunity, RegionIndex(row.Key)) : Saved(new(row.Key), -1));
         }
 
         _list.MarkDirty(0.5f);
-        _rules.Show(ConfiguredRules());
     }
+
+    protected override void Apply() => RuleEffects.ApplyReputation(Game);
 
     private IEnumerable<(string Key, string Name)> Communities()
     {
@@ -139,73 +135,4 @@ internal sealed class ReputationView : EditorView
     private int RegionIndex(string key) => Array.IndexOf(Game.rainWorld.progression.regionNames, key);
 
     private float Saved(CreatureCommunities.CommunityID community, int region) => _communities.playerOpinions[community.Index - 1, region + 1, ReputationPlayer];
-
-    private static string CommunityName(string community) => community == Rules.All ? Translation.Of("Every Community") : community;
-
-    private static string RegionName(string region) => region switch
-    {
-        Rules.All => Translation.Of("Every Region"),
-        RuleEffects.GlobalRegion => "Global",
-        _ => region,
-    };
-
-    private void Load(RuleKey? selection)
-    {
-        if (Target == null)
-        {
-            return;
-        }
-
-        List<(RuleKey Key, string Text)> configured = [.. ConfiguredRules()];
-        RuleKey? shown = selection ?? _rules.Choose([.. configured.Select(rule => rule.Key)], [SelectedKey]);
-
-        if (shown is { } chosen)
-        {
-            EditorUi.ShowValue(_community, chosen.Subject);
-
-            if (_region != null)
-            {
-                EditorUi.ShowValue(_region, chosen.Region);
-            }
-        }
-
-        RuleKey key = SelectedKey;
-
-        _reputation.SetModes(key.Subject == Rules.All && key.Region == Rules.All);
-        _reputation.Load(RuleStore.For(Game).Exact(key));
-        Refresh();
-        _rules.Show(configured, shown);
-    }
-
-    private IEnumerable<(RuleKey Key, string Text)> ConfiguredRules() => Target is not { } target ? [] : RuleStore.For(Game)
-        .Matching(key => Owns(key, target))
-        .OrderBy(rule => rule.Key.Subject != Rules.All)
-        .ThenBy(rule => rule.Key.Subject, StringComparer.Ordinal)
-        .ThenBy(rule => rule.Key.Region != Rules.All)
-        .ThenBy(rule => rule.Key.Region, StringComparer.Ordinal)
-        .Select(rule => (rule.Key, Game.IsStorySession
-            ? $"{CommunityName(rule.Key.Subject)} - {RegionName(rule.Key.Region)}: {EditorUi.RuleText(rule.Rule)}"
-            : $"{CommunityName(rule.Key.Subject)}: {EditorUi.RuleText(rule.Rule)}"));
-
-    private void ApplyRule()
-    {
-        if (Target == null || _reputation.EditedRule is { } rule && !rule.IsValid(Stat.Reputation))
-        {
-            return;
-        }
-
-        RuleStore.For(Game).Set(SelectedKey, _reputation.EditedRule);
-        RuleStore.Save(Game);
-        RuleEffects.ApplyReputation(Game);
-        Load(null);
-    }
-
-    private void RemoveRule(RuleKey key)
-    {
-        RuleStore.For(Game).Set(key, null);
-        RuleStore.Save(Game);
-        Load(null);
-    }
-
-    private void SelectRule(RuleKey key) => Load(key);
 }

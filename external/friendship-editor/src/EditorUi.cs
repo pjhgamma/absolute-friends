@@ -99,8 +99,7 @@ internal static class EditorUi
 
     internal static IEnumerable<(string Key, string Name)> RelationshipItems(bool topLevel) =>
     [
-        (Inherit, Translation.Of(topLevel ? "No Rule" : "Inherit")),
-        .. topLevel ? [] : ((string Key, string Name)[])[(RuleMode.Vanilla.ToString(), Translation.Of("No Rule"))],
+        .. ModeItems(topLevel).Where(item => item.Key is Inherit or nameof(RuleMode.Vanilla)),
         .. RelationshipTypes.Editable.Select(type => (type.value, type.value)),
     ];
 
