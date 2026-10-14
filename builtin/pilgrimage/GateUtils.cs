@@ -48,26 +48,16 @@ internal static class GateUtils
     {
         public bool CanActivate(List<AbstractCreature>? abstractPlayers, Func<T, Creature, bool> isInGate)
         {
-            bool canActivate = true;
+            bool isFriendOutside = FriendUtils.TrackedFriends.Any(abstractCreature => abstractCreature.realizedCreature is { } creature
+                ? !creature.dead && !isInGate(gate, creature)
+                : abstractCreature.state?.dead != true);
 
-            foreach (var abstractCreature in FriendUtils.TrackedFriends)
+            if (isFriendOutside && !Config.GateForce.IsActive)
             {
-                bool isOutside = abstractCreature.realizedCreature is { } creature
-                    ? !creature.dead && !isInGate(gate, creature)
-                    : abstractCreature.state?.dead != true;
-
-                if (isOutside)
-                {
-                    if (!Config.GateForce.IsActive)
-                    {
-                        return false;
-                    }
-
-                    canActivate = false;
-
-                    break;
-                }
+                return false;
             }
+
+            float idleTime = Config.GateTime.Value + (isFriendOutside ? Config.GateForceTime.Value : 0f);
 
             foreach (var abstractPlayer in abstractPlayers ?? [])
             {
@@ -76,19 +66,7 @@ internal static class GateUtils
                     continue;
                 }
 
-                if (!isInGate(gate, player))
-                {
-                    return false;
-                }
-
-                if (player.onBack != null)
-                {
-                    continue;
-                }
-
-                float idleTime = Config.GateTime.Value + (Config.GateForce.IsActive && !canActivate ? Config.GateForceTime.Value : 0f);
-
-                if (!IsIdleForGate(player, idleTime))
+                if (!isInGate(gate, player) || (player.onBack == null && !IsIdleForGate(player, idleTime)))
                 {
                     return false;
                 }
