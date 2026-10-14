@@ -20,13 +20,15 @@ internal static class RelationshipRules
         OwnerUtils.UnregisterSelfOwnershipRule(IsSelfOwnedIterator);
     }
 
+    private static bool? Grant(Configurable<bool> option) => option.IsActive ? true : null;
+
     private static bool IsSelfOwnedIterator(PhysicalObject physicalObject) => physicalObject is Oracle or SLOracleSwarmer or HalcyonPearl or Prince;
 
     private static bool? IsFriendIterator(AbstractCreature abstractCreature, AbstractCreature abstractSlugcat)
     {
         if (abstractCreature.creatureTemplate?.type == CreatureTemplate.Type.Overseer)
         {
-            return Config.Overseer.IsActive ? true : null;
+            return Grant(Config.Overseer);
         }
 
         if (abstractCreature is not AbstractOwner abstractOwner)
@@ -46,11 +48,11 @@ internal static class RelationshipRules
 
         return abstractOwner.PhysicalObject switch
         {
-            Oracle oracle when oracle.ID == Oracle.OracleID.SL || oracle.ID == MoreSlugcatsEnums.OracleID.DM => Config.Moon.IsActive,
-            SLOracleSwarmer => Config.MoonNeuron.IsActive,
-            Oracle oracle when oracle.ID == Oracle.OracleID.SS || oracle.ID == MoreSlugcatsEnums.OracleID.CL => Config.Pebbles.IsActive,
-            HalcyonPearl => Config.PebblesPearl.IsActive,
-            Prince => Config.Prince.IsActive,
+            Oracle oracle when oracle.ID == Oracle.OracleID.SL || oracle.ID == MoreSlugcatsEnums.OracleID.DM => Grant(Config.Moon),
+            SLOracleSwarmer => Grant(Config.MoonNeuron),
+            Oracle oracle when oracle.ID == Oracle.OracleID.SS || oracle.ID == MoreSlugcatsEnums.OracleID.CL => Grant(Config.Pebbles),
+            HalcyonPearl => Grant(Config.PebblesPearl),
+            Prince => Grant(Config.Prince),
             _ => null
         };
     }
