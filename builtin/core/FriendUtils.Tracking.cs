@@ -8,8 +8,6 @@ public static partial class FriendUtils
 {
     private static ConditionalWeakTable<AbstractCreature, HashSet<EntityID>> _trackedPlayerIds = new();
 
-    private static ConditionalWeakTable<AbstractCreature, HashSet<EntityID>> _slugpupFriendIds = new();
-
     private static readonly HashSet<AbstractCreature> _trackedSlugpups = [];
 
     private static readonly HashSet<AbstractCreature> _trackedCreatures = [];
@@ -96,7 +94,6 @@ public static partial class FriendUtils
         _chainingClock = -1;
         _chainingFrame = -1;
         _trackedPlayerIds = new();
-        _slugpupFriendIds = new();
     }
 
     internal static void PruneTrackedFriends()
@@ -232,7 +229,6 @@ public static partial class FriendUtils
                 return;
             }
 
-            _slugpupFriendIds.GetOrCreateValue(abstractSlugpup).Add(abstractPlayer.ID);
             abstractSlugpup.Track();
         }
 
