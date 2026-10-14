@@ -34,8 +34,6 @@ internal static class OverlayUtils
 
     private static RainWorldGame? _game;
 
-    public static float Row(int index) => Gap * (index + 1);
-
     public static void ClearGame()
     {
         _game = null;
@@ -105,9 +103,7 @@ internal static class OverlayUtils
 
     private static float Wave(RainWorldGame? game, float timeStacker) => game == null ? 0f : 0.5f - 0.5f * Mathf.Cos((game.clock + timeStacker) / PulsePeriod * 2f * Mathf.PI);
 
-    private static Vector2 Interpolate(Vector2 last, Vector2 now, float timeStacker) => Vector2.Lerp(last, now, timeStacker);
-
-    private static Vector2 Interpolate(BodyChunk chunk, float timeStacker) => Interpolate(chunk.lastPos, chunk.pos, timeStacker);
+    private static Vector2 Interpolate(BodyChunk chunk, float timeStacker) => Vector2.Lerp(chunk.lastPos, chunk.pos, timeStacker);
 
     extension(RoomCamera camera)
     {
