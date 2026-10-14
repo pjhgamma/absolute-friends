@@ -93,9 +93,14 @@ internal class GateHooks : BaseHooks
             return false;
         }
 
-        foreach (var creature in self.room.PlayerFriends)
+        foreach (var abstractCreature in FriendUtils.TrackedFriends)
         {
-            foreach (var bodyChunk in creature?.bodyChunks ?? [])
+            if (abstractCreature.realizedCreature is not { dead: false } creature || creature.room != self.room)
+            {
+                continue;
+            }
+
+            foreach (var bodyChunk in creature.bodyChunks ?? [])
             {
                 if (bodyChunk != null && self.GetBodyChunkLeftTile(bodyChunk) > -8f && self.GetBodyChunkRightTile(bodyChunk) < 4f)
                 {
