@@ -52,7 +52,11 @@ internal static class GateUtils
 
             foreach (var abstractCreature in FriendUtils.TrackedFriends)
             {
-                if (abstractCreature.realizedCreature is Creature creature && !creature.dead && !isInGate(gate, creature))
+                bool isOutside = abstractCreature.realizedCreature is { } creature
+                    ? !creature.dead && !isInGate(gate, creature)
+                    : abstractCreature.state?.dead != true;
+
+                if (isOutside)
                 {
                     if (!Config.GateForce.IsActive)
                     {
