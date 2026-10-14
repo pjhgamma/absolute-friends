@@ -18,6 +18,7 @@ internal class PebblesHooks : BaseHooks
         ILLabel l = c.DefineLabel();
 
         if (c.TryGotoNext(
+            MoveType.AfterLabel,
             i => i.MatchLdarg(0),
             i => i.MatchCall<SSOracleBehavior.SubBehavior>("get_player"),
             i => i.MatchCallvirt<Creature>("get_dead"),
