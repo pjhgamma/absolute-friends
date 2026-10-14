@@ -1,7 +1,7 @@
-using System.Text;
 using AbsoluteFriends.Addons;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Options;
+using Menu.Remix;
 
 namespace AbsoluteFriends.Profiles;
 
@@ -18,7 +18,7 @@ internal static class ProfileManager
             ModifiedAt = now,
         };
 
-        ProfileResult result = Capture(profile);
+        ProfileResult result = Capture(profile, ValueOf, out _);
         ProfileStore.Save(profile);
 
         return (profile, result);
@@ -50,14 +50,19 @@ internal static class ProfileManager
         return profile;
     }
 
-    internal static ProfileResult Update(Profile profile)
+    internal static bool Keep(Profile profile)
     {
-        ProfileResult result = Capture(profile);
+        Capture(profile, SavedValueOf, out bool changed);
+
+        if (!changed)
+        {
+            return false;
+        }
 
         profile.ModifiedAt = Timestamp();
         ProfileStore.Save(profile);
 
-        return result;
+        return true;
     }
 
     internal static void Rename(Profile profile, string name)
@@ -154,44 +159,34 @@ internal static class ProfileManager
         return new(enabledAddons, profile.Addons.Count, enabledOptions, options, unavailableAddons, unavailableOptions);
     }
 
-    internal static string State()
-    {
-        StringBuilder state = new();
-
-        foreach (Addon addon in AddonRegistry.Applied)
-        {
-            Append(state, addon.Id);
-            Append(state, ValueOf(addon.Enabled));
-
-            foreach (var option in addon.ProfileOptions)
-            {
-                Append(state, option.Key);
-                Append(state, ValueOf(option.Value));
-            }
-        }
-
-        return state.ToString();
-    }
-
-    private static ProfileResult Capture(Profile profile)
+    private static ProfileResult Capture(Profile profile, Func<ConfigurableBase?, string> valueOf, out bool changed)
     {
         int addons = 0;
         int options = 0;
+
+        changed = false;
 
         foreach (Addon addon in AddonRegistry.Applied)
         {
             if (!profile.Addons.TryGetValue(addon.Id, out ProfileAddon saved))
             {
                 profile.Addons[addon.Id] = saved = new();
+                changed = true;
             }
 
+            string enabled = valueOf(addon.Enabled);
+
+            changed |= saved.Name != addon.Name || saved.Version != addon.Version || saved.Enabled != enabled;
             saved.Name = addon.Name;
             saved.Version = addon.Version;
-            saved.Enabled = ValueOf(addon.Enabled);
+            saved.Enabled = enabled;
 
             foreach (var option in addon.ProfileOptions)
             {
-                saved.Options[option.Key] = ValueOf(option.Value);
+                string value = valueOf(option.Value);
+
+                changed |= !saved.Options.TryGetValue(option.Key, out string previous) || previous != value;
+                saved.Options[option.Key] = value;
 
                 if (option.Value is Configurable<bool>)
                 {
@@ -297,15 +292,17 @@ internal static class ProfileManager
         return "false";
     }
 
-    private static void Append(StringBuilder state, string value)
-    {
-        state.Append(value.Length).Append(':').Append(value);
-    }
-
     private static string ValueOf(ConfigurableBase? configurable)
     {
-        return configurable?.BoundUIconfig?.value ?? configurable?.BoxedValue?.ToString() ?? "";
+        return configurable?.BoundUIconfig?.value ?? SavedValueOf(configurable);
     }
+
+    private static string SavedValueOf(ConfigurableBase? configurable) => configurable?.BoxedValue switch
+    {
+        null => "",
+        bool value => value ? "true" : "false",
+        { } value => ValueConverter.ConvertToString(value, configurable.settingType),
+    };
 
     private static void Set(ConfigurableBase? configurable, string value, ref int unavailable)
     {

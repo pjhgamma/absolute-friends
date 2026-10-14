@@ -165,6 +165,11 @@ internal static class HookManager
             return;
         }
 
+        if (self == Options.RemixMenu.Instance)
+        {
+            Options.RemixMenu.Instance.KeepSelectedProfile();
+        }
+
         OnEnable();
 
         Reporter.LogInfo("Configurations saved");

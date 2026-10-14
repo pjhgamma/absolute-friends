@@ -16,7 +16,7 @@ internal sealed partial class RemixMenu
         BeginTab(tab);
         AddTitle("Profiles");
         AddLabel("Profiles save addon and option settings.");
-        AddLabel("Selecting a profile loads it and saves changes immediately; apply to keep them.");
+        AddLabel("Selecting a profile loads it; applying saves the changes to the profile.");
 
         _profiles.Clear();
         _profiles.AddRange(ProfileStore.Load());

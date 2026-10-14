@@ -31,7 +31,6 @@ internal sealed partial class RemixMenu
 
             _profiles.Insert(0, created.Profile);
             _profileIndex = 0;
-            _profileState = ProfileManager.State();
 
             ShowProfileResult(created.Profile, "Profile created.");
             RefreshProfileViews();
@@ -52,29 +51,21 @@ internal sealed partial class RemixMenu
 
         ProfileManager.Apply(profile);
         ShowProfileResult(profile, "Profile loaded.");
-        _profileState = ProfileManager.State();
     }
 
-    private void SaveCurrentProfileWhenChanged()
+    internal void KeepSelectedProfile()
     {
-        string state = ProfileManager.State();
-
-        if (state == _profileState)
-        {
-            return;
-        }
-
-        _profileState = state;
-
-        if (CurrentProfile is not { } profile)
+        if (_profiles.Find(profile => profile.Id == Config.ProfileSelection.Value) is not { } profile)
         {
             return;
         }
 
         try
         {
-            ProfileManager.Update(profile);
-            RefreshProfileViews();
+            if (ProfileManager.Keep(profile))
+            {
+                RefreshProfileViews();
+            }
         }
         catch (Exception exception)
         {

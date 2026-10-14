@@ -35,8 +35,6 @@ internal sealed partial class RemixMenu : MenuBuilder
 
     private string _profileChoices = "";
 
-    private string _profileState = "";
-
     private string _query = "";
 
     private RemixMenu() => Config.Bind(this);
@@ -67,8 +65,6 @@ internal sealed partial class RemixMenu : MenuBuilder
         EndTab();
 
         BindRequirements();
-        _profileState = ProfileManager.State();
-        Watch(SaveCurrentProfileWhenChanged);
         Watch(RefreshProfileEditorVisibility);
     }
 
