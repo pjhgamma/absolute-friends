@@ -10,22 +10,57 @@ internal class RippleSpaceHooks : WatcherHooks
 
     private static void SynchronizeRippleLayer(Creature creature)
     {
-        if (!creature.IsTracked)
+        int rippleLayer = creature.abstractCreature.rippleLayer;
+        List<AbstractCreature> abstractPlayers = creature.room.game?.Players ?? [];
+
+        if (abstractPlayers.All(abstractPlayer => abstractPlayer?.rippleLayer == rippleLayer) || !creature.IsTracked)
         {
             return;
         }
 
-        foreach (var abstractPlayer in creature.room.game?.Players ?? [])
+        if (LeadingPlayer(creature, abstractPlayers) is { } leader && leader.abstractCreature.rippleLayer != rippleLayer)
         {
-            if (abstractPlayer?.realizedCreature is Player friendPlayer && abstractPlayer.rippleLayer != creature.abstractCreature.rippleLayer && creature.IsFriend(friendPlayer))
+            creature.ChangeRippleLayer(leader.abstractCreature.rippleLayer);
+
+            RevealInRippleSpace(creature.room.game, creature);
+        }
+    }
+
+    private static Player? LeadingPlayer(Creature creature, List<AbstractCreature> abstractPlayers)
+    {
+        Player? nearest = null;
+        Player? stayed = null;
+        Player? other = null;
+        float nearestDistance = float.MaxValue;
+
+        foreach (var abstractPlayer in abstractPlayers)
+        {
+            if (abstractPlayer?.realizedCreature is not Player friendPlayer || !creature.IsFriend(friendPlayer))
             {
-                creature.ChangeRippleLayer(abstractPlayer.rippleLayer);
+                continue;
+            }
 
-                RevealInRippleSpace(creature.room.game, creature);
+            if (friendPlayer.room == creature.room && friendPlayer.mainBodyChunk != null && creature.mainBodyChunk != null)
+            {
+                float distance = (friendPlayer.mainBodyChunk.pos - creature.mainBodyChunk.pos).sqrMagnitude;
 
-                return;
+                if (distance < nearestDistance)
+                {
+                    nearest = friendPlayer;
+                    nearestDistance = distance;
+                }
+            }
+            else if (abstractPlayer.rippleLayer == creature.abstractCreature.rippleLayer)
+            {
+                stayed ??= friendPlayer;
+            }
+            else
+            {
+                other ??= friendPlayer;
             }
         }
+
+        return nearest ?? stayed ?? other;
     }
 
     private static void RevealInRippleSpace(RainWorldGame? game, PhysicalObject target)
