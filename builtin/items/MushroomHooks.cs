@@ -22,6 +22,11 @@ internal class MushroomHooks : BaseHooks
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.EmitGuarded((RainWorldGame game, Player source) =>
             {
+                if (!FriendUtils.IsFriendSession)
+                {
+                    return game.AlivePlayers;
+                }
+
                 List<AbstractCreature> friends = [];
 
                 if (!source.IsTracked || source.inShortcut)
