@@ -146,7 +146,7 @@ internal sealed partial class FriendManagerDialog
                 (string symbol, Color color) = other.Icon;
                 bool hasIcon = Futile.atlasManager.DoesContainElementWithName(symbol);
                 FriendshipType friendship = friend.FriendshipWith(other);
-                SocialMemory.Relationship? relationship = friend.IsPlayer
+                (float Like, float TempLike, float Know)? memory = friend.IsPlayer
                     ? MemoryOf(other, friend)
                     : MemoryOf(friend, other) ?? MemoryOf(other, friend);
                 float labelY = y + (Height - LabelHeight) * 0.5f;
@@ -167,7 +167,7 @@ internal sealed partial class FriendManagerDialog
 
                 foreach (UIelement element in (UIelement[])[_barBack, _barFill, _knowFill, _center, _threshold, _tempTickBack, _tempTick, _percent])
                 {
-                    SetShown(element, relationship != null);
+                    SetShown(element, memory != null);
                 }
 
                 if (hasIcon)
@@ -185,13 +185,13 @@ internal sealed partial class FriendManagerDialog
                 _relation.text = Trim(relation, RelationWidth);
                 _relation.color = RelationshipColor(friendship);
 
-                if (relationship == null)
+                if (memory is not { } values)
                 {
                     return;
                 }
 
-                float like = Mathf.Clamp(relationship.like, -1f, 1f);
-                float tempLike = Mathf.Clamp(relationship.tempLike, -1f, 1f);
+                float like = Mathf.Clamp(values.Like, -1f, 1f);
+                float tempLike = Mathf.Clamp(values.TempLike, -1f, 1f);
 
                 float fill = BarWidth * 0.5f * like;
                 Vector2 tick = new(Mathf.Clamp(BarCenter + BarWidth * 0.5f * tempLike - TickWidth * 0.5f, BarX, BarX + BarWidth - TickWidth), y + (Height - TickHeight) * 0.5f);
@@ -201,7 +201,7 @@ internal sealed partial class FriendManagerDialog
                 Place(_barFill, new Vector2(fill < 0f ? BarCenter + fill : BarCenter, barY));
                 _barFill.scale = new(Mathf.Abs(fill), BarHeight);
                 _barFill.color = _relation.color;
-                _knowFill.scale = new(BarWidth * Mathf.Clamp01(relationship.know), KnowHeight);
+                _knowFill.scale = new(BarWidth * Mathf.Clamp01(values.Know), KnowHeight);
                 _percent.text = $"{Mathf.RoundToInt(like * 100f)}%";
                 _percent.color = _relation.color;
             }
@@ -214,7 +214,10 @@ internal sealed partial class FriendManagerDialog
                 }
             }
 
-            private static SocialMemory.Relationship? MemoryOf(AbstractCreature creature, AbstractCreature subject) => creature.state?.socialMemory?.GetRelationship(subject.ID);
+            private static (float Like, float TempLike, float Know)? MemoryOf(AbstractCreature creature, AbstractCreature subject) =>
+                creature.state?.socialMemory is { } socialMemory && socialMemory.GetRelationship(subject.ID) != null
+                    ? (socialMemory.GetLike(subject.ID), socialMemory.GetTempLike(subject.ID), socialMemory.GetKnow(subject.ID))
+                    : null;
 
             private static void Place(UIelement element, Vector2 position)
             {
