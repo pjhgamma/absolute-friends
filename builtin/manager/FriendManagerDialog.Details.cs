@@ -228,7 +228,11 @@ internal sealed partial class FriendManagerDialog
                 return;
             }
 
-            friend.SetNickname(value == friend.DefaultName ? null : value);
+            if (value != friend.FriendName)
+            {
+                friend.SetNickname(value == friend.DefaultName ? null : value);
+            }
+
             _nickname.value = friend.FriendName;
             _tab.RefreshManager();
         }
