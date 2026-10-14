@@ -16,7 +16,7 @@ public class Plugin : AddonPlugin
 
     public const string Name = "Absolute Friends: Manager";
 
-    public override string AddonDescription => "Lists friends during gameplay and manages their tracking and nicknames.";
+    public override string AddonDescription => "Lists friends during gameplay, shows their relationships, and manages tracking and nicknames.";
 
     public override string[] AddonDependencies => [Core.Plugin.GUID];
 

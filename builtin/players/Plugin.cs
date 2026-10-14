@@ -16,7 +16,7 @@ public class Plugin : AddonPlugin
 
     public const string Name = "Absolute Friends: Players";
 
-    public override string AddonDescription => "Controls interactions with friendly players.";
+    public override string AddonDescription => "Controls how players and their abilities treat friends.";
 
     public override string[] AddonDependencies => [Core.Plugin.GUID];
 

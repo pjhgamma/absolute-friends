@@ -16,7 +16,7 @@ public class Plugin : AddonPlugin
 
     public const string Name = "Absolute Friends: Iterators";
 
-    public override string AddonDescription => "Controls interactions with iterators.";
+    public override string AddonDescription => "Controls friendship with iterators, the Prince, and overseers, and lets tracked friends share the mark and glow.";
 
     public override string[] AddonDependencies => [Core.Plugin.GUID];
 

@@ -16,7 +16,7 @@ public class Plugin : AddonPlugin
 
     public const string Name = "Absolute Friends: Visualizer";
 
-    public override string AddonDescription => "Visually shows friends and owners.";
+    public override string AddonDescription => "Shows friends and owners on screen.";
 
     public override string[] AddonDependencies => [Core.Plugin.GUID];
 
