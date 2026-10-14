@@ -31,10 +31,11 @@ internal static class GateUtils
 
     private static bool IsIdleForGate(Player player, float seconds)
     {
-        return player.Consious
-            && _idleStates.TryGetValue(player, out GateIdleState idleState)
-            && !idleState.WasUnconscious
-            && player.touchedNoInputCounter - idleState.ResetCounter > seconds * RainWorldUtils.Second;
+        return player.dead
+            || (player.Consious
+                && _idleStates.TryGetValue(player, out GateIdleState idleState)
+                && !idleState.WasUnconscious
+                && player.touchedNoInputCounter - idleState.ResetCounter > seconds * RainWorldUtils.Second);
     }
 
     private sealed class GateIdleState
