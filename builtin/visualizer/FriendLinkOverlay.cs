@@ -26,6 +26,15 @@ internal class FriendLinkOverlay : CosmeticSprite
 
     private int _quiet;
 
+    public static void ClearGame()
+    {
+        _pairs.Clear();
+        _objects.Clear();
+        _scanned = null;
+
+        _timer.Reset();
+    }
+
     public static void Refresh(RainWorldGame? game)
     {
         Room? viewed = RainWorldUtils.MainCamera(game)?.room;

@@ -17,6 +17,14 @@ internal abstract class RoomOverlayHooks<TOverlay> : BaseHooks
 
         OverlayUtils.Attach(_overlays, self, self, Create);
     }
+
+    [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.ShutDownProcess))]
+    protected void On_RainWorldGame_ShutDownProcess(On.RainWorldGame.orig_ShutDownProcess orig, RainWorldGame self)
+    {
+        orig(self);
+
+        OverlayUtils.ClearGame();
+    }
 }
 
 internal abstract class ObjectOverlayHooks<TOverlay> : BaseHooks

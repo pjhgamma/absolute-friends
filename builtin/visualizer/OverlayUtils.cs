@@ -36,6 +36,15 @@ internal static class OverlayUtils
 
     public static float Row(int index) => Gap * (index + 1);
 
+    public static void ClearGame()
+    {
+        _game = null;
+        _failures.Clear();
+
+        FriendLinkOverlay.ClearGame();
+        OutsideFriends.ClearGame();
+    }
+
     public static bool ShouldDraw(RoomCamera? camera, Room? room) => camera != null && camera.room == room && camera == RainWorldUtils.MainCamera(room?.game);
 
     public static void Attach<TSource, TOverlay>(ConditionalWeakTable<TSource, TOverlay> overlays, TSource source, Room room, Func<TSource, TOverlay> create)

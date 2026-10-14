@@ -14,6 +14,14 @@ internal static class OutsideFriends
 
     private static int _clock = -1;
 
+    internal static void ClearGame()
+    {
+        _outside.Clear();
+        _intensities.Clear();
+        _game = null;
+        _clock = -1;
+    }
+
     private static void Refresh(RainWorldGame? game)
     {
         if (game == null || (ReferenceEquals(game, _game) && game.clock == _clock))
