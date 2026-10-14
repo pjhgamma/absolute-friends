@@ -214,12 +214,12 @@ internal sealed partial class FriendManagerDialog
 
     private void HighlightSelection(bool snap)
     {
-        int index = _rows.FindIndex(row => row.Creature == _selectedFriend);
-
         if (_selectionBox == null)
         {
             return;
         }
+
+        int index = _rows.FindIndex(row => row.Creature == _selectedFriend);
 
         if (index < 0)
         {
@@ -272,12 +272,10 @@ internal sealed partial class FriendManagerDialog
 
     private void ClickRow(AbstractCreature creature)
     {
-        if (creature == _selectedFriend)
+        if (creature != _selectedFriend)
         {
-            return;
+            SelectFriend(creature);
         }
-
-        SelectFriend(creature);
     }
 
     private void PlaceSelection(float timeStacker)

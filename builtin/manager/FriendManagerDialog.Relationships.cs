@@ -162,13 +162,8 @@ internal sealed partial class FriendManagerDialog
                 Place(_percent, new Vector2(_percentX, labelY));
 
                 SetShown(_icon, hasIcon);
-                SetShown(_name, true);
-                SetShown(_relation, true);
-
-                foreach (UIelement element in (UIelement[])[_barBack, _barFill, _knowFill, _center, _threshold, _tempTickBack, _tempTick, _percent])
-                {
-                    SetShown(element, memory != null);
-                }
+                SetShown(true, _name, _relation);
+                SetShown(memory != null, _barBack, _barFill, _knowFill, _center, _threshold, _tempTickBack, _tempTick, _percent);
 
                 if (hasIcon)
                 {
@@ -206,13 +201,7 @@ internal sealed partial class FriendManagerDialog
                 _percent.color = _relation.color;
             }
 
-            internal void Hide()
-            {
-                foreach (UIelement element in Elements)
-                {
-                    SetShown(element, false);
-                }
-            }
+            internal void Hide() => SetShown(false, Elements);
 
             private static (float Like, float TempLike, float Know)? MemoryOf(AbstractCreature creature, AbstractCreature subject) =>
                 creature.state?.socialMemory is { } socialMemory && socialMemory.GetRelationship(subject.ID) != null

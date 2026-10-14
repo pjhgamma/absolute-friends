@@ -32,19 +32,10 @@ internal static class FriendNicknames
                 return;
             }
 
-            string key = abstractCreature.SaveDataKey;
             string nickname = Normalize(value);
 
-            if (nickname.Length == 0)
+            if (FriendSaveData.Assign(state.Nicknames, abstractCreature.SaveDataKey, nickname.Length == 0 ? null : nickname))
             {
-                if (state.Nicknames.Remove(key))
-                {
-                    state.Write();
-                }
-            }
-            else if (!state.Nicknames.TryGetValue(key, out string previous) || previous != nickname)
-            {
-                state.Nicknames[key] = nickname;
                 state.Write();
             }
         }
@@ -56,7 +47,7 @@ internal static class FriendNicknames
 
         private readonly SaveState? _save;
 
-        private ConditionalWeakTable<AbstractCreature, CachedNickname> _cache = new();
+        private ConditionalWeakTable<AbstractCreature, StrongBox<string?>> _cache = new();
 
         internal State(SaveState? save)
         {
@@ -102,10 +93,5 @@ internal static class FriendNicknames
                 .OrderBy(pair => pair.Key, StringComparer.Ordinal)
                 .Select(pair => $"{pair.Key}={FriendSaveData.Encode(pair.Value)}"));
         }
-    }
-
-    private sealed class CachedNickname(string? value)
-    {
-        internal string? Value { get; } = value;
     }
 }

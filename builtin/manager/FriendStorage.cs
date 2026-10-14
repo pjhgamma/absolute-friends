@@ -20,18 +20,8 @@ public static class FriendStorage
                 return;
             }
 
-            (string Creature, string Key) entry = (abstractCreature.SaveDataKey, key);
-
-            if (value == null)
+            if (FriendSaveData.Assign(state.Values, (abstractCreature.SaveDataKey, key), value))
             {
-                if (state.Values.Remove(entry))
-                {
-                    state.Write();
-                }
-            }
-            else if (!state.Values.TryGetValue(entry, out string previous) || previous != value)
-            {
-                state.Values[entry] = value;
                 state.Write();
             }
         }

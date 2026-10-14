@@ -22,16 +22,11 @@ internal class FriendManagerHooks : BaseHooks
 
     internal static bool ConsumeShortcut()
     {
-        if (!_shortcutPending || Time.unscaledTime - _shortcutTime > 0.2f)
-        {
-            _shortcutPending = false;
-
-            return false;
-        }
+        bool pending = _shortcutPending && Time.unscaledTime - _shortcutTime <= 0.2f;
 
         _shortcutPending = false;
 
-        return true;
+        return pending;
     }
 
     private static void TryOpen(ProcessManager manager, RainWorldGame game)

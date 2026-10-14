@@ -22,6 +22,23 @@ internal static class FriendSaveData
 
     internal static string Decode(string value) => Encoding.UTF8.GetString(Convert.FromBase64String(value));
 
+    internal static bool Assign<TKey>(Dictionary<TKey, string> values, TKey key, string? value)
+    {
+        if (value == null)
+        {
+            return values.Remove(key);
+        }
+
+        if (values.TryGetValue(key, out string previous) && previous == value)
+        {
+            return false;
+        }
+
+        values[key] = value;
+
+        return true;
+    }
+
     internal static IEnumerable<string> ReadEntries(SaveState? save, string sectionKey)
     {
         IEnumerable<(string Section, string Prefix, string Separator)> sections = [

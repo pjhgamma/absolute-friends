@@ -133,20 +133,9 @@ internal sealed partial class FriendManagerDialog
             SetShown(_icon, friend != null && Futile.atlasManager.DoesContainElementWithName(symbol));
             SetShown(_name, friend is { IsPlayer: true });
 
-            foreach (UIelement element in (UIelement[])[_nickname, _save, _clear])
-            {
-                SetShown(element, named);
-            }
-
-            foreach (UIelement element in (UIelement[])[_tracking, _trackingLabel, _relationshipsTitle, _relationships])
-            {
-                SetShown(element, friend != null);
-            }
-
-            foreach (UIelement element in (UIelement[])[_divider, _forget])
-            {
-                SetShown(element, forgettable);
-            }
+            SetShown(named, _nickname, _save, _clear);
+            SetShown(friend != null, _tracking, _trackingLabel, _relationshipsTitle, _relationships);
+            SetShown(forgettable, _divider, _forget);
 
             RefreshRelationships(friend);
 

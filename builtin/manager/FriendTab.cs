@@ -10,8 +10,6 @@ public sealed class FriendTab
 
     private readonly MenuTabWrapper _wrapper;
 
-    private readonly Vector2 _origin;
-
     private readonly List<UIelement> _elements = [];
 
     private readonly List<UIelement> _hiddenByTab = [];
@@ -20,7 +18,7 @@ public sealed class FriendTab
     {
         _dialog = dialog;
         _wrapper = wrapper;
-        _origin = origin;
+        Origin = origin;
         Registration = registration;
         BuiltIn = builtIn;
         Size = size;
@@ -50,7 +48,7 @@ public sealed class FriendTab
 
     public Vector2 Size { get; }
 
-    public Vector2 Origin => _origin;
+    public Vector2 Origin { get; }
 
     public FContainer Container { get; }
 
@@ -77,7 +75,7 @@ public sealed class FriendTab
 
         if (!element.InScrollBox)
         {
-            element.SetPos(element.GetPos() + _origin);
+            element.SetPos(element.GetPos() + Origin);
         }
 
         _ = new UIelementWrapper(_wrapper, element);

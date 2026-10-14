@@ -322,6 +322,14 @@ internal sealed partial class FriendManagerDialog : Dialog
         }
     }
 
+    private static void SetShown(bool shown, params UIelement[] elements)
+    {
+        foreach (UIelement element in elements)
+        {
+            SetShown(element, shown);
+        }
+    }
+
     private static void FitIcon(OpImage icon)
     {
         Vector2 size = icon.sprite.element.sourcePixelSize;
