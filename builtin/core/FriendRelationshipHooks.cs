@@ -22,16 +22,9 @@ internal class FriendRelationshipHooks : BaseHooks
     [HookPatch(typeof(On.RelationshipTracker.DynamicRelationship), nameof(On.RelationshipTracker.DynamicRelationship.Update))]
     private static void On_DynamicRelationship_Update(On.RelationshipTracker.DynamicRelationship.orig_Update orig, RelationshipTracker.DynamicRelationship self)
     {
-        if (self is not { rt: { AI.creature: { } source } relationshipTracker, trackerRep: { representedCreature: { } target } trackerRep }
-            || !source.IsFriend(target, direct: true))
-        {
-            orig(self);
-            self.RecordVanillaRelationship(self.currentRelationship);
-
-            return;
-        }
-
-        if (relationshipTracker.AI is not IUseARelationshipTracker relationshipUser)
+        if (self is not { rt: { AI: { creature: { } source } ai } relationshipTracker, trackerRep: { representedCreature: { } target } trackerRep }
+            || !source.IsFriend(target, direct: true)
+            || ai is not IUseARelationshipTracker relationshipUser)
         {
             orig(self);
             self.RecordVanillaRelationship(self.currentRelationship);

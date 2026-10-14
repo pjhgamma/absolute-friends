@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using AbsoluteFriends.Diagnostics;
+using AbsoluteFriends.Utils;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -60,7 +61,7 @@ public static class CreatureIcon
             get
             {
                 IconSymbol.IconSymbolData data = CreatureSymbol.SymbolDataFromCreature(creature);
-                Color color = ModManager.MSC && creature.creatureTemplate.type == MoreSlugcats.MoreSlugcatsEnums.CreatureTemplateType.SlugNPC
+                Color color = creature.IsSlugpup
                     ? SlugpupColor(creature)
                     : CreatureSymbol.ColorOfCreature(data);
 

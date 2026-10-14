@@ -21,6 +21,8 @@ public static partial class FriendUtils
 
     private static int _chainingFrame = -1;
 
+    private static bool IsLiked(float like, float tempLike) => like > FriendLikeThreshold && (tempLike == 0f ? like : tempLike) > FriendLikeThreshold;
+
     private static bool TryGetLikes(SocialMemory socialMemory, EntityID subjectID, out float like, out float tempLike)
     {
         like = socialMemory.GetLike(subjectID);
@@ -31,7 +33,7 @@ public static partial class FriendUtils
             tempLike = like;
         }
 
-        return like > FriendLikeThreshold && tempLike > FriendLikeThreshold;
+        return IsLiked(like, tempLike);
     }
 
     extension(AbstractCreature? source)

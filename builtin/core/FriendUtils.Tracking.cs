@@ -140,7 +140,9 @@ public static partial class FriendUtils
             && Players.Any(abstractPlayer => abstractCreature.IsCloseFriendOf(abstractPlayer));
 
         internal AbstractCreature? FavoredPlayer => Players.FirstOrDefault(abstractPlayer =>
-            abstractPlayer is { slatedForDeletion: false, state.dead: false } && source.CloseRelationshipWith(abstractPlayer.ID) != null);
+            abstractPlayer is { slatedForDeletion: false, state.dead: false }
+            && source?.state?.socialMemory?.GetRelationship(abstractPlayer.ID) is { } relationship
+            && IsLiked(relationship.like, relationship.tempLike));
 
         private bool IsCloseFriendOf(AbstractCreature abstractSlugcat) => !abstractSlugcat.IsDenied
             && source.GetCreatureFriendship(abstractSlugcat, allowNeutral: false) == true;
@@ -222,16 +224,6 @@ public static partial class FriendUtils
             }
         }
 
-        internal void TrackSlugpupFriend(AbstractCreature abstractPlayer)
-        {
-            if (source is not { } abstractSlugpup || !abstractSlugpup.IsSlugpup || !abstractPlayer.IsPlayer)
-            {
-                return;
-            }
-
-            abstractSlugpup.Track();
-        }
-
         private bool? RememberedFriendshipWith(AbstractCreature target)
         {
             if (source == null)
@@ -248,12 +240,6 @@ public static partial class FriendUtils
                 ? playerIds.Contains(target.ID)
                 : null;
         }
-
-        private SocialMemory.Relationship? CloseRelationshipWith(EntityID id) =>
-            source?.state?.socialMemory?.GetRelationship(id) is { like: > FriendLikeThreshold } relationship
-                && (relationship.tempLike == 0f ? relationship.like : relationship.tempLike) > FriendLikeThreshold
-                ? relationship
-                : null;
     }
 
     extension(EntityID id)

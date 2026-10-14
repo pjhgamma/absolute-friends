@@ -45,13 +45,13 @@ internal class FriendTrackerHooks : BaseHooks
                 ? followedPlayer
                 : abstractCreature.FavoredPlayer;
 
-            if (abstractPlayer != null)
-            {
-                abstractCreature.TrackSlugpupFriend(abstractPlayer);
-            }
-            else
+            if (abstractPlayer == null)
             {
                 abstractCreature.Untrack();
+            }
+            else if (abstractPlayer.IsPlayer)
+            {
+                abstractCreature.Track();
             }
 
             return;

@@ -10,9 +10,11 @@ internal class FriendMemoryHooks : BaseHooks
 
     protected override Configurable<bool>[] Options => [Config.FriendSharing];
 
+    private static bool IsSharing => FriendUtils.IsFriendSession && FriendUtils.HasMultipleKnownSlugcats;
+
     private static IEnumerable<int> SharedPlayerNumbers(CreatureCommunities communities, int playerNumber)
     {
-        if (!FriendUtils.IsFriendSession || !FriendUtils.HasMultipleKnownSlugcats || communities.session is StoryGameSession)
+        if (!IsSharing || communities.session is StoryGameSession)
         {
             yield break;
         }
@@ -41,8 +43,7 @@ internal class FriendMemoryHooks : BaseHooks
     private static IEnumerable<SocialMemory.Relationship> SharedRelationships(SocialMemory.Relationship relationship)
     {
         if (
-            !FriendUtils.IsFriendSession
-            || !FriendUtils.HasMultipleKnownSlugcats
+            !IsSharing
             || !relationship.subjectID.IsKnownSlugcat
             || !_relationshipMemories.TryGetValue(relationship, out SocialMemory socialMemory)
         )
@@ -61,7 +62,7 @@ internal class FriendMemoryHooks : BaseHooks
 
     private static float ShareValue(SocialMemory self, EntityID subjectID, float value, MemoryValue field)
     {
-        if (!FriendUtils.IsFriendSession || !FriendUtils.HasMultipleKnownSlugcats || !subjectID.IsKnownSlugcat)
+        if (!IsSharing || !subjectID.IsKnownSlugcat)
         {
             return value;
         }
