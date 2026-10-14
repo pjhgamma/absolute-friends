@@ -337,54 +337,13 @@ public abstract partial class MenuBuilder : OptionInterface
             }
 
             Vector2 direction = _focusDirections[index];
-            UIfocusable next = Nearest(focused, center, children, direction)
-                ?? (direction == Vector2.up ? Nearest(focused, top, header.OfType<UIfocusable>().Where(IsNavigable), direction) : null)
+            UIfocusable next = FocusNavigation.Nearest(focused, center, children, CenterOf, direction)
+                ?? (direction == Vector2.up ? FocusNavigation.Nearest(focused, top, header.OfType<UIfocusable>().Where(IsNavigable), CenterOf, direction) : null)
                 ?? (direction == Vector2.left ? TabButton() : null)
                 ?? focused;
 
             focused.NextFocusable[index] = written[index] = next;
         }
-    }
-
-    private static UIfocusable? Nearest(UIfocusable from, Vector2 origin, IEnumerable<UIfocusable> candidates, Vector2 direction)
-    {
-        UIfocusable? best = null;
-        UIfocusable? aligned = null;
-        float bestScore = float.MaxValue;
-        float alignedScore = float.MaxValue;
-
-        foreach (var candidate in candidates)
-        {
-            if (candidate == from)
-            {
-                continue;
-            }
-
-            Vector2 offset = CenterOf(candidate) - origin;
-            float along = Vector2.Dot(offset, direction);
-
-            if (along <= 1f)
-            {
-                continue;
-            }
-
-            float across = Mathf.Abs(offset.x * direction.y - offset.y * direction.x);
-            float score = along + across * 2f;
-
-            if (score < bestScore)
-            {
-                best = candidate;
-                bestScore = score;
-            }
-
-            if (across <= along && score < alignedScore)
-            {
-                aligned = candidate;
-                alignedScore = score;
-            }
-        }
-
-        return aligned ?? best;
     }
 
     private static UIfocusable? TabButton()

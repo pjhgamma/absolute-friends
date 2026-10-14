@@ -1,3 +1,4 @@
+using AbsoluteFriends.Options;
 using Menu;
 using Menu.Remix;
 using Menu.Remix.MixedUI;
@@ -96,47 +97,7 @@ internal sealed partial class FriendManagerDialog
 
     private IEnumerable<UIelement> ContentElements() => _activeTab?.Elements ?? [];
 
-    private MenuObject? Nearest(MenuObject from, List<MenuObject> candidates, Vector2 direction)
-    {
-        Vector2 origin = CenterOf(from);
-        MenuObject? best = null;
-        MenuObject? aligned = null;
-        float bestScore = float.MaxValue;
-        float alignedScore = float.MaxValue;
-
-        foreach (MenuObject candidate in candidates)
-        {
-            if (candidate == from)
-            {
-                continue;
-            }
-
-            Vector2 offset = CenterOf(candidate) - origin;
-            float along = Vector2.Dot(offset, direction);
-
-            if (along <= 1f)
-            {
-                continue;
-            }
-
-            float across = Mathf.Abs(offset.x * direction.y - offset.y * direction.x);
-            float score = along + across * 2f;
-
-            if (score < bestScore)
-            {
-                best = candidate;
-                bestScore = score;
-            }
-
-            if (across <= along && score < alignedScore)
-            {
-                aligned = candidate;
-                alignedScore = score;
-            }
-        }
-
-        return aligned ?? best;
-    }
+    private MenuObject? Nearest(MenuObject from, List<MenuObject> candidates, Vector2 direction) => FocusNavigation.Nearest(from, CenterOf(from), candidates, CenterOf, direction);
 
     private Vector2 CenterOf(MenuObject menuObject) => menuObject is UIelementWrapper { thisElement: { } element } and not RowWrapper
         ? element.ScreenPos + element.size * 0.5f
