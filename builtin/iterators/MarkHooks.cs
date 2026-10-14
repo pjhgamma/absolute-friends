@@ -1,8 +1,5 @@
 using System.Runtime.CompilerServices;
-using AbsoluteFriends.Core;
 using AbsoluteFriends.Hooks;
-using AbsoluteFriends.Utils;
-using UnityEngine;
 
 namespace AbsoluteFriends.Iterators;
 
@@ -12,36 +9,14 @@ internal class MarkHooks : BaseHooks
 
     protected override Configurable<bool>[] Options => [Config.Mark];
 
-    public static bool CanBearMark(Creature creature)
-    {
-        return creature is { dead: false, slatedForDeletetion: false, room: not null }
-            && creature.room.game.session is StoryGameSession { saveState.deathPersistentSaveData.theMark: true }
-            && creature.IsTracked;
-    }
-
-    public static float MarkAlpha(Creature friend)
-    {
-        float alpha = 0f;
-
-        foreach (var player in friend.room.game.RealizedPlayers)
-        {
-            if (player.room == friend.room && player.graphicsModule is PlayerGraphics graphics && friend.abstractCreature.IsTrackedFor(player.abstractCreature))
-            {
-                alpha = Mathf.Max(alpha, graphics.markAlpha);
-            }
-        }
-
-        return alpha;
-    }
-
     [HookPatch(typeof(On.PlayerGraphics), nameof(On.PlayerGraphics.Update))]
     private static void On_PlayerGraphics_Update(On.PlayerGraphics.orig_Update orig, PlayerGraphics self)
     {
         orig(self);
 
-        if (self.player is { isNPC: true } slugpup && CanBearMark(slugpup))
+        if (self.player is { isNPC: true } slugpup && MarkOverlay.CanBearMark(slugpup))
         {
-            self.markAlpha = MarkAlpha(slugpup);
+            self.markAlpha = MarkOverlay.MarkAlpha(slugpup);
         }
     }
 
@@ -50,7 +25,7 @@ internal class MarkHooks : BaseHooks
     {
         orig(self, eu);
 
-        if (self is Player || !CanBearMark(self))
+        if (MarkOverlay.Failed || self is Player || !MarkOverlay.CanBearMark(self))
         {
             return;
         }
