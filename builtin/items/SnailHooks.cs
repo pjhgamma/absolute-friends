@@ -38,7 +38,7 @@ internal class SnailHooks : BaseHooks
 
     [HookPatch(typeof(IL.Snail), nameof(IL.Snail.Violence))]
     [HookTest([15], ["ldarg.0; ldc.i4.1; stfld Snail::triggered"])]
-    private static void IL_PhysicalObject_HitByWeapon(ILContext il)
+    private static void IL_Snail_Violence(ILContext il)
     {
         ILCursor c = new(il);
 
