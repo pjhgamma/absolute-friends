@@ -10,7 +10,7 @@ public static class PlayerUtils
 
         public bool IsPlayer => abstractPhysicalObject.Template == CreatureTemplate.Type.Slugcat;
 
-        public bool IsSlugpup => abstractPhysicalObject.Template == MoreSlugcatsEnums.CreatureTemplateType.SlugNPC;
+        public bool IsSlugpup => abstractPhysicalObject.Template is { } template && template == MoreSlugcatsEnums.CreatureTemplateType.SlugNPC;
 
         public bool IsSlugcat => abstractPhysicalObject.IsPlayer || abstractPhysicalObject.IsSlugpup;
     }
