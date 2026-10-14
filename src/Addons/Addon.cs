@@ -36,7 +36,7 @@ public sealed class Addon
         AddonDescription = plugin.AddonDescription;
         BuildMenu = buildMenu;
         HasMenu = plugin.GetType().GetMethod("BuildMenu", BindingFlags.Instance | BindingFlags.NonPublic)?.DeclaringType != typeof(AddonPlugin);
-        Prefix = string.Concat(Id.Select(character => char.IsLetterOrDigit(character) ? character : '_'));
+        Prefix = PrefixOf(Id);
         Enabled = RemixMenu.Instance.Bind($"{Prefix}_Addon", true, new ConfigurableInfo(AddonDescription, tags: [Name]));
     }
 
@@ -51,7 +51,7 @@ public sealed class Addon
         IsBuiltIn = false;
         AddonDescription = mod.LocalizedDescription;
         BuildMenu = _ => { };
-        Prefix = string.Concat(Id.Select(character => char.IsLetterOrDigit(character) ? character : '_'));
+        Prefix = PrefixOf(Id);
 
         _keywords.Add(mod.name);
     }
@@ -170,6 +170,8 @@ public sealed class Addon
     internal void UpdateRunningState() => SetRunning(Enabled?.IsActive == true && AddonDependencyIds.All(AddonRegistry.IsRunning));
 
     internal void Stop() => SetRunning(false);
+
+    private static string PrefixOf(string id) => string.Concat(id.Select(character => char.IsLetterOrDigit(character) ? character : '_'));
 
     private static ModManager.Mod? Owner(string location)
     {

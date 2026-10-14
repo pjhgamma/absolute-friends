@@ -1,6 +1,5 @@
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Options;
-using AbsoluteFriends.Utils;
 
 namespace AbsoluteFriends.Addons;
 
@@ -84,8 +83,6 @@ internal static class AddonRegistry
     internal static Addon? Find(string id) => _addons.FirstOrDefault(addon => addon.Id == id);
 
     internal static bool IsRunning(string id) => Find(id)?.Enabled?.IsActive == true;
-
-    internal static string NameOf(string id) => Translation.Of(RawNameOf(id));
 
     internal static string RawNameOf(string id) => Find(id)?.Name ?? id;
 

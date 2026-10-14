@@ -10,8 +10,6 @@ internal static class HookManager
 
     private static readonly HashSet<Assembly> _assemblies = [];
 
-    private static readonly HashSet<OptionInterface> _menus = [];
-
     private static bool _isInit;
 
     private static bool _isBinding;
@@ -65,8 +63,6 @@ internal static class HookManager
         }
     }
 
-    internal static void Watch(OptionInterface menu) => _menus.Add(menu);
-
     internal static bool IsFailed(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasFailed && hook.Owns(option));
 
     internal static bool IsWarned(Configurable<bool>? option) => option != null && _activeHooks.Any(hook => hook.HasWarned && hook.Owns(option));
@@ -87,7 +83,6 @@ internal static class HookManager
 
             HookNotifier.Start();
 
-            Watch(Options.RemixMenu.Instance);
             Register(Assembly.GetExecutingAssembly());
         }
         catch (Exception exception)
@@ -153,23 +148,18 @@ internal static class HookManager
 
         _activeHooks.Clear();
         _assemblies.Clear();
-        _menus.Clear();
     }
 
     internal static void On_OptionInterface__SaveConfigFile(On.OptionInterface.orig__SaveConfigFile orig, OptionInterface self)
     {
         orig(self);
 
-        if (!_menus.Contains(self))
+        if (self != Options.RemixMenu.Instance)
         {
             return;
         }
 
-        if (self == Options.RemixMenu.Instance)
-        {
-            Options.RemixMenu.Instance.KeepSelectedProfile();
-        }
-
+        Options.RemixMenu.Instance.KeepSelectedProfile();
         OnEnable();
 
         Reporter.LogInfo("Configurations saved");
