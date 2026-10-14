@@ -25,7 +25,12 @@ internal static partial class VoidSeaUtils
 
     public static VoidSeaScene? ActiveScene(Room? room)
     {
-        return room?.updateList.OfType<VoidSeaScene>().FirstOrDefault(scene => !scene.Inverted);
+        if (room?.roomSettings?.GetEffect(RoomSettings.RoomEffect.Type.VoidSea) == null)
+        {
+            return null;
+        }
+
+        return room.updateList.OfType<VoidSeaScene>().FirstOrDefault(scene => !scene.Inverted);
     }
 
     public static VoidSeaScene? CompanionScene(Creature creature)
