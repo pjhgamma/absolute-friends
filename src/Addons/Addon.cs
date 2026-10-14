@@ -37,7 +37,7 @@ public sealed class Addon
         BuildMenu = buildMenu;
         HasMenu = plugin.GetType().GetMethod("BuildMenu", BindingFlags.Instance | BindingFlags.NonPublic)?.DeclaringType != typeof(AddonPlugin);
         Prefix = PrefixOf(Id);
-        Enabled = RemixMenu.Instance.Bind($"{Prefix}_Addon", true, new ConfigurableInfo(AddonDescription, tags: [Name]));
+        Enabled = RemixMenu.Instance.Bind($"{Prefix}_Addon", true, new ConfigurableInfo("Enables this addon.", tags: [Name]));
     }
 
     internal Addon(ModManager.Mod mod)

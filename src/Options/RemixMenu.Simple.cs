@@ -48,7 +48,7 @@ internal sealed partial class RemixMenu
         {
             AddSwitch(
                 addon.Name,
-                addon.AddonDescription,
+                enabled.Description ?? "",
                 () => enabled.IsChecked ? SwitchState.On : SwitchState.Off,
                 () => IsUsable(enabled),
                 () => enabled.Check(!enabled.IsChecked),
