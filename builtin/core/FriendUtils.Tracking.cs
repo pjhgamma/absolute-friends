@@ -254,7 +254,10 @@ public static partial class FriendUtils
         }
 
         private SocialMemory.Relationship? CloseRelationshipWith(EntityID id) =>
-            source?.state?.socialMemory?.GetRelationship(id) is { like: > FriendLikeThreshold, tempLike: > FriendLikeThreshold } relationship ? relationship : null;
+            source?.state?.socialMemory?.GetRelationship(id) is { like: > FriendLikeThreshold } relationship
+                && (relationship.tempLike == 0f ? relationship.like : relationship.tempLike) > FriendLikeThreshold
+                ? relationship
+                : null;
     }
 
     extension(EntityID id)
