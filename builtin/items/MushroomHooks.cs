@@ -14,13 +14,13 @@ internal class MushroomHooks : BaseHooks
     [HookTest([1702], ["callvirt List`1::GetEnumerator"])]
     private static void IL_Player_Update(ILContext il)
     {
-        ILCursor cursor = new(il);
+        ILCursor c = new(il);
 
-        if (cursor.TryGotoNext(i => i.MatchCallvirt<RainWorldGame>("get_AlivePlayers")))
+        if (c.TryGotoNext(i => i.MatchCallvirt<RainWorldGame>("get_AlivePlayers")))
         {
-            cursor.Remove();
-            cursor.Emit(OpCodes.Ldarg_0);
-            cursor.EmitGuarded((RainWorldGame game, Player source) =>
+            c.Remove();
+            c.Emit(OpCodes.Ldarg_0);
+            c.EmitGuarded((RainWorldGame game, Player source) =>
             {
                 if (!FriendUtils.IsFriendSession)
                 {
@@ -75,24 +75,14 @@ internal class MushroomHooks : BaseHooks
 
         foreach (var slugcat in slugcats)
         {
-            int counter = 0;
-            float effect = 0f;
-            bool hasSource = false;
+            List<(int Counter, float Effect)> sources = [.. active
+                .Where(source => source.Key == slugcat || slugcat.IsFriend(source.Key))
+                .Select(source => source.Value)];
 
-            foreach (var source in active)
+            if (sources.Count > 0)
             {
-                if (source.Key == slugcat || slugcat.IsFriend(source.Key))
-                {
-                    counter = hasSource ? Math.Max(counter, source.Value.Counter) : source.Value.Counter;
-                    effect = hasSource ? Math.Max(effect, source.Value.Effect) : source.Value.Effect;
-                    hasSource = true;
-                }
-            }
-
-            if (hasSource)
-            {
-                slugcat.mushroomCounter = counter;
-                slugcat.mushroomEffect = effect;
+                slugcat.mushroomCounter = sources.Select(source => source.Counter).Aggregate(Math.Max);
+                slugcat.mushroomEffect = sources.Select(source => source.Effect).Aggregate(Math.Max);
             }
         }
     }
