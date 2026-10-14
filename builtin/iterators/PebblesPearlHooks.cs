@@ -1,3 +1,4 @@
+using AbsoluteFriends.Core;
 using AbsoluteFriends.Hooks;
 using MoreSlugcats;
 
@@ -10,6 +11,6 @@ internal class PebblesPearlHooks : DownpourHooks
     [HookPatch(typeof(On.Player), nameof(On.Player.CanIPickThisUp))]
     private static bool On_Player_CanIPickThisUp(On.Player.orig_CanIPickThisUp orig, Player self, PhysicalObject obj)
     {
-        return obj is not HalcyonPearl && orig(self, obj);
+        return (obj is not HalcyonPearl || !self.IsFriend(obj)) && orig(self, obj);
     }
 }

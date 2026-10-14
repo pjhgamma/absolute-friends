@@ -1,3 +1,5 @@
+using AbsoluteFriends.Core;
+using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -27,7 +29,9 @@ internal class PebblesHooks : BaseHooks
             i => i.MatchBleUn(out l)
         ))
         {
-            c.Emit(OpCodes.Br, l);
+            c.Emit(OpCodes.Ldarg_0);
+            c.EmitGuarded((SSOracleBehavior.ThrowOutBehavior behavior) => behavior.oracle.IsFriend(behavior.player), _ => false);
+            c.Emit(OpCodes.Brtrue, l);
         }
     }
 }

@@ -1,3 +1,4 @@
+using AbsoluteFriends.Core;
 using AbsoluteFriends.Hooks;
 
 namespace AbsoluteFriends.Iterators;
@@ -9,6 +10,6 @@ internal class MoonNeuronHooks : BaseHooks
     [HookPatch(typeof(On.Player), nameof(On.Player.CanIPickThisUp))]
     private static bool On_Player_CanIPickThisUp(On.Player.orig_CanIPickThisUp orig, Player self, PhysicalObject obj)
     {
-        return obj is not SLOracleSwarmer && orig(self, obj);
+        return (obj is not SLOracleSwarmer || !self.IsFriend(obj)) && orig(self, obj);
     }
 }
