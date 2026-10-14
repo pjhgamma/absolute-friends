@@ -3,6 +3,7 @@ using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using RWCustom;
+using UnityEngine;
 
 namespace AbsoluteFriends.Core;
 
@@ -17,6 +18,8 @@ public static partial class FriendUtils
     private static RainWorldGame? _chainingGame;
 
     private static int _chainingClock = -1;
+
+    private static int _chainingFrame = -1;
 
     private static bool TryGetLikes(SocialMemory socialMemory, EntityID subjectID, out float like, out float tempLike)
     {
@@ -222,11 +225,14 @@ public static partial class FriendUtils
                 return source.IsFriend(abstractSlugcat, true, false);
             }
 
-            if (_chainingGame != game || _chainingClock != game.clock)
+            int frame = game.GamePaused ? Time.frameCount : -1;
+
+            if (_chainingGame != game || _chainingClock != game.clock || _chainingFrame != frame)
             {
                 _chainingFriendships.Clear();
                 _chainingGame = game;
                 _chainingClock = game.clock;
+                _chainingFrame = frame;
             }
 
             var key = (source, abstractSlugcat);

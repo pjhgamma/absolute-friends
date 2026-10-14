@@ -94,6 +94,7 @@ public static partial class FriendUtils
         _chainingFriendships.Clear();
         _chainingGame = null;
         _chainingClock = -1;
+        _chainingFrame = -1;
         _trackedPlayerIds = new();
         _slugpupFriendIds = new();
     }
