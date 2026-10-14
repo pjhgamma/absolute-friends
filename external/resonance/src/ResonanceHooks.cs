@@ -41,6 +41,7 @@ internal class ResonanceHooks : BaseHooks
         ILCursor c = new(il);
 
         if (c.TryGotoNext(
+            MoveType.AfterLabel,
             i => i.MatchLdarg(0),
             i => i.MatchLdsfld<RegionGate.Mode>("ClosingAirLock"),
             i => i.MatchStfld<RegionGate>("mode")

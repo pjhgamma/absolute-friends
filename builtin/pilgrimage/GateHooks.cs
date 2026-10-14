@@ -24,7 +24,7 @@ internal class GateHooks : BaseHooks
     }
 
     [HookPatch(typeof(IL.Player), nameof(IL.Player.Update))]
-    [HookTest([4445, 4459], ["ldc.i4.s; ble; ldarg.0", "ldarg.0; ldfld Player::touchedNoInputCounter"])]
+    [HookTest([4448, 4462], ["ldc.i4.s; ble; ldarg.0", "ldarg.0; ldfld Player::touchedNoInputCounter"])]
     private static void IL_Player_Update(ILContext il)
     {
         ILCursor c = new(il);

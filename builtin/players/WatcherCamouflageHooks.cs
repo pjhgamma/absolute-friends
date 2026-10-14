@@ -217,7 +217,7 @@ internal class WatcherCamouflageHooks : WatcherHooks
     }
 
     [HookPatch(typeof(IL.Player), nameof(IL.Player.TickLevitation_bool_int_float))]
-    [HookTest([2], ["ldc.i4.0; bgt; ldarg.0"])]
+    [HookTest([2], ["ldc.i4.0; bgt.s; ldarg.0"])]
     private static void IL_Player_TickLevitation(ILContext il)
     {
         ILCursor c = new(il);
