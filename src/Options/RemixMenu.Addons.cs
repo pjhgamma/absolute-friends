@@ -64,18 +64,16 @@ internal sealed partial class RemixMenu
         BeginSection([.. addon.Keywords], addon.IsApplied ? () => IsDetailed : null);
         BeginBox();
 
-        SetColumns(2);
+        SetColumns(1);
         if (addon.Enabled is { } enabled)
         {
             AddCheckBox(enabled, enabled: addon.AddonDependenciesApplied);
+            AddLabel(addon.AddonDescription, alignment: FLabelAlignment.Left, enabled: addon.AddonDescription.Length > 0);
         }
         else
         {
             AddNote(addon.Name, alignment: FLabelAlignment.Left);
         }
-        AddNote($"{addon.Id} v{addon.Version}");
-
-        SetColumns(1);
 
         if (!addon.IsApplied && AddLabel("Remix is not enabled.", alignment: FLabelAlignment.Left) is { } notApplied)
         {

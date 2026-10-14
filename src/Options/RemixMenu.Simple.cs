@@ -52,19 +52,13 @@ internal sealed partial class RemixMenu
                 () => enabled.IsChecked ? SwitchState.On : SwitchState.Off,
                 () => IsUsable(enabled),
                 () => enabled.Check(!enabled.IsChecked),
-                span: 2f
+                span: 3f
             );
+            AddLabel(addon.AddonDescription, alignment: FLabelAlignment.Left, enabled: addon.AddonDescription.Length > 0);
         }
         else
         {
-            AddNote(addon.Name, alignment: FLabelAlignment.Left, span: 2f);
-        }
-
-        if (AddNote("Options enabled: <PLACEHOLDER>", OptionCountText(addon)) is { } count)
-        {
-            string template = Translate("Options enabled: <PLACEHOLDER>");
-
-            Watch(() => Retitle(count, template, addon));
+            AddNote(addon.Name, alignment: FLabelAlignment.Left, span: 3f);
         }
 
         foreach (var group in addon.Groups)
