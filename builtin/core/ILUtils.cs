@@ -16,7 +16,7 @@ public static class ILUtils
         public void FriendBranch()
         {
             ILCursor c = new(il);
-            ILLabel? l = null;
+            ILLabel l = c.DefineLabel();
 
             while (c.TryGotoNext(
                 i => i.MatchLdfld<AbstractPhysicalObject>("rippleLayer")
